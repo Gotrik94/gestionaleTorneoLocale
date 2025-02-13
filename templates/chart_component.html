@@ -1,0 +1,55 @@
+<!-- Chart Component -->
+<div id="chart-container" >
+    <style>
+        .chart-container {
+            background-color: #222;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 100%;
+            min-height: 300px;
+        }
+
+        /* Assicuriamoci che il canvas abbia una dimensione */
+        #torneiChart {
+            width: 100% !important;
+            height: 300px !important;
+        }
+    </style>
+
+    <h2 class="mt-5 text-warning">Statistiche Tornei</h2>
+    <div class="chart-container">
+        <canvas id="torneiChart"></canvas>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            setTimeout(initializeChart, 500); // Ritardo per assicurarsi che il canvas sia visibile
+        });
+
+        function initializeChart() {
+            let ctx = document.getElementById('torneiChart');
+            if (!ctx) {
+                console.error("Canvas del grafico non trovato!");
+                return;
+            }
+
+            ctx = ctx.getContext('2d');
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ["Spring Cup", "Summer Clash", "Autumn Arena"],
+                    datasets: [{
+                        label: "Squadre per Torneo",
+                        data: [8, 12, 10],
+                        backgroundColor: ['#ff9800', '#e68900', '#d67600']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+    </script>
+</div>

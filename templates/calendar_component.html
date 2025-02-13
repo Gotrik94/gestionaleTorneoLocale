@@ -1,0 +1,101 @@
+<!-- Calendar Component -->
+<div id="calendar-container">
+    <style>
+        .calendar-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .calendar-header {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            background-color: #ff9800;
+            color: black;
+            padding: 10px;
+            font-weight: bold;
+            text-align: center;
+            border-radius: 5px;
+        }
+
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            padding: 10px;
+            background-color: #1e1e1e;
+            border-radius: 5px;
+        }
+
+        .calendar-day {
+            padding: 15px;
+            background-color: #2c2c2c;
+            color: white;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .event {
+            background-color: #ff9800;
+            color: black;
+            padding: 5px;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+    </style>
+
+    <h2 class="mt-4 text-warning">Calendario Eventi</h2>
+    <div class="calendar-header">
+        <div>Domenica</div><div>Lunedì</div><div>Martedì</div>
+        <div>Mercoledì</div><div>Giovedì</div><div>Venerdì</div><div>Sabato</div>
+    </div>
+    <div class="calendar" id="calendar"></div>
+    <div class="calendar-container">
+        <h3 id="calendar-month" class="text-light text-end pe-3"></h3>
+    </div>
+
+    <script>
+        function initializeCalendar() {
+            const calendarEl = document.getElementById('calendar');
+            const monthEl = document.getElementById('calendar-month');
+            const today = new Date();
+            const monthNames = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
+            monthEl.innerText = monthNames[today.getMonth()] + " " + today.getFullYear();
+
+            const firstDay = new Date(today.getFullYear(), today.getMonth(), 1).getDay();
+            const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+            const events = [
+                { day: 12, title: 'Finale Spring Cup' },
+                { day: 15, title: 'Inizio Summer Clash' },
+                { day: 20, title: 'Quarti di Finale Summer Clash' }
+            ];
+
+            for (let i = 0; i < firstDay; i++) {
+                let emptyBox = document.createElement('div');
+                emptyBox.classList.add('calendar-day');
+                calendarEl.appendChild(emptyBox);
+            }
+
+            for (let i = 1; i <= daysInMonth; i++) {
+                let dayBox = document.createElement('div');
+                dayBox.classList.add('calendar-day');
+                dayBox.innerText = i;
+
+                events.forEach(event => {
+                    if (event.day === i) {
+                        let eventEl = document.createElement('div');
+                        eventEl.classList.add('event');
+                        eventEl.innerText = event.title;
+                        dayBox.appendChild(eventEl);
+                    }
+                });
+
+                calendarEl.appendChild(dayBox);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeCalendar();
+        });
+    </script>
+</div>

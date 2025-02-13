@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestione Squadre</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="bg-dark text-light">
+
+<div class="container mt-5">
+    <h1 class="text-center text-primary">⚽ Gestione Squadre</h1>
+
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            <label class="form-label">Nome Squadra</label>
+            {{ form.nome(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">ID Torneo</label>
+            {{ form.torneo_id(class="form-control") }}
+        </div>
+        <button type="submit" class="btn btn-primary">✅ Aggiungi Squadra</button>
+    </form>
+
+    <h2 class="mt-5 text-warning">Squadre Esistenti</h2>
+    <ul class="list-group">
+        {% for squadra in squadre %}
+        <li class="list-group-item bg-secondary text-light">
+            {{ squadra.nome }} (Torneo: {{ squadra.torneo.nome }})
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
