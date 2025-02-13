@@ -21,16 +21,3 @@ eventi con un calendario interattivo che mostra le partite e i tornei imminenti.
 L'interfaccia principale offre un menu laterale chiudibile e una dashboard centrale con riepiloghi statistici e informazioni essenziali. 
 Il design e la struttura dell'app sono stati ottimizzati per garantire un'esperienza utente fluida e intuitiva, migliorando 
 la leggibilità e la navigazione tra le diverse sezioni.
-
-## Tecnologie Utilizzate
-
-| Tecnologia    | Descrizione                              |
-|--------------|------------------------------------------|
-| **Frontend** | React.js / Vue.js                       |
-| **Backend**  | Node.js / Express.js                    |
-| **Database** | PostgreSQL / MongoDB                    |
-| **Linguaggi**| JavaScript, TypeScript                  |
-| **Hosting**  | AWS / Vercel                            |
-| **Autenticazione** | Firebase Auth / JWT              |
-| **Gestione Stato** | Redux / Vuex                      |
-| **Stile UI** | Tailwind CSS / Bootstrap               |
