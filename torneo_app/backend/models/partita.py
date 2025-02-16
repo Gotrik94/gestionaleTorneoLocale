@@ -1,4 +1,6 @@
 from django.db import models
+
+from backend.models import Giocatore
 from backend.models.torneo import Torneo
 from backend.models.squadra import Squadra
 
@@ -37,6 +39,7 @@ class Partita(models.Model):
     squadra_blu = models.ForeignKey(Squadra, on_delete=models.CASCADE, related_name="partite_blu")
     vincitore = models.ForeignKey(Squadra, on_delete=models.SET_NULL, null=True, blank=True,
                                   related_name="partite_vinte")
+    mvp = models.ForeignKey(Giocatore, on_delete=models.SET_NULL, related_name="mvp", null=True, blank=True)
 
     data_evento = models.DateField()  # Data della partita
     durata_minuti = models.IntegerField(null=False)  # Durata in minuti
