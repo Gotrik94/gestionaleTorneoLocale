@@ -1,58 +1,76 @@
-torneo_app/
-│── manage.py                 # Script di gestione Django
-│── db.sqlite3                 # Database SQLite
-│── torneo/                    # Configurazione principale di Django
-│   ├── __init__.py
-│   ├── settings.py            # Configurazioni principali
-│   ├── urls.py                # Collegamento principale delle URL
-│   ├── wsgi.py                # Server WSGI
-│   ├── asgi.py                # Server ASGI
-│── backend/                   # Modelli, Forms, Admin e Logica di Business
-│   ├── __init__.py
-│   ├── models/                # Modelli suddivisi per entità
+Progetto_Torneo/
+├── torneo_app/                     
+│   ├── torneo/                    # Configurazioni principali di Django
 │   │   ├── __init__.py
-│   │   ├── torneo.py          # Modello Torneo
-│   │   ├── squadra.py         # Modello Squadra
-│   │   ├── giocatore.py       # Modello Giocatore
-│   │   ├── partita.py         # Modello Partita
-│   │   ├── statistiche.py     # Modello Statistiche Giocatori
-│   │   ├── pickban.py         # Modello Pick/Ban
-│   ├── forms/                 # Form per input utenti
-│   │   ├── __init__.py
-│   │   ├── torneo.py
-│   │   ├── squadra.py
-│   │   ├── giocatore.py
-│   │   ├── partita.py
-│   ├── serializers/           # Serializzazione per API
-│   │   ├── __init__.py
-│   │   ├── torneo.py
-│   │   ├── squadra.py
-│   │   ├── giocatore.py
-│   │   ├── partita.py
-│   ├── admin.py               # Registrazione modelli nell'Admin Django
-│   ├── tests.py               # Test unitari
-│── api/                       # API REST con Django REST Framework
-│   ├── __init__.py
-│   ├── urls.py                # URL principale delle API
-│   ├── views/                 # Views API suddivise per entità
-│   │   ├── __init__.py
-│   │   ├── views_tornei.py
-│   │   ├── views_squadre.py
-│   │   ├── views_giocatori.py
-│   │   ├── views_partite.py
-│   ├── urls/                  # URL API suddivise per entità
-│   │   ├── __init__.py
-│   │   ├── urls_tornei.py
-│   │   ├── urls_squadre.py
-│   │   ├── urls_giocatori.py
-│   │   ├── urls_partite.py
-│── frontend/                  # Parte HTML + Statici
-│   ├── static/                # File statici (CSS, JS)
-│   │   ├── css/
-│   │   ├── js/
-│   ├── templates/             # Template HTML Django
-│   │   ├── base.html
-│   │   ├── home.html
-│   ├── views.py               # Rendering pagine HTML (se necessario)
-│── requirements.txt           # Dipendenze del progetto
-│── README.md                  # Documentazione
+│   │   ├── asgi.py
+│   │   ├── settings.py
+│   │   ├── urls.py
+│   │   ├── wsgi.py
+│   │   └── ...
+│   ├── api/                      # Endpoint REST e routing API
+│   │   ├── urls/
+│   │   │   ├── __init__.py
+│   │   │   ├── urls_giocatori.py
+│   │   │   ├── urls_iscrizione.py
+│   │   │   ├── urls_nota_partita.py
+│   │   │   ├── urls_partite.py
+│   │   │   ├── urls_pickban.py
+│   │   │   ├── urls_squadre.py
+│   │   │   ├── urls_statistiche_giocatore_partita.py
+│   │   │   └── urls_tornei.py
+│   │   └── views/
+│   │       ├── __init__.py
+│   │       ├── views_giocatori.py
+│   │       ├── views_iscrizione.py
+│   │       ├── views_nota_partita.py
+│   │       ├── views_partite.py
+│   │       ├── views_pickban.py
+│   │       ├── views_squadre.py
+│   │       ├── views_statistiche_giocatore_partita.py
+│   │       └── views_tornei.py
+│   ├── backend/                   # Logica di business, modelli e serializers
+│   │   ├── forms/
+│   │   ├── migrations/
+│   │   │   ├── 0001_initial.py
+│   │   │   ├── 0002_iscrizione.py
+│   │   │   └── ...
+│   │   ├── models/
+│   │   │   ├── __init__.py
+│   │   │   ├── campione.py
+│   │   │   ├── giocatore.py
+│   │   │   ├── iscrizione.py
+│   │   │   ├── nota_partita.py
+│   │   │   ├── partita.py
+│   │   │   ├── pickban.py
+│   │   │   ├── squadra.py
+│   │   │   ├── statistiche_giocatore_partita.py
+│   │   │   └── torneo.py
+│   │   ├── serializers/
+│   │   │   ├── __init__.py
+│   │   │   ├── giocatore.py
+│   │   │   ├── iscrizione.py
+│   │   │   ├── nota_partita.py
+│   │   │   ├── partita.py
+│   │   │   ├── pickban.py
+│   │   │   ├── squadra.py
+│   │   │   ├── statistiche_giocatore_partita.py
+│   │   │   └── torneo.py
+│   │   ├── admin.py
+│   │   └── tests.py
+│   ├── frontend/                  # Parte visuale: static e templates
+│   │   ├── static/
+│   │   │   ├── css/
+│   │   │   └── js/
+│   │   └── templates/
+│   │       ├── modules/
+│   │       │   ├── footer.html
+│   │       │   ├── header.html
+│   │       │   └── sidebar.html
+│   │       ├── base.html
+│   │       ├── home.html
+│   │       └── test.html
+│   └── urls.py
+├── db.sqlite3                     # Database SQLite locale
+├── manage.py
+├── README.md
+└── requirements.txt

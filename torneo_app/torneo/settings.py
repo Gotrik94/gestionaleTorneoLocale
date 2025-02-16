@@ -11,11 +11,10 @@ SECRET_KEY = "DJANGO_DRF_RULES_3729645730#!954#8E$$"  # Chiave per uso locale
 ROOT_URLCONF = "torneo.urls"
 
 # Configurazione Static Files
-STATIC_URL = "/static/"
+STATIC_URL = "/modules/"
 STATICFILES_DIRS = [
-    BASE_DIR / "frontend/static",
+    BASE_DIR / "frontend/templates/modules",
 ]
-
 # Applicazioni installate
 INSTALLED_APPS = [
     "django.contrib.admin",  # Deve essere presente
