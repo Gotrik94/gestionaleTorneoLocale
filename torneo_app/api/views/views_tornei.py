@@ -1,9 +1,13 @@
-from datetime import timedelta
+from datetime import timedelta, date
 
 from django.http import JsonResponse
+from django.shortcuts import render
 from rest_framework.decorators import api_view
+from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import status
+
+from backend.models import Squadra, Iscrizione
 from backend.models.torneo import Torneo
 from backend.serializers.torneo import TorneoSerializer
 
@@ -11,7 +15,7 @@ from backend.serializers.torneo import TorneoSerializer
 def lista_tornei(request):
     """
     GET  -> Lista di tutti i tornei
-    POST -> Crea un nuovo torneo
+    POST -> Crea un nuovo tornei
     """
     if request.method == 'GET':
         tornei = Torneo.objects.all()
@@ -29,9 +33,9 @@ def lista_tornei(request):
 @api_view(['GET', 'PUT', 'DELETE'])
 def dettaglio_torneo(request, torneo_id):
     """
-    GET    -> Dettaglio di un torneo
-    PUT    -> Aggiorna un torneo
-    DELETE -> Elimina un torneo
+    GET    -> Dettaglio di un tornei
+    PUT    -> Aggiorna un tornei
+    DELETE -> Elimina un tornei
     """
     try:
         torneo = Torneo.objects.get(pk=torneo_id)
@@ -66,3 +70,39 @@ def calendar_schedule_tornei(request):
         for torneo in tornei
     ]
     return JsonResponse(eventi, safe=False)
+
+
+def tornei_page(request):
+    oggi = date.today()
+
+    # Query per i tornei
+    tornei_totali = Torneo.objects.filter(is_active=True).count()
+    tornei_attivi = Torneo.objects.filter(data_inizio__lte=oggi, data_fine__gte=oggi, is_active=True).count()
+    tornei_conclusi = Torneo.objects.filter(data_fine__lt=oggi, is_active=True).count()
+
+    tornei = Torneo.objects.filter(is_active=True)
+
+    return render(request, 'modules/tornei/tornei.html', {
+        'tornei': tornei,
+        'tornei_totali': tornei_totali,
+        'tornei_attivi': tornei_attivi,
+        'tornei_conclusi': tornei_conclusi
+    })
+
+
+def iscrivi_squadra(request):
+    if request.method == "POST":
+        torneo_id = request.POST.get("torneo_id")
+        squadra_id = request.POST.get("squadra_id")
+
+        torneo = get_object_or_404(Torneo, id=torneo_id)
+        squadra = get_object_or_404(Squadra, id=squadra_id)
+
+        if Iscrizione.objects.filter(torneo=torneo, squadra=squadra).exists():
+            return JsonResponse({"success": False, "message": "Squadra già iscritta!"})
+
+        Iscrizione.objects.create(torneo=torneo, squadra=squadra)
+
+        return JsonResponse({"success": True, "message": "Squadra iscritta con successo!"})
+
+    return JsonResponse({"success": False, "message": "Richiesta non valida!"}, status=400)

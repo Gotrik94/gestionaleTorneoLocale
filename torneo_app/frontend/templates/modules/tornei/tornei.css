@@ -1,0 +1,132 @@
+/* Variabili per la palette e la tipografia */
+:root {
+  --primary-color: #ffcc00;
+  --success-color: #27ae60;
+  --error-color: #e74c3c;
+  --bg-dark: #1f1f1f;
+  --bg-secondary: #2a2a2a;
+  --text-color: #e0e0e0;
+  --font-family: 'Roboto', sans-serif;
+}
+
+/* Impostazioni generali */
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-color);
+  font-family: var(--font-family);
+}
+
+h2.text-warning {
+  font-weight: 700;
+}
+
+/* BOX RIEPILOGO (info-box) */
+.info-box {
+  background: var(--bg-secondary);
+  border: 2px solid rgba(255, 204, 0, 0.5);
+  border-radius: 10px;
+  text-align: center;
+  padding: 20px;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  cursor: pointer; /* Cursor pointer per i box cliccabili */
+}
+.info-box:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+}
+.info-box h4 {
+  color: var(--primary-color);
+  margin-bottom: 10px;
+}
+.info-box span {
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+.info-box.total {
+  border-color: var(--primary-color);
+}
+.info-box.active {
+  border-color: var(--success-color);
+}
+.info-box.concluded {
+  border-color: var(--error-color);
+}
+/* Stato selezionato */
+.info-box.selected {
+  box-shadow: 0 0 10px var(--primary-color);
+  background: #333; /* leggero contrasto per evidenziare la selezione */
+}
+
+/* CARD Tornei */
+.card {
+  border-radius: 10px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+}
+.card h5 {
+  color: var(--primary-color);
+  margin-bottom: 10px;
+}
+
+/* SEARCH */
+.search-container {
+  position: relative;
+  width: 250px; /* oppure la larghezza che preferisci */
+  transition: width 0.4s ease-in-out;
+}
+#searchTorneo {
+  width: 100%;
+  padding: 8px 40px 8px 15px;
+  border-radius: 25px;
+  border: 2px solid var(--primary-color);
+  background: transparent;
+  color: var(--text-color);
+}
+#searchTorneo:focus {
+  outline: none;
+  box-shadow: 0 0 5px var(--primary-color);
+}
+#searchTorneo::placeholder {
+  color: rgba(255, 255, 255, 0.6); /* placeholder più visibile */
+}
+.search-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--primary-color);
+  border: none;
+  padding: 6px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.search-btn i {
+  color: #000;
+  font-size: 16px;
+}
+
+/* Bottone Dettagli (outline-warning) */
+.btn-outline-warning {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+.btn-outline-warning:hover {
+  background: var(--primary-color);
+  color: #000;
+}
+
+/* Modal content */
+.modal-content {
+  background: var(--bg-secondary);
+  border: none;
+  border-radius: 10px;
+}
+.modal-header,
+.modal-footer {
+  border: none;
+}

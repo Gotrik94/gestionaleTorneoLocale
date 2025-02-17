@@ -1,0 +1,98 @@
+{% extends "modules/base/base.html" %}
+{% load static %}
+
+{% block title %}Tornei - Torneo Manager{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'tornei/tornei.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+    <!-- HEADER con titolo e barra di ricerca (dropdown rimosso) -->
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <h2 class="text-warning mb-0">Tornei</h2>
+        <div class="d-flex align-items-center">
+            <!-- Barra di ricerca -->
+            <div class="search-container">
+                <input type="text" id="searchTorneo" class="form-control" placeholder="Cerca un torneo...">
+                <button id="searchButton" class="search-btn">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- RIQUADRI RIEPILOGO (cliccabili) -->
+    <div class="row g-3">
+        <div class="col-md-4" onclick="applyFilter('tutti', event)">
+            <div class="info-box total selected" id="boxTutti">
+                <h4>Tornei Totali</h4>
+                <span id="torneiTotali">{{ tornei_totali }}</span>
+            </div>
+        </div>
+        <div class="col-md-4" onclick="applyFilter('attivi', event)">
+            <div class="info-box active" id="boxAttivi">
+                <h4>Tornei Attivi</h4>
+                <span id="torneiAttivi">{{ tornei_attivi }}</span>
+            </div>
+        </div>
+        <div class="col-md-4" onclick="applyFilter('conclusi', event)">
+            <div class="info-box concluded" id="boxConclusi">
+                <h4>Tornei Conclusi</h4>
+                <span id="torneiConclusi">{{ tornei_conclusi }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- LISTA TORNEI -->
+    <div id="torneiList" class="row g-3 mt-4">
+        {% for torneo in tornei %}
+        <!-- Notare l'attributo data-status per filtrare con JS -->
+        <div class="col-md-4 torneo-card" data-status="{{ torneo.status }}">
+            <div class="card bg-dark text-light border-warning h-100 p-3">
+                <h5 class="text-warning">{{ torneo.nome }}</h5>
+                <p>📅 {{ torneo.data_inizio }} - {{ torneo.data_fine }}</p>
+                <p>👥 Squadre iscritte: {{ torneo.num_squadre }}</p>
+                <p>🏆 Ultimo vincitore: {{ torneo.ultimo_vincitore|default:"N/A" }}</p>
+                <div class="d-flex justify-content-between mt-auto">
+                    <button class="btn btn-warning btn-sm" onclick="apriIscrizione({{ torneo.id }})">
+                        📝 Iscrivi Squadra
+                    </button>
+                    <a href="/torneo/{{ torneo.id }}" class="btn btn-outline-warning btn-sm">👁 Dettagli</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- MODALE ISCRIZIONE -->
+<div class="modal fade" id="iscrizioneModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-light">
+            <div class="modal-header">
+                <h5 class="modal-title text-warning">Iscrivi una Squadra</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <select id="squadraSelect" class="form-select">
+                    {% for squadra in squadre %}
+                    <option value="{{ squadra.id }}">{{ squadra.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                <button type="button" class="btn btn-warning" onclick="confermaIscrizione()">Conferma</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'tornei/tornei.js' %}"></script>
+{% endblock %}
