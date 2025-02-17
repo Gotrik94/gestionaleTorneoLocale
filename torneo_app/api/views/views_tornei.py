@@ -1,3 +1,6 @@
+from datetime import timedelta
+
+from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -49,3 +52,17 @@ def dettaglio_torneo(request, torneo_id):
     elif request.method == 'DELETE':
         torneo.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+def api_tornei(request):
+    tornei = Torneo.objects.filter(is_active=True)
+    eventi = [
+        {
+            "title": torneo.nome,
+            "start": torneo.data_inizio if torneo.data_fine else None,
+            "end": torneo.data_fine if torneo.data_fine else None,
+            "description": f"Formato: {torneo.formato}"
+        }
+        for torneo in tornei
+    ]
+    return JsonResponse(eventi, safe=False)

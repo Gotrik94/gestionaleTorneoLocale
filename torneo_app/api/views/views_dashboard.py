@@ -1,4 +1,5 @@
 from django.db.models import Sum, Count, F
+from django.http import JsonResponse
 from django.shortcuts import render
 from backend.models import Torneo, Squadra, Iscrizione, StatisticheGiocatorePartita, Giocatore, Partita
 
@@ -74,11 +75,27 @@ def get_percentuali_vittorie():
     return percentuale_blu, percentuale_rossa
 
 
+def get_tornei_events():
+    tornei = Torneo.objects.filter(is_active=True)
+    events = [
+        {
+            "title": torneo.nome,
+            "start": torneo.data_inizio.strftime('%Y-%m-%d'),
+            "end": torneo.data_fine.strftime('%Y-%m-%d'),
+            "backgroundColor": "#FFC107",  # Giallo per evidenziare
+            "borderColor": "#FFA000"
+        }
+        for torneo in tornei
+    ]
+    return JsonResponse(events, safe=False)
+
+
 def dashboard_page_metrics(request):
     return render(request, 'modules/dashboard/dashboard.html', {
         'tornei': get_tornei_con_dati(),
         'riepilogo_tornei': get_riepilogo_tornei(),
         'percentuale_blu': get_percentuali_vittorie()[0],
         'percentuale_rossa': get_percentuali_vittorie()[1],
+        'events': get_tornei_events(),
         'active_page': 'dashboard'
     })
