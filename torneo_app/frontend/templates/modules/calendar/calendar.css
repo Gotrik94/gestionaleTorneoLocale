@@ -1,0 +1,24 @@
+/* Frecce di navigazione */
+.fc .fc-button-group .fc-prev-button,
+.fc .fc-button-group .fc-next-button {
+    color: #fff !important;
+    background-color: #222 !important;
+    border: none !important;
+}
+
+.fc .fc-toolbar-title {
+    text-transform: capitalize !important;
+}
+
+
+/* Stile per le celle dell'intestazione dei giorni della settimana */
+.fc .fc-col-header-cell {
+  background-color: #222 !important; /* Sfondo scuro */
+  color: #fff !important; /* Testo bianco */
+  border: none !important;
+}
+
+.fc .fc-col-header-cell-cushion {
+  color: #fff !important;
+  text-transform: capitalize !important;
+}
