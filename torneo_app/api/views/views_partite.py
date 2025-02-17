@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -49,3 +50,18 @@ def dettaglio_partita(request, partita_id):
     elif request.method == 'DELETE':
         partita.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+def calendar_schedule_partita(request):
+    partite = Partita.objects.all()
+    events = []
+
+    for partita in partite:
+        # Costruisci il titolo con il nome del torneo e le squadre, separate da un newline
+        title = f"{partita.torneo.nome}\n{partita.squadra_rossa.nome} vs {partita.squadra_blu.nome}"
+        events.append({
+            'title': title,
+            'start': partita.data_evento.isoformat()
+        })
+
+    return JsonResponse(events, safe=False)

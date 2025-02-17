@@ -54,13 +54,13 @@ def dettaglio_torneo(request, torneo_id):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-def api_tornei(request):
+def calendar_schedule_tornei(request):
     tornei = Torneo.objects.filter(is_active=True)
     eventi = [
         {
             "title": torneo.nome,
-            "start": torneo.data_inizio if torneo.data_fine else None,
-            "end": torneo.data_fine if torneo.data_fine else None,
+            "start": torneo.data_inizio.isoformat() if torneo.data_inizio else None,
+            "end": torneo.data_fine.isoformat() if torneo.data_fine else None,
             "description": f"Formato: {torneo.formato}"
         }
         for torneo in tornei

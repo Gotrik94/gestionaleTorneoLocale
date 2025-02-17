@@ -74,6 +74,7 @@ CREATE TABLE Partita (
     fase_torneo ENUM('Gruppi', 'Quarti', 'Semifinale', 'Finale') DEFAULT 'Gruppi', -- Fase del torneo
     serie_id INT NULL,                      -- ID della serie a cui appartiene la partita (NULL se partita singola)
     numero_partita_nella_serie INT DEFAULT 1, -- Numero progressivo della partita nella serie
+    conclusa BOOLEAN NOT NULL DEFAULT FALSE    -- Flag per capire se la partita si è disputata
     FOREIGN KEY (torneo_id) REFERENCES Torneo(id) ON DELETE CASCADE,
     FOREIGN KEY (squadra_rossa_id) REFERENCES Squadra(id) ON DELETE CASCADE,
     FOREIGN KEY (squadra_blu_id) REFERENCES Squadra(id) ON DELETE CASCADE,

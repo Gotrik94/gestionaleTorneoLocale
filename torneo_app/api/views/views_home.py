@@ -5,7 +5,7 @@ def home(request):
     ultimi_tornei = Torneo.objects.order_by('-data_inizio')[:3]
     totale_tornei = Torneo.objects.count()
     totale_squadre = Squadra.objects.count()
-    totale_partite = Partita.objects.count()
+    totale_partite = Partita.objects.filter(conclusa=True).count()
 
     tornei_con_squadre = [
         {

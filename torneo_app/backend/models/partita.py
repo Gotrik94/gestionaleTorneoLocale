@@ -42,7 +42,7 @@ class Partita(models.Model):
     mvp = models.ForeignKey(Giocatore, on_delete=models.SET_NULL, related_name="mvp", null=True, blank=True)
 
     data_evento = models.DateField()  # Data della partita
-    durata_minuti = models.IntegerField(null=False)  # Durata in minuti
+    durata_minuti = models.IntegerField(null=True, blank=True)  # Durata in minuti
 
     # Obiettivi di gioco
     draghi_rossa = models.IntegerField(default=0)
@@ -67,6 +67,7 @@ class Partita(models.Model):
     fase_torneo = models.CharField(max_length=15, choices=FASI_TORNEO, default='Gruppi')
     serie_id = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name="serie_partite")
     numero_partita_nella_serie = models.IntegerField(default=1)
+    conclusa = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.id} {self.squadra_rossa.nome} vs {self.squadra_blu.nome} - {self.data_evento.strftime('%d-%m-%Y')}"

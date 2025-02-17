@@ -26,16 +26,39 @@ const inizializzaCalendario = () => {
         dayHeaderFormat: { weekday: "short" },
         locale: "it",
         events: function(fetchInfo, successCallback, failureCallback) {
-            fetch("/api/tornei/")
-                .then(response => {
-                    if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
-                    return response.json();
-                })
-                .then(data => successCallback(data))
-                .catch(error => failureCallback(error));
+          Promise.all([
+            fetch("/api/tornei/calendar_schedule_tornei")
+              .then(response => {
+                if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+                return response.json();
+              }),
+            fetch("/api/partita/calendar_schedule_partita")
+              .then(response => {
+                if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+                return response.json();
+              })
+          ])
+          .then(([torneiData, partitaData]) => {
+            // Aggiungi proprietà 'color' e 'textColor' per i tornei (giallo)
+            const torneiEvents = torneiData.map(ev => ({
+              ...ev,
+              color: "#f1c40f",    // Giallo
+              textColor: "#000"    // Testo nero
+            }));
+
+            // Aggiungi proprietà 'color' e 'textColor' per le partite (blu)
+            const partiteEvents = partitaData.map(ev => ({
+              ...ev,
+              color: "#3498db",    // Blu
+              textColor: "#fff"    // Testo bianco
+            }));
+
+            // Unisci i due array in uno solo
+            const combinedEvents = [...torneiEvents, ...partiteEvents];
+            successCallback(combinedEvents);
+          })
+          .catch(error => failureCallback(error));
         },
-        eventColor: "#f1c40f",
-        eventTextColor: "#000",
 
         // TOOLTIP al passaggio del mouse
         eventMouseEnter: function(info) {
