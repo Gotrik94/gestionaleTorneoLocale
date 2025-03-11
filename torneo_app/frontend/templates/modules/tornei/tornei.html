@@ -10,7 +10,7 @@
 {% block content %}
 <div class="container py-4">
 
-    <!-- HEADER con titolo e barra di ricerca (dropdown rimosso) -->
+    <!-- HEADER con titolo e barra di ricerca -->
     <div class="d-flex align-items-center justify-content-between mb-4">
         <h2 class="text-warning mb-0">Tornei</h2>
         <div class="d-flex align-items-center">
@@ -24,24 +24,33 @@
         </div>
     </div>
 
-    <!-- RIQUADRI RIEPILOGO (cliccabili) -->
+    <!-- RIQUADRI RIEPILOGO + PANNELLO NUOVO TORNEO -->
     <div class="row g-3">
-        <div class="col-md-4" onclick="applyFilter('tutti', event)">
+        <div class="col-md-3" onclick="applyFilter('tutti', event)">
             <div class="info-box total selected" id="boxTutti">
                 <h4>Tornei Totali</h4>
                 <span id="torneiTotali">{{ tornei_totali }}</span>
             </div>
         </div>
-        <div class="col-md-4" onclick="applyFilter('attivi', event)">
+        <div class="col-md-3" onclick="applyFilter('attivi', event)">
             <div class="info-box active" id="boxAttivi">
                 <h4>Tornei Attivi</h4>
                 <span id="torneiAttivi">{{ tornei_attivi }}</span>
             </div>
         </div>
-        <div class="col-md-4" onclick="applyFilter('conclusi', event)">
+        <div class="col-md-3" onclick="applyFilter('conclusi', event)">
             <div class="info-box concluded" id="boxConclusi">
                 <h4>Tornei Conclusi</h4>
                 <span id="torneiConclusi">{{ tornei_conclusi }}</span>
+            </div>
+        </div>
+        <!-- BOX "Crea Nuovo Torneo" -->
+        <div class="col-md-3" onclick="openCreateTournamentModal()">
+            <div class="info-box create-new" id="boxNuovoTorneo">
+                <h4>Crea Nuovo Torneo</h4>
+                <span>
+                    <i class="bi bi-plus-circle"></i>
+                </span>
             </div>
         </div>
     </div>
@@ -49,18 +58,21 @@
     <!-- LISTA TORNEI -->
     <div id="torneiList" class="row g-3 mt-4">
         {% for torneo in tornei %}
-        <!-- Notare l'attributo data-status per filtrare con JS -->
+        <!-- L'attributo data-status viene usato per filtrare le card -->
         <div class="col-md-4 torneo-card" data-status="{{ torneo.status }}">
             <div class="card bg-dark text-light border-warning h-100 p-3">
                 <h5 class="text-warning">{{ torneo.nome }}</h5>
-                <p>📅 {{ torneo.data_inizio }} - {{ torneo.data_fine }}</p>
+                <p>📅 {{ torneo.data_inizio|date:"d/m/Y" }} - {{ torneo.data_fine|date:"d/m/Y" }}</p>
                 <p>👥 Squadre iscritte: {{ torneo.num_squadre }}</p>
-                <p>🏆 Ultimo vincitore: {{ torneo.ultimo_vincitore|default:"N/A" }}</p>
                 <div class="d-flex justify-content-between mt-auto">
                     <button class="btn btn-warning btn-sm" onclick="apriIscrizione({{ torneo.id }})">
                         📝 Iscrivi Squadra
                     </button>
-                    <a href="/torneo/{{ torneo.id }}" class="btn btn-outline-warning btn-sm">👁 Dettagli</a>
+                    <div>
+                        <a href="/torneo/{{ torneo.id }}" class="btn btn-outline-warning btn-sm">👁 Dettagli</a>
+                        <a href="/torneo/{{ torneo.id }}" class="btn btn-outline-warning btn-sm"><i class="bi bi-trash3-fill"></i></a>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -70,6 +82,10 @@
 
 <!-- MODALE ISCRIZIONE -->
 <div class="modal fade" id="iscrizioneModal" tabindex="-1" aria-hidden="true">
+
+    <input type="hidden" id="csrf_token" value="{% csrf_token %}">
+
+
     <div class="modal-dialog">
         <div class="modal-content bg-dark text-light">
             <div class="modal-header">
@@ -86,6 +102,48 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
                 <button type="button" class="btn btn-warning" onclick="confermaIscrizione()">Conferma</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODALE NUOVO TORNEO -->
+<div class="modal fade" id="nuovoTorneoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-light">
+            <div class="modal-header">
+                <h5 class="modal-title text-warning">Crea Nuovo Torneo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Form di creazione torneo -->
+                <div class="mb-3">
+                    <label for="nomeTorneo" class="form-label">Nome Torneo</label>
+                    <input type="text" class="form-control" id="nomeTorneo" placeholder="Inserisci il nome">
+                </div>
+                <div class="mb-3">
+                    <label for="dataInizio" class="form-label">Data Inizio</label>
+                    <input type="date" class="form-control" id="dataInizio">
+                </div>
+                <div class="mb-3">
+                    <label for="dataFine" class="form-label">Data Fine</label>
+                    <input type="date" class="form-control" id="dataFine">
+                </div>
+                <div class="mb-3">
+                    <label for="fasciaOraria" class="form-label">Fascia Oraria</label>
+                    <input type="text" class="form-control" id="fasciaOraria" placeholder="Es. 18:00 - 22:00">
+                </div>
+                <div class="mb-3">
+                    <label for="formato" class="form-label">Formato</label>
+                    <select class="form-select" id="formato">
+                        <option value="DRAFT">Draft</option>
+                        <option value="ARAM">ARAM</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                <button type="button" class="btn btn-warning" onclick="creaNuovoTorneo()">Crea</button>
             </div>
         </div>
     </div>

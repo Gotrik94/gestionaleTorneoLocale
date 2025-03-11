@@ -1,3 +1,4 @@
+import datetime
 from datetime import timedelta, date
 
 from django.http import JsonResponse
@@ -11,11 +12,12 @@ from backend.models import Squadra, Iscrizione
 from backend.models.torneo import Torneo
 from backend.serializers.torneo import TorneoSerializer
 
+
 @api_view(['GET', 'POST'])
 def lista_tornei(request):
     """
     GET  -> Lista di tutti i tornei
-    POST -> Crea un nuovo tornei
+    POST -> Crea un nuovo torneo
     """
     if request.method == 'GET':
         tornei = Torneo.objects.all()
@@ -33,9 +35,9 @@ def lista_tornei(request):
 @api_view(['GET', 'PUT', 'DELETE'])
 def dettaglio_torneo(request, torneo_id):
     """
-    GET    -> Dettaglio di un tornei
-    PUT    -> Aggiorna un tornei
-    DELETE -> Elimina un tornei
+    GET    -> Dettaglio di un torneo
+    PUT    -> Aggiorna un torneo
+    DELETE -> Elimina un torneo
     """
     try:
         torneo = Torneo.objects.get(pk=torneo_id)
@@ -86,23 +88,6 @@ def tornei_page(request):
         'tornei': tornei,
         'tornei_totali': tornei_totali,
         'tornei_attivi': tornei_attivi,
-        'tornei_conclusi': tornei_conclusi
+        'tornei_conclusi': tornei_conclusi,
+        'active_page': 'tornei'
     })
-
-
-def iscrivi_squadra(request):
-    if request.method == "POST":
-        torneo_id = request.POST.get("torneo_id")
-        squadra_id = request.POST.get("squadra_id")
-
-        torneo = get_object_or_404(Torneo, id=torneo_id)
-        squadra = get_object_or_404(Squadra, id=squadra_id)
-
-        if Iscrizione.objects.filter(torneo=torneo, squadra=squadra).exists():
-            return JsonResponse({"success": False, "message": "Squadra già iscritta!"})
-
-        Iscrizione.objects.create(torneo=torneo, squadra=squadra)
-
-        return JsonResponse({"success": True, "message": "Squadra iscritta con successo!"})
-
-    return JsonResponse({"success": False, "message": "Richiesta non valida!"}, status=400)

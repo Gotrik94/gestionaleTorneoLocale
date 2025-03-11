@@ -28,12 +28,12 @@ h2.text-warning {
   text-align: center;
   padding: 20px;
   transition: all 0.3s ease-in-out;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-  cursor: pointer; /* Cursor pointer per i box cliccabili */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
 }
 .info-box:hover {
   transform: translateY(-3px);
-  box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
 }
 .info-box h4 {
   color: var(--primary-color);
@@ -55,7 +55,23 @@ h2.text-warning {
 /* Stato selezionato */
 .info-box.selected {
   box-shadow: 0 0 10px var(--primary-color);
-  background: #333; /* leggero contrasto per evidenziare la selezione */
+  background: #333;
+}
+
+/* BOX "Crea Nuovo Torneo" specifico */
+.info-box.create-new {
+  border-color: #999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.info-box.create-new:hover {
+  border-color: var(--primary-color);
+}
+.info-box.create-new i {
+  font-size: 2rem;
+  color: var(--primary-color);
 }
 
 /* CARD Tornei */
@@ -65,7 +81,7 @@ h2.text-warning {
 }
 .card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
 }
 .card h5 {
   color: var(--primary-color);
@@ -75,7 +91,7 @@ h2.text-warning {
 /* SEARCH */
 .search-container {
   position: relative;
-  width: 250px; /* oppure la larghezza che preferisci */
+  width: 250px;
   transition: width 0.4s ease-in-out;
 }
 #searchTorneo {
@@ -91,7 +107,7 @@ h2.text-warning {
   box-shadow: 0 0 5px var(--primary-color);
 }
 #searchTorneo::placeholder {
-  color: rgba(255, 255, 255, 0.6); /* placeholder più visibile */
+  color: rgba(255, 255, 255, 0.6);
 }
 .search-btn {
   position: absolute;
