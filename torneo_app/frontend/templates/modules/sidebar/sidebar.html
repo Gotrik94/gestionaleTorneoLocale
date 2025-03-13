@@ -1,0 +1,24 @@
+<link rel="stylesheet" href="/modules/sidebar/sidebar.css">
+<script src="/modules/sidebar/sidebar.js"></script>
+
+<!-- HTML della Sidebar -->
+<div id="sidebar-wrapper">
+    <nav class="sidebar" id="sidebar">
+        <button class="sidebar-toggle" id="sidebarToggle">☰</button>
+        <a class="nav-link {% if active_page == 'home' %} active {% endif %}" href="/">
+            <i class="bi bi-house-door"></i> <span class="nav-text">Home</span>
+        </a>
+        <a class="nav-link {% if active_page == 'dashboard' %} active {% endif %}" href="/dashboard">
+            <i class="bi bi-speedometer2"></i> <span class="nav-text">Dashboard</span>
+        </a>
+        <a class="nav-link {% if active_page == 'tornei' %} active {% endif %}" href="/tornei">
+            <i class="bi bi-trophy"></i> <span class="nav-text">Tornei</span>
+        </a>
+        <a class="nav-link {% if active_page == 'squadre' %} active {% endif %}" href="/squadre">
+            <i class="bi bi-people"></i> <span class="nav-text">Squadre</span>
+        </a>
+        <a class="nav-link {% if active_page == 'eventi' %} active {% endif %}"  href="/eventi">
+            <i class="bi bi-calendar-event"></i> <span class="nav-text">Eventi</span>
+        </a>
+    </nav>
+</div>

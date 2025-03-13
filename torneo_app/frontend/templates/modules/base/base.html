@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Gestionale Torneo{% endblock %}</title>
+
+    <!-- Bootstrap e Icone -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap">
+        <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Stili Globali -->
+    <link rel="stylesheet" href="/modules/base/base.css">
+    <!-- Script Globali -->
+    <script src="/modules/base/base.js"></script>
+
+    <!-- Sidebar CSS -->
+    <link rel="stylesheet" href="/modules/sidebar/sidebar.css">
+    <!-- Sidebar JS -->
+    <script src="/modules/sidebar/sidebar.js"></script>
+
+    {% block extra_css %}
+
+    {% endblock %}
+</head>
+<body>
+    <!-- Sidebar -->
+    {% include 'modules/sidebar/sidebar.html' %}
+    <div class="d-flex">
+        <!-- Contenuto principale -->
+        <div class="main-content flex-grow-1">
+        {% block content %}
+        {% endblock %}
+        </div>
+    </div>
+    {% block extra_js %}
+    {% endblock %}
+</body>
+</html>

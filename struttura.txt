@@ -1,0 +1,76 @@
+Progetto_Torneo/
+├── torneo_app/                     
+│   ├── torneo/                    # Configurazioni principali di Django
+│   │   ├── __init__.py
+│   │   ├── asgi.py
+│   │   ├── settings.py
+│   │   ├── urls.py
+│   │   ├── wsgi.py
+│   │   └── ...
+│   ├── api/                      # Endpoint REST e routing API
+│   │   ├── urls/
+│   │   │   ├── __init__.py
+│   │   │   ├── urls_giocatori.py
+│   │   │   ├── urls_iscrizione.py
+│   │   │   ├── urls_nota_partita.py
+│   │   │   ├── urls_partite.py
+│   │   │   ├── urls_pickban.py
+│   │   │   ├── urls_squadre.py
+│   │   │   ├── urls_statistiche_giocatore_partita.py
+│   │   │   └── urls_tornei.py
+│   │   └── views/
+│   │       ├── __init__.py
+│   │       ├── views_giocatori.py
+│   │       ├── views_iscrizione.py
+│   │       ├── views_nota_partita.py
+│   │       ├── views_partite.py
+│   │       ├── views_pickban.py
+│   │       ├── views_squadre.py
+│   │       ├── views_statistiche_giocatore_partita.py
+│   │       └── views_tornei.py
+│   ├── backend/                   # Logica di business, modelli e serializers
+│   │   ├── forms/
+│   │   ├── migrations/
+│   │   │   ├── 0001_initial.py
+│   │   │   ├── 0002_iscrizione.py
+│   │   │   └── ...
+│   │   ├── models/
+│   │   │   ├── __init__.py
+│   │   │   ├── campione.py
+│   │   │   ├── giocatore.py
+│   │   │   ├── iscrizione.py
+│   │   │   ├── nota_partita.py
+│   │   │   ├── partita.py
+│   │   │   ├── pickban.py
+│   │   │   ├── squadra.py
+│   │   │   ├── statistiche_giocatore_partita.py
+│   │   │   └── torneo.py
+│   │   ├── serializers/
+│   │   │   ├── __init__.py
+│   │   │   ├── giocatore.py
+│   │   │   ├── iscrizione.py
+│   │   │   ├── nota_partita.py
+│   │   │   ├── partita.py
+│   │   │   ├── pickban.py
+│   │   │   ├── squadra.py
+│   │   │   ├── statistiche_giocatore_partita.py
+│   │   │   └── torneo.py
+│   │   ├── admin.py
+│   │   └── tests.py
+│   ├── frontend/                  # Parte visuale: static e templates
+│   │   ├── static/
+│   │   │   ├── css/
+│   │   │   └── js/
+│   │   └── templates/
+│   │       ├── modules/
+│   │       │   ├── footer.html
+│   │       │   ├── header.html
+│   │       │   └── sidebar.html
+│   │       ├── base.html
+│   │       ├── home.html
+│   │       └── test.html
+│   └── urls.py
+├── db.sqlite3                     # Database SQLite locale
+├── manage.py
+├── README.md
+└── requirements.txt
