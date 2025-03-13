@@ -88,12 +88,6 @@ h2.text-warning {
   margin-bottom: 10px;
 }
 
-/* SEARCH */
-.search-container {
-  position: relative;
-  width: 250px;
-  transition: width 0.4s ease-in-out;
-}
 #searchTorneo {
   width: 100%;
   padding: 8px 40px 8px 15px;
@@ -108,21 +102,6 @@ h2.text-warning {
 }
 #searchTorneo::placeholder {
   color: rgba(255, 255, 255, 0.6);
-}
-.search-btn {
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: var(--primary-color);
-  border: none;
-  padding: 6px;
-  border-radius: 50%;
-  cursor: pointer;
-}
-.search-btn i {
-  color: #000;
-  font-size: 16px;
 }
 
 /* Bottone Dettagli (outline-warning) */

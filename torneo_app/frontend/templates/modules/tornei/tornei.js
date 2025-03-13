@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const searchContainer = document.querySelector(".search-container");
     const searchInput = document.getElementById("searchTorneo");
     const torneiCards = document.querySelectorAll("#torneiList .torneo-card");
 
@@ -110,13 +109,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // Gestione del focus sulla search-container
-    searchContainer.addEventListener("click", function() {
-        searchContainer.classList.add("active");
+    searchInput.addEventListener("click", function() {
+        searchInput.classList.add("active");
         searchInput.focus();
     });
     document.addEventListener("click", function(event) {
-        if (!searchContainer.contains(event.target)) {
-            searchContainer.classList.remove("active");
+        if (!searchInput.contains(event.target)) {
+            searchInput.classList.remove("active");
         }
     });
     // Evento di input per il filtro in tempo reale
