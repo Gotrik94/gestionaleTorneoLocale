@@ -59,6 +59,7 @@
                                                 <th>K</th>
                                                 <th>D</th>
                                                 <th>A</th>
+                                                <th>KDA</th>
                                                 <th>Azioni</th>
                                             </tr>
                                         </thead>
@@ -69,6 +70,7 @@
                                                 <td>{{ giocatore.totale_k|default:"0" }}</td>
                                                 <td>{{ giocatore.totale_d|default:"0" }}</td>
                                                 <td>{{ giocatore.totale_a|default:"0" }}</td>
+                                                <td>{{ giocatore.kda|default:"0" }}</td>
                                                 <td>
                                                     <a href="{}" class="text-warning"
                                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Dettagli Giocatore">

@@ -1,10 +1,9 @@
-from django.db.models import Sum, Count, F
+from django.db.models.functions import Coalesce, Cast, Round
 from django.http import JsonResponse
-from django.shortcuts import render
 from backend.models import Torneo, Squadra, Iscrizione, StatisticheGiocatorePartita, Giocatore, Partita
 
 from django.shortcuts import render
-from django.db.models import Count, Sum, F
+from django.db.models import Count, Sum, F, FloatField, Case, When, Q
 
 
 
@@ -14,20 +13,31 @@ def get_tornei_con_dati():
 
     for torneo in tornei:
         squadre_iscritte = Iscrizione.objects.filter(torneo=torneo).select_related('squadra')
-        squadre_dettagliate = [
-            {
+        squadre_dettagliate = []
+
+        for iscrizione in squadre_iscritte:
+            giocatori = list(StatisticheGiocatorePartita.objects.filter(
+                partita__torneo=torneo,
+                giocatore__squadra=iscrizione.squadra
+            ).values('giocatore__nome').annotate(
+                totale_k=Coalesce(Sum('kills'), 0),
+                totale_d=Coalesce(Sum('deaths'), 0),
+                totale_a=Coalesce(Sum('assists'), 0)
+            ).annotate(
+                kda=Round(
+                    Case(
+                        When(totale_d=0, then=F('totale_k') + F('totale_a')),
+                        default=Cast(F('totale_k') + F('totale_a'), FloatField()) / Cast(Coalesce(F('totale_d'), 1), FloatField()),
+                        output_field=FloatField()
+                    ),
+                    precision=2
+                )
+            ))
+
+            squadre_dettagliate.append({
                 'nome': iscrizione.squadra.nome,
-                'giocatori': list(StatisticheGiocatorePartita.objects.filter(
-                    partita__torneo=torneo,
-                    giocatore__squadra=iscrizione.squadra
-                ).values('giocatore__nome').annotate(
-                    totale_k=Sum('kills'),
-                    totale_d=Sum('deaths'),
-                    totale_a=Sum('assists')
-                ))
-            }
-            for iscrizione in squadre_iscritte
-        ]
+                'giocatori': giocatori
+            })
 
         tornei_con_dati.append({
             'id': torneo.id,
@@ -40,7 +50,6 @@ def get_tornei_con_dati():
         })
 
     return tornei_con_dati
-
 
 def get_riepilogo_tornei():
     squadra_con_piu_vittorie = (

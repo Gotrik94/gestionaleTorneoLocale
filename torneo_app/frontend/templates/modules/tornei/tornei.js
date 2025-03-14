@@ -11,16 +11,36 @@ document.addEventListener("DOMContentLoaded", function () {
     function filterTornei() {
         const searchText = searchInput.value.toLowerCase();
 
+        // Recupera tutte le card dei tornei nel DOM
+        const torneiCards = document.querySelectorAll(".torneo-card");
+
+        // Nasconde tutte le card dei tornei prima di applicare il filtro
         torneiCards.forEach(card => {
+            card.style.display = "none";
+        });
+
+        let torneiDaMostrare = [];
+
+        // Seleziona le card in base al filtro attuale
+        if (currentFilter === "tutti") {
+            torneiDaMostrare = document.querySelectorAll(".torneo-card.totali");
+        } else if (currentFilter === "attivi") {
+            torneiDaMostrare = document.querySelectorAll(".torneo-card.attivi");
+        } else if (currentFilter === "conclusi") {
+            torneiDaMostrare = document.querySelectorAll(".torneo-card.conclusi");
+        }
+
+        // Filtra i tornei anche per il testo di ricerca
+        torneiDaMostrare.forEach(card => {
             const torneoName = card.querySelector("h5").innerText.toLowerCase();
-            const dataStatus = card.getAttribute("data-status");
-
             const matchSearch = torneoName.includes(searchText);
-            const matchFilter = (currentFilter === "tutti" || dataStatus === currentFilter);
 
-            card.style.display = (matchSearch && matchFilter) ? "block" : "none";
+            if (matchSearch) {
+                card.style.display = "block";
+            }
         });
     }
+
 
     /**
      * Applica un filtro (chiamato cliccando sui box di riepilogo)
@@ -113,6 +133,7 @@ document.addEventListener("DOMContentLoaded", function () {
         searchInput.classList.add("active");
         searchInput.focus();
     });
+
     document.addEventListener("click", function(event) {
         if (!searchInput.contains(event.target)) {
             searchInput.classList.remove("active");
@@ -124,3 +145,85 @@ document.addEventListener("DOMContentLoaded", function () {
     // Filtra inizialmente (mostra tutte le card)
     filterTornei();
 });
+
+let torneoDaEliminare = null;
+
+function apriModaleEliminazione(torneoId) {
+    torneoDaEliminare = torneoId;
+    let modal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+    modal.show();
+}
+
+function getCSRFToken() {
+    let csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]')?.value;
+    if (!csrfToken) {
+        let cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            let cookie = cookies[i].trim();
+            if (cookie.startsWith('csrftoken=')) {
+                csrfToken = cookie.substring('csrftoken='.length, cookie.length);
+                break;
+            }
+        }
+    }
+    return csrfToken;
+}
+
+document.getElementById("confirmDeleteBtn").addEventListener("click", function() {
+    if (torneoDaEliminare) {
+        fetch(`/api/tornei/elimina/${torneoDaEliminare}/`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCSRFToken()
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Errore HTTP: ${response.status}`);
+            }
+            return response.json().catch(() => {
+                throw new Error("Risposta non valida dal server.");
+            });
+        })
+        .then(data => {
+            // ✅ Chiudiamo la modale PRIMA di mostrare l'alert
+            let modalElement = document.getElementById("confirmDeleteModal");
+            let modalInstance = bootstrap.Modal.getInstance(modalElement);
+            modalInstance.hide();
+
+            // ✅ Messaggio di successo con SweetAlert2
+            Swal.fire({
+                icon: 'success',
+                title: 'Torneo eliminato!',
+                text: 'Il torneo è stato eliminato correttamente.',
+                timer: 2500,
+                showConfirmButton: false
+            });
+
+            let torneoElement = document.getElementById(`torneo-${torneoDaEliminare}`);
+            if (torneoElement) {
+                torneoElement.style.transition = "opacity 0.5s ease";
+                torneoElement.style.opacity = "0";
+
+                // 🔥 Dopo che il torneo scompare, ricarichiamo la pagina
+                setTimeout(() => {
+                    torneoElement.remove();
+                    location.reload();  // 🔄 Reload della pagina dopo 800ms
+                }, 800);
+            } else {
+                // Se l'elemento non esiste, aggiorna comunque la pagina dopo il messaggio
+                setTimeout(() => location.reload(), 1500);
+            }
+        })
+        .catch(error => {
+            console.error('❌ Errore:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Errore!',
+                text: `Errore durante l'eliminazione: ${error.message}`
+            });
+        });
+    }
+});
+

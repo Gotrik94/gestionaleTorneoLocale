@@ -2,13 +2,12 @@ import datetime
 from datetime import timedelta, date
 
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
 from rest_framework.decorators import api_view
-from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import status
 
-from backend.models import Squadra, Iscrizione
 from backend.models.torneo import Torneo
 from backend.serializers.torneo import TorneoSerializer
 
@@ -78,9 +77,12 @@ def tornei_page(request):
     oggi = date.today()
 
     # Query per i tornei
-    tornei_totali = Torneo.objects.filter(is_active=True).count()
-    tornei_attivi = Torneo.objects.filter(data_inizio__lte=oggi, data_fine__gte=oggi, is_active=True).count()
-    tornei_conclusi = Torneo.objects.filter(data_fine__lt=oggi, is_active=True).count()
+    tornei_totali = Torneo.objects.filter(is_active=True)
+    tornei_attivi = Torneo.objects.filter(data_inizio__lte=oggi, data_fine__gte=oggi, is_active=True)
+    tornei_conclusi = Torneo.objects.filter(data_fine__lt=oggi, is_active=True)
+    tornei_totali_counter = tornei_totali.count()
+    tornei_attivi_counter = tornei_attivi.count()
+    tornei_conclusi_counter = tornei_conclusi.count()
 
     tornei = Torneo.objects.filter(is_active=True)
 
@@ -89,5 +91,21 @@ def tornei_page(request):
         'tornei_totali': tornei_totali,
         'tornei_attivi': tornei_attivi,
         'tornei_conclusi': tornei_conclusi,
+        'tornei_totali_counter': tornei_totali_counter,
+        'tornei_attivi_counter': tornei_attivi_counter,
+        'tornei_conclusi_counter': tornei_conclusi_counter,
         'active_page': 'tornei'
     })
+
+
+def elimina_torneo(request, torneo_id):
+    if request.method == "DELETE":
+        torneo = get_object_or_404(Torneo, id=torneo_id)
+
+        # Eliminazione logica
+        torneo.is_active = False
+        torneo.save()
+
+        return JsonResponse({"message": f"Il torneo '{torneo.nome}' è stato eliminato con successo."}, status=200)
+
+    return JsonResponse({"error": "Metodo non consentito"}, status=405)
