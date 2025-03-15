@@ -1,0 +1,119 @@
+{% extends "modules/base/base.html" %}
+{% load static %}
+
+{% block title %}Squadre{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'squadre/squadre.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="text-center">
+        <h1 class="title">Panello<span class="highlight"> Squadre</span></h1>
+    </div>
+
+    <!-- Barra di ricerca -->
+    <input
+        type="text"
+        id="searchSquadra"
+        class="form-control mb-3"
+        placeholder="🔍 Cerca squadra...">
+
+    <!-- Contenitore principale delle card, sfruttiamo Bootstrap (.row + .col-md-4) -->
+    <div class="row" id="squadreContainer">
+
+        <!-- Card "Crea Nuova Squadra" -->
+        <div class="col-md-4 mb-4">
+            <div class="card squadra-card create-squadra" id="creaSquadraCard" onclick="openCreateSquadraModal()">
+                <h5 class="card-title">Crea Nuova Squadra</h5>
+                <div class="create-icon">+</div>
+            </div>
+        </div>
+
+        {% for squadra in squadre %}
+        <div class="col-md-4 mb-4">
+            <div class="card squadra-card">
+
+                <!-- Livello con classi dinamiche -->
+                <div class="livello-container">
+                    <div class="livello-base
+                        {% if squadra.livello < 5 %} livello-bronzo
+                        {% elif squadra.livello < 10 %} livello-argento
+                        {% elif squadra.livello < 15 %} livello-oro
+                        {% elif squadra.livello < 20 %} livello-platino
+                        {% elif squadra.livello < 25 %} livello-diamante
+                        {% elif squadra.livello < 30 %} livello-master
+                        {% elif squadra.livello < 35 %} livello-grandmaster
+                        {% else %} livello-challenger {% endif %}">
+                        {{ squadra.livello }}
+                    </div>
+                </div>
+
+                {% if squadra.logo %}
+                    <img src="{{ squadra.logo.url }}" class="card-img-top" alt="{{ squadra.nome }}">
+                {% else %}
+                    <img src="/static/default_logo.png" class="card-img-top" alt="{{ squadra.nome }}">
+                {% endif %}
+
+                <div class="card-body">
+                    <h5 class="card-title">{{ squadra.nome }}</h5>
+                    <p class="card-text">
+                        📅 Iscrizione: {{ squadra.data_iscrizione|date:"d/m/Y" }}
+                    </p>
+
+                    <!-- Barra dell'esperienza -->
+                    <div class="exp-bar-container">
+                        <div class="exp-bar" style="width: {{ squadra.exp_percentage }}%;"></div>
+                        <div class="exp-text">{{ squadra.exp }} / {{ squadra.exp_max }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center">❌ Nessuna squadra trovata.</p>
+        {% endfor %}
+    </div>
+</div>
+
+
+<!-- Overlay della Modale -->
+<!-- MODALE NUOVA SQUADRA -->
+<div class="modal fade" id="nuovaSquadraModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-light">
+            <div class="modal-header">
+                <h5 class="modal-title text-warning">Crea Nuova Squadra</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="nomeSquadra" class="form-label">Nome Squadra</label>
+                    <input type="text" class="form-control" id="nomeSquadra" placeholder="Inserisci il nome">
+                </div>
+                <div class="mb-3">
+                    <label for="logoSquadra" class="form-label">Logo Squadra</label>
+                    <input type="file" class="form-control" id="logoSquadra">
+                </div>
+                <div class="mb-3">
+                    <label for="dataIscrizione" class="form-label">Data Iscrizione</label>
+                    <input type="date" class="form-control" id="dataIscrizione">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                <button type="button" class="btn btn-warning" onclick="creaNuovaSquadra()">Crea</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+
+
+{% block extra_js %}
+<script src="{% static 'squadre/squadre.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{% endblock %}

@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from backend.models.torneo import Torneo
 from backend.models.squadra import Squadra
 from backend.models.giocatore import Giocatore
@@ -19,4 +20,3 @@ admin.site.register(NotaPartita)
 admin.site.register(PickBanPartita)
 admin.site.register(Iscrizione)
 admin.site.register(Campione)
-

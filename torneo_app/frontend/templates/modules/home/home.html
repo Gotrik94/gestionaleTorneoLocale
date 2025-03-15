@@ -33,10 +33,10 @@
 
         <!-- Pulsanti Navigazione -->
         <div class="nav-buttons text-center mt-4">
-            <a {% if 'tornei' in request.resolver_match.namespaces %} href="{% url 'tornei' %}" {% else %} href="#" {% endif %} class="btn btn-primary">
+            <a href="{% url 'tornei_page' %}" class="btn {% if request.resolver_match.url_name == 'tornei_page' %}btn-primary{% else %}btn-outline-primary{% endif %}">
                 <i class="bi bi-trophy"></i> Tornei
             </a>
-            <a {% if 'squadre' in request.resolver_match.namespaces %} href="{% url 'squadre' %}" {% else %} href="#" {% endif %} class="btn btn-success">
+            <a href="{% url 'squadre_page' %}" class="btn {% if request.resolver_match.url_name == 'squadre_page' %}btn-success{% else %}btn-outline-success{% endif %}">
                 <i class="bi bi-people"></i> Squadre
             </a>
             <a {% if 'eventi' in request.resolver_match.namespaces %} href="{% url 'eventi' %}" {% else %} href="#" {% endif %} class="btn btn-warning">
