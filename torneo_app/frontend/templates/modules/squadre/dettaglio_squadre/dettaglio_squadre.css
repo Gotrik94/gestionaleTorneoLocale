@@ -1,0 +1,25 @@
+.flex-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.flex-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.champion-img {
+    width: 30px;
+    height: 30px;
+    object-fit: cover;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.champion-img:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}

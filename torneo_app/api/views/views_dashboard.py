@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.db.models.functions import Coalesce, Cast, Round
 from django.http import JsonResponse
 from backend.models import Torneo, Squadra, Iscrizione, StatisticheGiocatorePartita, Giocatore, Partita
@@ -8,10 +10,15 @@ from django.db.models import Count, Sum, F, FloatField, Case, When, Q
 
 
 def get_tornei_con_dati():
-    tornei = Torneo.objects.filter(is_active=True)
+
+    oggi = date.today()
+
+    tornei_attivi = Torneo.objects.filter(data_inizio__lte=oggi, data_fine__gte=oggi, is_active=True)
+    tornei_attivi_counter = tornei_attivi.count()
+
     tornei_con_dati = []
 
-    for torneo in tornei:
+    for torneo in tornei_attivi:
         squadre_iscritte = Iscrizione.objects.filter(torneo=torneo).select_related('squadra')
         squadre_dettagliate = []
 

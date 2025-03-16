@@ -3,28 +3,35 @@
 
 {% block title %}Dettaglio {{ squadra.nome }}{% endblock %}
 
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'squadre/dettaglio_squadre/dettaglio_squadre.css' %}">
+{% endblock %}
+
 {% block content %}
 <div class="container my-5 text-light">
 
   <!-- HEADER: Logo, nome, exp -->
-  <div class="d-flex align-items-center gap-4 mb-4">
-    <img src="{{ squadra.logo.url }}" class="rounded-circle shadow" alt="logo"
-         width="120" height="120" style="object-fit: cover;">
-    <div>
-      <h1 class="mb-1">{{ squadra.nome }}</h1>
-      <p class="mb-1">
-        Livello: {{ squadra.livello }} (EXP: {{ squadra.exp }})<br>
-        Data iscrizione: {{ squadra.data_iscrizione|date:"d/m/Y" }}
-      </p>
-      <!-- Barra EXP in stile videogame -->
-      <div class="progress" style="height: 20px; width:250px;">
-        <div class="progress-bar bg-warning" role="progressbar" style="width:{{ exp_percentuale }}%;">
-          {{ exp_percentuale|floatformat:0 }}%
+  <div class="container my-5 text-light">
+    <div class="d-flex align-items-center gap-4 mb-4 header-content">
+      <img src="{{ squadra.logo.url }}" class="rounded-circle shadow" alt="logo"
+           width="120" height="120" style="object-fit: cover;">
+      <div>
+        <h1 class="mb-1">{{ squadra.nome }}</h1>
+        <p class="mb-1">
+          <i class="fas fa-trophy"></i> Livello: {{ squadra.livello }} (EXP: {{ squadra.exp }})<br>
+          <i class="fas fa-calendar-alt"></i> Data iscrizione: {{ squadra.data_iscrizione|date:"d/m/Y" }}
+        </p>
+        <!-- Barra EXP in stile videogame -->
+        <div class="progress" style="height: 20px; width:250px;">
+          <div class="progress-bar bg-warning" role="progressbar" style="width:{{ exp_percentuale }}%;">
+            {{ exp_percentuale|floatformat:0 }}%
+          </div>
         </div>
+        <a href="{% url 'squadre_page' %}" class="btn btn-outline-light mt-3">
+          ⬅️ Torna alle squadre
+        </a>
       </div>
-      <a href="{% url 'squadre_page' %}" class="btn btn-outline-light mt-3">
-        ⬅️ Torna alle squadre
-      </a>
     </div>
   </div>
 
@@ -94,7 +101,13 @@
                   {% if campione_obj.immagine %}
                     <img src="{{ campione_obj.immagine.url }}"
                          alt="{{ campione_obj.nome }}"
-                         data-bs-toggle="tooltip" data-bs-placement="top" title="{{ campione_obj.nome }}"
+                         class="champion-img"
+                         data-bs-toggle="tooltip"
+                         data-bs-placement="top"
+                         title="{{ campione_obj.nome }}"
+                         data-name="{{ campione_obj.nome }}"
+                         data-image="{{ campione_obj.immagine.url }}"
+                         data-percentage="{{ pick_count }}"
                          style="width: 30px; height: 30px; object-fit: cover; border-radius: 50%;">
                   {% endif %}
                 </div>
@@ -120,6 +133,11 @@
       <li class="list-group-item bg-dark text-light border-secondary">
         <strong>{{ t.nome }}</strong>
         <small>(dal {{ t.data_inizio|date:"d/m/Y" }} al {{ t.data_fine|date:"d/m/Y" }})</small>
+        {% if t.data_fine > now %}
+          <span class="badge bg-success ms-2">In corso</span>
+        {% else %}
+          <span class="badge bg-danger ms-2">Concluso</span>
+        {% endif %}
       </li>
     {% empty %}
       <li class="list-group-item">Nessun torneo trovato.</li>
@@ -155,11 +173,30 @@
     <p>Nessun pick registrato.</p>
   {% endif %}
 </div>
+
+
+
+<!-- Modale per il dettaglio del campione -->
+<div class="modal fade" id="championModal" tabindex="-1" aria-labelledby="championModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-dark text-light">
+      <div class="modal-header">
+        <h5 class="modal-title" id="championModalLabel">Dettaglio Campione</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+        <img id="championImage" src="" alt="Champion Image" class="img-fluid rounded">
+        <h5 id="championName" class="mt-2"></h5>
+        <p id="championPickPercentage" class="text-warning"></p>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
+
 
 {% block extra_js %}
 <!-- Carichiamo Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="{% static 'squadre/dettaglio_squadre/dettaglio_squadre.js' %}"></script>
 {% endblock %}
-

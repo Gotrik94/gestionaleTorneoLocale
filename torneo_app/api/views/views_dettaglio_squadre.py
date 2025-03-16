@@ -1,3 +1,5 @@
+import datetime
+
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q, Sum, Count
 from collections import defaultdict
@@ -44,7 +46,7 @@ def dettaglio_squadra(request, squadra_id):
     baroni_totali = baroni_rossa + baroni_blu
 
     # 6) Giocatori attivi della squadra
-    giocatori = Giocatore.objects.filter(squadra=squadra, is_active=True)
+    giocatori = Giocatore.objects.filter(squadra=squadra)
 
     # 7) Statistiche globali (kills, deaths, assists)
     stats_globali = StatisticheGiocatorePartita.objects.filter(giocatore__in=giocatori).aggregate(
@@ -140,6 +142,7 @@ def dettaglio_squadra(request, squadra_id):
         'top_picks': top_picks,
         'top_picks_per_giocatore': top_picks_per_giocatore,
         'exp_percentuale': exp_percentuale,
+        'now': datetime.date.today(),
     }
 
     return render(request, "modules/squadre/dettaglio_squadre/dettaglio_squadre.html", context)
