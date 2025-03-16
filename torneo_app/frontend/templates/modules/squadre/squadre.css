@@ -301,8 +301,83 @@ body {
 }
 
 
+/* Overlay trasparente sulla card */
+.squadra-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7); /* Sfondo più visibile */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    border-radius: 15px; /* Mantiene la forma della card */
+}
+
+/* Mostra overlay al passaggio del mouse */
+.squadra-card:hover .squadra-overlay {
+    opacity: 1;
+}
+
+/* Stile per i pulsanti dell'overlay */
+.squadra-overlay .btn {
+    width: 80%;
+    padding: 10px 15px;
+    margin: 5px;
+    font-weight: bold;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* Icone dei pulsanti */
+.squadra-overlay .btn i {
+    margin-right: 8px;
+}
+
+/* Colori personalizzati per i pulsanti */
+.squadra-overlay .btn-dettagli {
+    background: #ffc107; /* Giallo */
+    color: #121212;
+}
+
+.squadra-overlay .btn-modifica {
+    background: #007bff; /* Blu */
+    color: white;
+}
+
+.squadra-overlay .btn-elimina {
+    background: #dc3545; /* Rosso */
+    color: white;
+}
+
+/* Effetto hover per rendere i bottoni più reattivi */
+.squadra-overlay .btn:hover {
+    transform: scale(1.08);
+    filter: brightness(1.2);
+}
 
 
+
+/* Responsività: Assicura una buona esperienza su mobile */
+@media (max-width: 768px) {
+    .squadra-overlay {
+        background: rgba(0, 0, 0, 0.8); /* Maggiore contrasto su schermi piccoli */
+    }
+    .squadra-overlay .btn {
+        width: 90%;
+        padding: 12px;
+        font-size: 14px;
+    }
+}
 
 /* Responsività */
 @media (max-width: 768px) {

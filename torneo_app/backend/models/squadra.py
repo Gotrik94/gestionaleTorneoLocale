@@ -1,6 +1,7 @@
 from django.db import models
 
 class Squadra(models.Model):
+    DoesNotExist = None
     id = models.AutoField(primary_key=True)  # ID auto-incrementale
     nome = models.CharField(max_length=100)  # Nome della squadra
     data_iscrizione = models.DateField()  # Data di iscrizione della squadra
