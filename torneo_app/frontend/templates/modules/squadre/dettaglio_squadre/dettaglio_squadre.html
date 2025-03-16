@@ -1,0 +1,165 @@
+{% extends "modules/base/base.html" %}
+{% load static %}
+
+{% block title %}Dettaglio {{ squadra.nome }}{% endblock %}
+
+{% block content %}
+<div class="container my-5 text-light">
+
+  <!-- HEADER: Logo, nome, exp -->
+  <div class="d-flex align-items-center gap-4 mb-4">
+    <img src="{{ squadra.logo.url }}" class="rounded-circle shadow" alt="logo"
+         width="120" height="120" style="object-fit: cover;">
+    <div>
+      <h1 class="mb-1">{{ squadra.nome }}</h1>
+      <p class="mb-1">
+        Livello: {{ squadra.livello }} (EXP: {{ squadra.exp }})<br>
+        Data iscrizione: {{ squadra.data_iscrizione|date:"d/m/Y" }}
+      </p>
+      <!-- Barra EXP in stile videogame -->
+      <div class="progress" style="height: 20px; width:250px;">
+        <div class="progress-bar bg-warning" role="progressbar" style="width:{{ exp_percentuale }}%;">
+          {{ exp_percentuale|floatformat:0 }}%
+        </div>
+      </div>
+      <a href="{% url 'squadre_page' %}" class="btn btn-outline-light mt-3">
+        ⬅️ Torna alle squadre
+      </a>
+    </div>
+  </div>
+
+  <hr class="mb-4" style="border-top: 2px solid #ffc107;">
+
+  <!-- STATISTICHE GLOBALI -->
+  <div class="row gx-4 gy-4">
+    <div class="col-md-6">
+      <h4 class="mb-3">Statistiche Squadra</h4>
+      <ul class="list-group bg-dark">
+        <li class="list-group-item bg-dark border-secondary text-light">
+          Partite totali: <strong>{{ partite_totali }}</strong>
+        </li>
+        <li class="list-group-item bg-dark border-secondary text-light">
+          Vittorie: <span class="text-success">{{ vittorie }}</span>
+          {% if pareggi %}
+            | Pareggi: <span class="text-info">{{ pareggi }}</span>
+          {% endif %}
+          | Sconfitte: <span class="text-danger">{{ sconfitte }}</span>
+        </li>
+        <li class="list-group-item bg-dark border-secondary text-light">
+          Draghi totali presi: <span class="text-warning">{{ draghi_totali }}</span>
+        </li>
+        <li class="list-group-item bg-dark border-secondary text-light">
+          Baroni totali presi: <span class="text-warning">{{ baroni_totali }}</span>
+        </li>
+        <li class="list-group-item bg-dark border-secondary text-light">
+          Kills totali: {{ tot_kills }} | Deaths totali: {{ tot_deaths }} | Assists totali: {{ tot_assists }}
+        </li>
+        <li class="list-group-item bg-dark border-secondary text-light">
+          <strong>KDA Medio:</strong> {{ kda_squadra }}
+        </li>
+      </ul>
+    </div>
+
+    <!-- GRAFICO: 5 barre per Kills, Deaths, Assists, Draghi, Baroni -->
+    <div class="col-md-6">
+      <h4 class="mb-3">Statistiche Globali</h4>
+      <canvas id="kdaChart" data-chart-data="{{ chart_data|safe }}"></canvas>
+    </div>
+  </div>
+
+  <hr class="my-4">
+
+  <!-- TABELLA GIOCATORI con colonna "Top 3 pick" -->
+  <h3 class="mt-4">Giocatori della squadra</h3>
+  <table class="table table-dark table-striped table-hover">
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Data iscrizione</th>
+        <th>Stato</th>
+        <th>Top 3 pick</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for g in giocatori %}
+      <tr>
+        <td>{{ g.nome }}</td>
+        <td>{{ g.data_iscrizione|date:"d/m/Y" }}</td>
+        <td>{{ g.is_active|yesno:"Attivo,Inattivo" }}</td>
+        <td>
+          {% if g.top_picks %}
+            <div style="display: flex; align-items: center; gap: 8px;">
+              {% for campione_obj, pick_count in g.top_picks %}
+                <div style="display: flex; align-items: center; gap: 4px;">
+                  {% if campione_obj.immagine %}
+                    <img src="{{ campione_obj.immagine.url }}"
+                         alt="{{ campione_obj.nome }}"
+                         data-bs-toggle="tooltip" data-bs-placement="top" title="{{ campione_obj.nome }}"
+                         style="width: 30px; height: 30px; object-fit: cover; border-radius: 50%;">
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            Nessun pick registrato
+          {% endif %}
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4">Nessun giocatore trovato.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <hr class="my-4">
+
+  <!-- TORNEI PARTECIPATI -->
+  <h3>Tornei Partecipati ({{ tornei_partecipati.count }})</h3>
+  <ul class="list-group mb-4">
+    {% for t in tornei_partecipati %}
+      <li class="list-group-item bg-dark text-light border-secondary">
+        <strong>{{ t.nome }}</strong>
+        <small>(dal {{ t.data_inizio|date:"d/m/Y" }} al {{ t.data_fine|date:"d/m/Y" }})</small>
+      </li>
+    {% empty %}
+      <li class="list-group-item">Nessun torneo trovato.</li>
+    {% endfor %}
+  </ul>
+
+  <!-- TOP 5 PICKS DI SQUADRA (PickBanPartita) -->
+  <h3 class="mb-3">Pick più frequenti (Team)</h3>
+  {% if top_picks %}
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      {% for pick in top_picks %}
+        <div class="col">
+          <div class="card h-100 bg-secondary text-light">
+            {% if pick.campione.immagine %}
+              <img src="{{ pick.campione.immagine.url }}"
+                   class="card-img-top p-2"
+                   alt="{{ pick.campione.nome }}"
+                   style="height:200px;object-fit:contain;">
+            {% else %}
+              <img src="{% static 'images/no_champion.png' %}"
+                   class="card-img-top p-2"
+                   style="height:200px;object-fit:contain;">
+            {% endif %}
+            <div class="card-body">
+              <h5 class="card-title">{{ pick.campione.nome }}</h5>
+              <p class="card-text">Pick totali: {{ pick.num_picks }}</p>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p>Nessun pick registrato.</p>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Carichiamo Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'squadre/dettaglio_squadre/dettaglio_squadre.js' %}"></script>
+{% endblock %}
+

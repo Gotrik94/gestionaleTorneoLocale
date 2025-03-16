@@ -171,4 +171,9 @@ document.addEventListener("DOMContentLoaded", function () {
       document.getElementById("nomeFileSelezionato").textContent = nomeFile;
     });
 
+    function visualizzaDettagli(squadraId) {
+        console.log("Visualizza dettagli della squadra con ID:", squadraId);
+        window.location.href = `/squadre/dettaglio/${squadraId}/`;
+    }
+
 });
