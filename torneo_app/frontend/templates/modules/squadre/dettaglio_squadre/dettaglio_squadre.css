@@ -23,3 +23,32 @@
     transform: scale(1.1);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
+
+.card {
+    max-width: 150px; /* Riduce la larghezza delle card */
+    text-align: center;
+}
+.card-body {
+    padding: 10px;
+    font-size: 14px;
+}
+.card-img-top {
+    height: 120px !important; /* Ridotta da 200px a 120px */
+    object-fit: contain;
+    padding: 8px;
+}
+
+.row-cols-1 .col {
+    flex: 0 0 auto;
+    width: auto;
+}
+
+.row-cols-1 {
+    display: flex;
+    justify-content: center;
+    gap: 10px; /* Riduci il gap tra le card */
+}
+
+.g-4 {
+    gap: 8px !important;
+}

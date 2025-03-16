@@ -120,4 +120,79 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     console.log("✅ Script completato con successo!");
+
+     const ctxPerf = document.getElementById("performanceChart")?.getContext("2d");
+
+    if (ctxPerf) {
+        try {
+            // Recupero diretto dai data-attributes del canvas
+            const kdaRaw = ctxPerf.canvas.dataset.kda;
+            const vittorieRaw = ctxPerf.canvas.dataset.vittorie;
+            const obiettiviRaw = ctxPerf.canvas.dataset.obiettivi;
+            const dateLabelsRaw = ctxPerf.canvas.dataset.labels;
+
+            console.log("📊 KDA (Raw):", kdaRaw);
+            console.log("🏆 Vittorie (Raw):", vittorieRaw);
+            console.log("🐉 Obiettivi (Raw):", obiettiviRaw);
+            console.log("📅 Date Labels (Raw):", dateLabelsRaw);
+
+            // Ora facciamo il parsing JSON
+            const kdaData = JSON.parse(kdaRaw);
+            const vittorieData = JSON.parse(vittorieRaw);
+            const obiettiviData = JSON.parse(obiettiviRaw);
+            const dateLabels = JSON.parse(dateLabelsRaw);
+
+            console.log("✅ KDA Data:", kdaData);
+            console.log("✅ Vittorie Data:", vittorieData);
+            console.log("✅ Obiettivi Data:", obiettiviData);
+            console.log("✅ Date Labels:", dateLabels);
+
+            new Chart(ctxPerf, {
+                type: "line",
+                data: {
+                    labels: dateLabels,
+                    datasets: [
+                        {
+                            label: "KDA Medio",
+                            data: kdaData,
+                            borderColor: "#28a745",
+                            backgroundColor: "rgba(40, 167, 69, 0.2)",
+                            tension: 0.3,
+                            fill: true,
+                        },
+                        {
+                            label: "Vittorie (1=Vittoria, -1=Sconfitta)",
+                            data: vittorieData,
+                            borderColor: "#ffc107",
+                            backgroundColor: "rgba(255, 193, 7, 0.2)",
+                            tension: 0.3,
+                            fill: true,
+                        },
+                        {
+                            label: "Obiettivi Presi",
+                            data: obiettiviData,
+                            borderColor: "#17a2b8",
+                            backgroundColor: "rgba(23, 162, 184, 0.2)",
+                            tension: 0.3,
+                            fill: true,
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { labels: { color: "#fff" } },
+                        title: { display: true, text: "Andamento delle Prestazioni", color: "#fff" },
+                    },
+                    scales: {
+                        x: { ticks: { color: "#fff" }, grid: { color: "rgba(255, 255, 255, 0.1)" } },
+                        y: { ticks: { color: "#fff" }, grid: { color: "rgba(255, 255, 255, 0.1)" } },
+                    },
+                },
+            });
+
+        } catch (error) {
+            console.error("❌ Errore nel parsing JSON:", error);
+        }
+    }
 });

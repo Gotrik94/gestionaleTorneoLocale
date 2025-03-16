@@ -1,4 +1,5 @@
 import datetime
+import json
 
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q, Sum, Count
@@ -15,6 +16,8 @@ from backend.models.giocatore import Giocatore
 from backend.models.statistiche_giocatore_partita import StatisticheGiocatorePartita
 from backend.models.pickban import PickBanPartita
 from backend.models.campione import Campione
+from collections import Counter
+
 
 
 def dettaglio_squadra(request, squadra_id):
@@ -84,6 +87,14 @@ def dettaglio_squadra(request, squadra_id):
         except Campione.DoesNotExist:
             pass
 
+    # Ban più frequenti (NUOVO)
+    bans = PickBanPartita.objects.filter(squadra=squadra, tipo="ban")
+    ban_counter = Counter(bans.values_list("campione__nome", flat=True))
+    top_bans = [
+        {"campione": Campione.objects.get(nome=camp), "num_bans": count}
+        for camp, count in ban_counter.most_common(5)
+    ]
+
     # 10) Top 3 picks per giocatore (da StatisticheGiocatorePartita, campo FK "campione_usato")
     picks_giocatori_qs = (
         StatisticheGiocatorePartita.objects
@@ -124,6 +135,48 @@ def dettaglio_squadra(request, squadra_id):
     exp_max_squadra = squadra.livello * 1000
     exp_percentuale = (squadra.exp / exp_max_squadra) * 100 if exp_max_squadra > 0 else 0
 
+    # Ottenere le ultime 5 partite della squadra
+    partite = Partita.objects.filter(squadra_rossa=squadra) | Partita.objects.filter(squadra_blu=squadra)
+    partite = partite.order_by('-data_evento')[:10]
+
+    andamento_kda = []
+    andamento_vittorie = []
+    andamento_obiettivi = []
+    date_labels = []
+
+    for partita in partite:
+        statistiche = StatisticheGiocatorePartita.objects.filter(partita=partita, giocatore__squadra=squadra)
+
+        total_kills = sum(stat.kills for stat in statistiche)
+        total_deaths = sum(stat.deaths for stat in statistiche)
+        total_assists = sum(stat.assists for stat in statistiche)
+
+        kda_medio = (total_kills + total_assists) / max(1, total_deaths)
+
+        risultato = 1 if partita.vincitore == squadra else (0 if partita.vincitore is None else -1)
+
+        # Conteggio delle torri distrutte dai giocatori della squadra
+        torri_distrutte = sum(stat.torri_distrutte for stat in statistiche)
+
+        obiettivi = (
+            partita.draghi_rossa
+            + partita.draghi_blu
+            + partita.baroni_rossa
+            + partita.baroni_blu
+            + partita.araldo_rossa
+            + partita.araldo_blu
+            + partita.drago_anziano_rossa
+            + partita.drago_anziano_blu
+            + (1 if partita.atakhan_taken == squadra else 0)  # Atakhan conteggiato solo se preso dalla squadra
+            + torri_distrutte  # Aggiungiamo le torri distrutte
+        )
+
+        andamento_kda.append(round(kda_medio, 2))
+        andamento_vittorie.append(risultato)
+        andamento_obiettivi.append(obiettivi)
+        date_labels.append(partita.data_evento.strftime("%d/%m"))
+
+
     context = {
         'squadra': squadra,
         'tornei_partecipati': tornei_partecipati,
@@ -143,6 +196,11 @@ def dettaglio_squadra(request, squadra_id):
         'top_picks_per_giocatore': top_picks_per_giocatore,
         'exp_percentuale': exp_percentuale,
         'now': datetime.date.today(),
+        "top_bans": top_bans,
+        "andamento_kda": json.dumps(andamento_kda),  # Convertito in JSON puro
+        "andamento_vittorie": json.dumps(andamento_vittorie),
+        "andamento_obiettivi": json.dumps(andamento_obiettivi),
+        "date_labels": json.dumps(date_labels),  # Evita problemi di encoding con date
     }
 
     return render(request, "modules/squadre/dettaglio_squadre/dettaglio_squadre.html", context)
