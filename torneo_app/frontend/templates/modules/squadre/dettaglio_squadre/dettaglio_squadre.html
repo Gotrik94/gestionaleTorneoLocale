@@ -53,12 +53,6 @@
           | Sconfitte: <span class="text-danger">{{ sconfitte }}</span>
         </li>
         <li class="list-group-item bg-dark border-secondary text-light">
-          Draghi totali presi: <span class="text-warning">{{ draghi_totali }}</span>
-        </li>
-        <li class="list-group-item bg-dark border-secondary text-light">
-          Baroni totali presi: <span class="text-warning">{{ baroni_totali }}</span>
-        </li>
-        <li class="list-group-item bg-dark border-secondary text-light">
           Kills totali: {{ tot_kills }} | Deaths totali: {{ tot_deaths }} | Assists totali: {{ tot_assists }}
         </li>
         <li class="list-group-item bg-dark border-secondary text-light">
@@ -76,13 +70,28 @@
 
   <hr class="my-4">
 
-  <h3 class="mb-3">Andamento delle Prestazioni</h3>
-  <div class="chart-container" style="position: relative; height:300px; width:100%;">
-    <canvas id="performanceChart"
-      data-kda='{{ andamento_kda|safe }}'
-      data-vittorie='{{ andamento_vittorie|safe }}'
-      data-obiettivi='{{ andamento_obiettivi|safe }}'
-      data-labels='{{ date_labels|safe }}'></canvas>
+  <div class="row">
+      <!-- Grafico delle prestazioni -->
+      <div class="col-md-6">
+          <h3 class="mb-3">Andamento delle Prestazioni</h3>
+          <div class="chart-container" style="position: relative; height:300px; width:100%;">
+              <canvas id="performanceChart"
+                  data-kda='{{ andamento_kda|safe }}'
+                  data-vittorie='{{ andamento_vittorie|safe }}'
+                  data-obiettivi='{{ andamento_obiettivi|safe }}'
+                  data-labels='{{ date_labels|safe }}'></canvas>
+          </div>
+      </div>
+
+      <!-- MVP della Squadra -->
+    <!-- Grafico MVP -->
+      <div class="col-md-6">
+          <h3 class="mb-3">MVP della Squadra</h3>
+          <div class="chart-container" style="position: relative; height:300px; width:100%;">
+              <canvas id="mvpChart"
+                  data-giocatori='{{ mvp_giocatori|safe }}'></canvas>
+          </div>
+      </div>
   </div>
 
   <hr class="my-4">

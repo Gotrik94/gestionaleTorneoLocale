@@ -131,21 +131,11 @@ document.addEventListener("DOMContentLoaded", function () {
             const obiettiviRaw = ctxPerf.canvas.dataset.obiettivi;
             const dateLabelsRaw = ctxPerf.canvas.dataset.labels;
 
-            console.log("📊 KDA (Raw):", kdaRaw);
-            console.log("🏆 Vittorie (Raw):", vittorieRaw);
-            console.log("🐉 Obiettivi (Raw):", obiettiviRaw);
-            console.log("📅 Date Labels (Raw):", dateLabelsRaw);
-
             // Ora facciamo il parsing JSON
             const kdaData = JSON.parse(kdaRaw);
             const vittorieData = JSON.parse(vittorieRaw);
             const obiettiviData = JSON.parse(obiettiviRaw);
             const dateLabels = JSON.parse(dateLabelsRaw);
-
-            console.log("✅ KDA Data:", kdaData);
-            console.log("✅ Vittorie Data:", vittorieData);
-            console.log("✅ Obiettivi Data:", obiettiviData);
-            console.log("✅ Date Labels:", dateLabels);
 
             new Chart(ctxPerf, {
                 type: "line",
@@ -193,6 +183,60 @@ document.addEventListener("DOMContentLoaded", function () {
 
         } catch (error) {
             console.error("❌ Errore nel parsing JSON:", error);
+        }
+    }
+    // GESTIONE DEL GRAFICO MVP
+    const ctxMVP = document.getElementById("mvpChart")?.getContext("2d");
+
+    if (ctxMVP) {
+        try {
+            // Recupero dati dal canvas
+            const mvpRawData = ctxMVP.canvas.dataset.giocatori;
+
+            const mvpData = JSON.parse(mvpRawData);
+
+            // Estraggo i nomi e i valori
+            const mvpLabels = mvpData.map(item => item[0]); // Nomi giocatori
+            const mvpValues = mvpData.map(item => item[1]); // Numero MVP
+
+            new Chart(ctxMVP, {
+                type: "bar",
+                data: {
+                    labels: mvpLabels,
+                    datasets: [{
+                        label: "MVP Totali",
+                        data: mvpValues,
+                        backgroundColor: "rgba(255, 193, 7, 0.6)", // Giallo MVP
+                        borderColor: "#ffc107",
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false },
+                        title: {
+                            display: true,
+                            text: "MVP Totali per Giocatore",
+                            color: "#fff"
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: "#fff" },
+                            grid: { color: "rgba(255, 255, 255, 0.1)" }
+                        },
+                        y: {
+                            ticks: { color: "#fff" },
+                            grid: { color: "rgba(255, 255, 255, 0.1)" },
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+        } catch (error) {
+            console.error("❌ Errore nel parsing JSON per MVP:", error);
         }
     }
 });

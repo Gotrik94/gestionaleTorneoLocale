@@ -34,6 +34,9 @@ def dettaglio_squadra(request, squadra_id):
     )
     partite_totali = partite.count()
 
+    # Conteggio totale degli MVP per ogni giocatore
+    mvp_counter = Counter()
+
     # 4) Vittorie / Pareggi / Sconfitte
     vittorie = partite.filter(vincitore=squadra).count()
     pareggi = partite.filter(vincitore__isnull=True).count()
@@ -135,7 +138,11 @@ def dettaglio_squadra(request, squadra_id):
     exp_max_squadra = squadra.livello * 1000
     exp_percentuale = (squadra.exp / exp_max_squadra) * 100 if exp_max_squadra > 0 else 0
 
-    # Ottenere le ultime 5 partite della squadra
+    for partita in partite:
+        if partita.mvp and partita.mvp.squadra == squadra:
+            mvp_counter[partita.mvp.nome] += 1
+
+    # Ottenere le ultime 10 partite della squadra
     partite = Partita.objects.filter(squadra_rossa=squadra) | Partita.objects.filter(squadra_blu=squadra)
     partite = partite.order_by('-data_evento')[:10]
 
@@ -201,6 +208,7 @@ def dettaglio_squadra(request, squadra_id):
         "andamento_vittorie": json.dumps(andamento_vittorie),
         "andamento_obiettivi": json.dumps(andamento_obiettivi),
         "date_labels": json.dumps(date_labels),  # Evita problemi di encoding con date
+        "mvp_giocatori": json.dumps(mvp_counter.most_common()),
     }
 
     return render(request, "modules/squadre/dettaglio_squadre/dettaglio_squadre.html", context)
