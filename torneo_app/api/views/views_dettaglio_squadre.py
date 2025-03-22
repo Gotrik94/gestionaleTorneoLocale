@@ -4,6 +4,7 @@ import json
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q, Sum, Count
 from collections import defaultdict
+from datetime import date
 import logging
 
 logger = logging.getLogger(__name__)
@@ -27,6 +28,16 @@ def dettaglio_squadra(request, squadra_id):
     # 2) Tornei a cui la squadra è iscritta
     iscrizioni = Iscrizione.objects.filter(squadra=squadra)
     tornei_partecipati = Torneo.objects.filter(id__in=iscrizioni.values("torneo_id"))
+
+    oggi = date.today()
+    tornei_in_corso = []
+    tornei_conclusi = []
+
+    for t in tornei_partecipati:
+        if t.data_fine and t.data_fine < oggi:
+            tornei_conclusi.append(t)
+        else:
+            tornei_in_corso.append(t)
 
     # 3) Partite in cui la squadra è coinvolta (rossa o blu)
     partite = Partita.objects.filter(
@@ -187,6 +198,8 @@ def dettaglio_squadra(request, squadra_id):
     context = {
         'squadra': squadra,
         'tornei_partecipati': tornei_partecipati,
+        "tornei_in_corso": tornei_in_corso,
+        "tornei_conclusi": tornei_conclusi,
         'partite_totali': partite_totali,
         'vittorie': vittorie,
         'pareggi': pareggi,
