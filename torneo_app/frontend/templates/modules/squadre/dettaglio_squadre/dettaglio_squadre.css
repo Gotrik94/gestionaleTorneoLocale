@@ -23,11 +23,6 @@
     transform: scale(1.1);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
-
-.card {
-    max-width: 150px; /* Riduce la larghezza delle card */
-    text-align: center;
-}
 .card-body {
     padding: 10px;
     font-size: 14px;
@@ -74,3 +69,23 @@
     .accordion-dark .accordion-button::after {
       filter: brightness(0) invert(1); /* Trasforma la freccia in bianco */
     }
+
+
+.match-vittoria {
+  background: linear-gradient(to right, #222 10%, #2c2 40%, #2c2 60%, #222 90%);
+  cursor: pointer;
+}
+.match-pareggio {
+  background: linear-gradient(to right, #222 10%, #ffeb3b 40%, #ffeb3b 60%, #222 90%);
+  cursor: pointer;
+}
+.match-sconfitta {
+  background: linear-gradient(to right, #222 10%, #f44 40%, #f44 60%, #222 90%);
+  cursor: pointer;
+}
+
+.match-vittoria:hover,
+.match-pareggio:hover,
+.match-sconfitta:hover {
+  filter: brightness(1.1);
+}

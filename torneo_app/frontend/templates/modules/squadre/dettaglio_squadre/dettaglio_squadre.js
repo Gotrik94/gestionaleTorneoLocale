@@ -1,119 +1,100 @@
 document.addEventListener("DOMContentLoaded", function () {
     console.log("✅ DOM Caricato, avvio script...");
 
-    // Inizializza i tooltip di Bootstrap
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    // 1) Inizializza i tooltip di Bootstrap
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
 
-    // Grafico delle statistiche
-    const ctx = document.getElementById('kdaChart')?.getContext('2d');
-    if (ctx) {
-        const chartData = JSON.parse(document.getElementById('kdaChart').dataset.chartData);
+    // 2) Grafico KDA globale (kills, deaths, assists)
+    const kdaChartElem = document.getElementById('kdaChart');
+    if (kdaChartElem) {
+        try {
+            const ctx = kdaChartElem.getContext('2d');
+            const chartData = JSON.parse(kdaChartElem.dataset.chartData);
 
-        // Imposta lo sfondo del canvas
-        ctx.canvas.style.backgroundColor = '#333';
-        ctx.canvas.style.borderRadius = '8px';
-        ctx.canvas.style.padding = '10px';
-        ctx.canvas.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
+            // Stile canvas
+            ctx.canvas.style.backgroundColor = '#333';
+            ctx.canvas.style.borderRadius = '8px';
+            ctx.canvas.style.padding = '10px';
+            ctx.canvas.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
 
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Kills', 'Deaths', 'Assists'],
-                datasets: [{
-                    label: 'Statistiche Totali',
-                    data: chartData,
-                    backgroundColor: [
-                        '#28a745', // kills
-                        '#dc3545', // deaths
-                        '#17a2b8', // assists
-                    ],
-                    borderColor: [
-                        '#218838', // kills
-                        '#c82333', // deaths
-                        '#138496', // assists
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        labels: {
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Kills', 'Deaths', 'Assists'],
+                    datasets: [{
+                        label: 'Statistiche Totali',
+                        data: chartData,
+                        backgroundColor: ['#28a745','#dc3545','#17a2b8'],
+                        borderColor: ['#218838','#c82333','#138496'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#fff' }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Statistiche KDA',
                             color: '#fff'
                         }
                     },
-                    title: {
-                        display: true,
-                        text: 'Statistiche KDA',
-                        color: '#fff'
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: { color: '#fff' },
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.1)'
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: '#fff' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        },
+                        x: {
+                            ticks: { color: '#fff' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
                         }
                     },
-                    x: {
-                        ticks: { color: '#fff' },
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.1)'
-                        }
-                    }
-                },
-                animation: {
-                    duration: 1000,
-                    easing: 'easeInOutQuad'
+                    animation: { duration: 1000, easing: 'easeInOutQuad' }
                 }
-            }
-        });
+            });
+        } catch (err) {
+            console.error("❌ Errore nel rendering del grafico KDA globale:", err);
+        }
     }
 
-    // Evento per mostrare la modale al click
+    // 3) Click sulle immagini campione -> apre modale
     const championImages = document.querySelectorAll('.champion-img');
     console.log(`Trovate ${championImages.length} immagini di campioni.`);
 
     championImages.forEach(img => {
-        // Aggiungi un listener per il click
         img.addEventListener("click", function () {
             console.log("Click su un'immagine di campione.");
-
-            // Recupera i dati dal dataset dell'immagine
             const champName = this.dataset.name;
             const champImage = this.dataset.image;
             const champPercentage = this.dataset.percentage;
 
-            console.log(`Dati del campione: Nome = ${champName}, Immagine = ${champImage}, Percentuale = ${champPercentage}`);
+            console.log(`Dati campione: Nome=${champName}, Image=${champImage}, %=${champPercentage}`);
 
-            // Verifica se la modale esiste nel DOM
             const championModalElement = document.getElementById('championModal');
             if (!championModalElement) {
-                console.error("Errore: La modale non è stata trovata nel DOM.");
+                console.error("Errore: Modale 'championModal' non trovata nel DOM.");
                 return;
             }
 
-            // Verifica se gli elementi della modale esistono
             const championNameElement = document.getElementById('championName');
             const championImageElement = document.getElementById('championImage');
             const championPickPercentageElement = document.getElementById('championPickPercentage');
 
             if (!championNameElement || !championImageElement || !championPickPercentageElement) {
-                console.error("Errore: Uno o più elementi della modale non trovati.");
+                console.error("Errore: Elementi interni della modale non trovati.");
                 return;
             }
 
-            // Aggiorna la modale con i dati del campione
             championNameElement.innerText = champName;
             championImageElement.src = champImage;
             championPickPercentageElement.innerText = `Percentuale di utilizzo: ${champPercentage}%`;
 
-            // Mostra la modale
             const championModal = new bootstrap.Modal(championModalElement);
             championModal.show();
         });
@@ -121,17 +102,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     console.log("✅ Script completato con successo!");
 
-     const ctxPerf = document.getElementById("performanceChart")?.getContext("2d");
-
-    if (ctxPerf) {
+    // 4) Grafico “Andamento delle Prestazioni” globale (performanceChart)
+    const perfChartElem = document.getElementById("performanceChart");
+    if (perfChartElem) {
         try {
-            // Recupero diretto dai data-attributes del canvas
-            const kdaRaw = ctxPerf.canvas.dataset.kda;
-            const vittorieRaw = ctxPerf.canvas.dataset.vittorie;
-            const obiettiviRaw = ctxPerf.canvas.dataset.obiettivi;
-            const dateLabelsRaw = ctxPerf.canvas.dataset.labels;
+            const ctxPerf = perfChartElem.getContext("2d");
+            const kdaRaw = perfChartElem.dataset.kda;
+            const vittorieRaw = perfChartElem.dataset.vittorie;
+            const obiettiviRaw = perfChartElem.dataset.obiettivi;
+            const dateLabelsRaw = perfChartElem.dataset.labels;
 
-            // Ora facciamo il parsing JSON
             const kdaData = JSON.parse(kdaRaw);
             const vittorieData = JSON.parse(vittorieRaw);
             const obiettiviData = JSON.parse(obiettiviRaw);
@@ -151,7 +131,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             fill: true,
                         },
                         {
-                            label: "Vittorie (1=Vittoria, -1=Sconfitta)",
+                            label: "Vittorie (1=V, -1=S, 0=P)",
                             data: vittorieData,
                             borderColor: "#ffc107",
                             backgroundColor: "rgba(255, 193, 7, 0.2)",
@@ -162,7 +142,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             label: "Obiettivi Presi",
                             data: obiettiviData,
                             borderColor: "#17a2b8",
-                            backgroundColor: "rgba(23, 162, 184, 0.2)",
+                            backgroundColor: "rgba(23,162,184,0.2)",
                             tension: 0.3,
                             fill: true,
                         },
@@ -175,24 +155,22 @@ document.addEventListener("DOMContentLoaded", function () {
                         title: { display: true, text: "Andamento delle Prestazioni", color: "#fff" },
                     },
                     scales: {
-                        x: { ticks: { color: "#fff" }, grid: { color: "rgba(255, 255, 255, 0.1)" } },
-                        y: { ticks: { color: "#fff" }, grid: { color: "rgba(255, 255, 255, 0.1)" } },
-                    },
+                        x: { ticks: { color: "#fff" }, grid: { color: "rgba(255,255,255,0.1)" } },
+                        y: { ticks: { color: "#fff" }, grid: { color: "rgba(255,255,255,0.1)" } },
+                    }
                 },
             });
-
         } catch (error) {
-            console.error("❌ Errore nel parsing JSON:", error);
+            console.error("❌ Errore nel rendering del grafico delle Prestazioni globali:", error);
         }
     }
-    // GESTIONE DEL GRAFICO MVP
-    const ctxMVP = document.getElementById("mvpChart")?.getContext("2d");
 
-    if (ctxMVP) {
+    // 5) Grafico MVP globale (mvpChart)
+    const mvpChartElem = document.getElementById("mvpChart");
+    if (mvpChartElem) {
         try {
-            // Recupero dati dal canvas
-            const mvpRawData = ctxMVP.canvas.dataset.giocatori;
-
+            const ctxMVP = mvpChartElem.getContext("2d");
+            const mvpRawData = mvpChartElem.dataset.giocatori;
             const mvpData = JSON.parse(mvpRawData);
 
             // Estraggo i nomi e i valori
@@ -206,7 +184,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     datasets: [{
                         label: "MVP Totali",
                         data: mvpValues,
-                        backgroundColor: "rgba(255, 193, 7, 0.6)", // Giallo MVP
+                        backgroundColor: "rgba(255, 193, 7, 0.6)",
                         borderColor: "#ffc107",
                         borderWidth: 2
                     }]
@@ -224,19 +202,191 @@ document.addEventListener("DOMContentLoaded", function () {
                     scales: {
                         x: {
                             ticks: { color: "#fff" },
-                            grid: { color: "rgba(255, 255, 255, 0.1)" }
+                            grid: { color: "rgba(255,255,255,0.1)" }
                         },
                         y: {
                             ticks: { color: "#fff" },
-                            grid: { color: "rgba(255, 255, 255, 0.1)" },
+                            grid: { color: "rgba(255,255,255,0.1)" },
                             beginAtZero: true
                         }
                     }
                 }
             });
-
         } catch (error) {
-            console.error("❌ Errore nel parsing JSON per MVP:", error);
+            console.error("❌ Errore nel rendering del grafico MVP:", error);
         }
     }
+
+    // 6) Grafici “Obiettivi” e “Prestazioni” per singolo torneo (nell’accordion)
+    const graficiObiettiviRenderizzati = {};
+    const graficiPrestazioniRenderizzati = {};
+
+    document.querySelectorAll('.accordion-collapse').forEach(container => {
+        container.addEventListener('shown.bs.collapse', () => {
+
+            // A) Grafico obiettivi
+            const objCanvas = container.querySelector('canvas[id^="grafico-obiettivi-"]');
+            if (objCanvas) {
+                const torneoId = objCanvas.id.replace("grafico-obiettivi-", "");
+                if (!graficiObiettiviRenderizzati[torneoId]) {
+                    try {
+                        const ctxObj = objCanvas.getContext("2d");
+
+                        const labels = JSON.parse(objCanvas.dataset.labels || "[]");
+                        const torri = JSON.parse(objCanvas.dataset.torri || "[]");
+                        const draghi = JSON.parse(objCanvas.dataset.draghi || "[]");
+                        const baroni = JSON.parse(objCanvas.dataset.baroni || "[]");
+                        const araldi = JSON.parse(objCanvas.dataset.araldi || "[]");
+                        const anziani = JSON.parse(objCanvas.dataset.anziani || "[]");
+                        const atakhan = JSON.parse(objCanvas.dataset.atakhan || "[]");
+
+                        new Chart(ctxObj, {
+                            type: "line",
+                            data: {
+                                labels: labels,
+                                datasets: [
+                                    { label: "Torri", data: torri, borderColor: "#ffca28", borderWidth: 2 },
+                                    { label: "Draghi", data: draghi, borderColor: "#66bb6a", borderWidth: 2 },
+                                    { label: "Anziani", data: anziani, borderColor: "#ffa726", borderWidth: 2 },
+                                    { label: "Baroni", data: baroni, borderColor: "#ab47bc", borderWidth: 2 },
+                                    { label: "Araldi", data: araldi, borderColor: "#26c6da", borderWidth: 2 },
+                                    { label: "Atakhan", data: atakhan, borderColor: "#e53935", borderWidth: 2 }
+                                ]
+                            },
+                            options: {
+                                responsive: true,
+                                plugins: {
+                                    legend: { labels: { color: "#fff" } }
+                                },
+                                scales: {
+                                    x: { ticks: { color: "#ccc" }, grid: { color: "rgba(255,255,255,0.1)" } },
+                                    y: { ticks: { color: "#ccc" }, grid: { color: "rgba(255,255,255,0.1)" } }
+                                }
+                            }
+                        });
+
+                        graficiObiettiviRenderizzati[torneoId] = true;
+                    } catch(e) {
+                        console.error("❌ Errore nel rendering del grafico Obiettivi Torneo:", e);
+                    }
+                }
+            }
+
+            // B) Grafico prestazioni (KDA, Vittorie, Obiettivi) per singolo torneo
+            const perfCanvas = container.querySelector('canvas[id^="prestazioni-torneo-"]');
+            if (perfCanvas) {
+                const torneoId = perfCanvas.id.replace("prestazioni-torneo-", "");
+                if (!graficiPrestazioniRenderizzati[torneoId]) {
+                    try {
+                        const ctxPerfTorneo = perfCanvas.getContext('2d');
+                        const kdaRaw = perfCanvas.dataset.kda || "[]";
+                        const vittorieRaw = perfCanvas.dataset.vittorie || "[]";
+                        const obiettiviRaw = perfCanvas.dataset.obiettivi || "[]";
+                        const dateLabelsRaw = perfCanvas.dataset.labels || "[]";
+
+                        const kdaData = JSON.parse(kdaRaw);
+                        const vittorieData = JSON.parse(vittorieRaw);
+                        const obiettiviData = JSON.parse(obiettiviRaw);
+                        const dateLabels = JSON.parse(dateLabelsRaw);
+
+                        new Chart(ctxPerfTorneo, {
+                            type: "line",
+                            data: {
+                                labels: dateLabels,
+                                datasets: [
+                                    {
+                                        label: "KDA Medio",
+                                        data: kdaData,
+                                        borderColor: "#28a745",
+                                        backgroundColor: "rgba(40, 167, 69, 0.2)",
+                                        tension: 0.3,
+                                        fill: true,
+                                    },
+                                    {
+                                        label: "Vittorie (1=V, 0=P, -1=S)",
+                                        data: vittorieData,
+                                        borderColor: "#ffc107",
+                                        backgroundColor: "rgba(255, 193, 7, 0.2)",
+                                        tension: 0.3,
+                                        fill: true,
+                                    },
+                                    {
+                                        label: "Obiettivi Presi",
+                                        data: obiettiviData,
+                                        borderColor: "#17a2b8",
+                                        backgroundColor: "rgba(23,162,184,0.2)",
+                                        tension: 0.3,
+                                        fill: true,
+                                    },
+                                ],
+                            },
+                            options: {
+                                responsive: true,
+                                plugins: {
+                                    legend: { labels: { color: "#fff" } },
+                                    title: {
+                                        display: true,
+                                        text: "Andamento Prestazioni (Torneo)",
+                                        color: "#fff"
+                                    },
+                                },
+                                scales: {
+                                    x: { ticks: { color: "#fff" }, grid: { color: "rgba(255,255,255,0.1)" } },
+                                    y: { ticks: { color: "#fff" }, grid: { color: "rgba(255,255,255,0.1)" } }
+                                }
+                            }
+                        });
+
+                        graficiPrestazioniRenderizzati[torneoId] = true;
+
+                    } catch (e) {
+                        console.error("❌ Errore nel rendering del grafico Prestazioni Torneo:", e);
+                    }
+                }
+            }
+
+        }); // fine eventListener shown.bs.collapse
+    }); // fine forEach .accordion-collapse
+
+      document.querySelectorAll('canvas[id^="statsDonut-"]').forEach(canvas => {
+    // Estraiamo l'ID del torneo (se serve)
+    const torneoId = canvas.id.replace("statsDonut-", "");
+
+    // Leggiamo i data-* attributi
+    const vittorie = parseInt(canvas.dataset.vittorie || "0", 10);
+    const pareggi = parseInt(canvas.dataset.pareggi || "0", 10);
+    const sconfitte = parseInt(canvas.dataset.sconfitte || "0", 10);
+
+    // Creiamo il grafico con Chart.js (tipo "doughnut")
+    const ctx = canvas.getContext('2d');
+    new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ["Vittorie", "Pareggi", "Sconfitte"],
+        datasets: [{
+          data: [vittorie, pareggi, sconfitte],
+          backgroundColor: ["#28a745", "#ffc107", "#dc3545"]
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'left',   // <-- la legenda sarà a sinistra
+            labels: {
+              color: '#fff'
+            }
+          },
+          title: {
+            display: true,
+            text: "Distribuzione Risultati",
+            color: '#fff'
+          }
+        }
+      }
+    });
+  });
+
+
 });
