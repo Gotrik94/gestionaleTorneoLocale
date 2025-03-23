@@ -435,42 +435,88 @@
                                 <div class="p-3 bg-dark text-light">
                                   <div class="row">
                                     <!-- Pick e Ban Rosso -->
-                                    <div class="col-md-6">
-                                      <h5 class="text-danger mb-2">Pick & Ban Rosso</h5>
-                                      <p><strong>Pick:</strong></p>
-                                      <ul>
+                                    <!-- Team Rosso -->
+                                    <div class="col-md-6 mb-4">
+                                      <!-- PICK ROSSA -->
+                                      <h5 class="text-danger mb-2">Pick & Ban</h5>
+                                      <p class="mb-1"><strong>Pick:</strong></p>
+                                      <div class="d-flex flex-wrap gap-2 mb-3">
                                         {% for pick in match.picks_rossa %}
-                                          <li>{{ pick.campione.nome }}</li>
+                                          <div class="border border-danger rounded" style="padding: 2px;">
+                                            {% if pick.campione.immagine %}
+                                              <img src="{{ pick.campione.immagine.url }}"
+                                                   alt="{{ pick.campione.nome }}"
+                                                   style="width:40px;height:40px;object-fit:cover;">
+                                            {% else %}
+                                              <img src="{% static 'images/no_champion.png' %}"
+                                                   alt="N/A"
+                                                   style="width:40px;height:40px;object-fit:cover;">
+                                            {% endif %}
+                                          </div>
                                         {% endfor %}
-                                      </ul>
-                                      <p><strong>Ban:</strong></p>
-                                      <ul>
+                                      </div>
+
+                                      <!-- BAN ROSSA -->
+                                      <p class="mb-1"><strong>Ban:</strong></p>
+                                      <div class="d-flex flex-wrap gap-2 mb-3">
                                         {% for ban in match.bans_rossa %}
-                                          <li>{{ ban.campione.nome }}</li>
+                                          <div class="border border-danger rounded" style="padding: 2px;">
+                                            {% if ban.campione.immagine %}
+                                              <img src="{{ ban.campione.immagine.url }}"
+                                                   alt="{{ ban.campione.nome }}"
+                                                   style="width:40px;height:40px;object-fit:cover;">
+                                            {% else %}
+                                              <img src="{% static 'images/no_champion.png' %}"
+                                                   alt="N/A"
+                                                   style="width:40px;height:40px;object-fit:cover;">
+                                            {% endif %}
+                                          </div>
                                         {% endfor %}
-                                      </ul>
+                                      </div>
                                     </div>
 
-                                    <!-- Pick e Ban Blu -->
-                                    <div class="col-md-6">
-                                      <h5 class="text-primary mb-2">Pick & Ban Blu</h5>
-                                      <p><strong>Pick:</strong></p>
-                                      <ul>
+                                    <!-- Team Blu -->
+                                    <div class="col-md-6 mb-4">
+                                        <!-- PICK BLU -->
+                                      <h5 class="text-primary mb-2">Pick & Ban</h5>
+                                      <p class="mb-1"><strong>Pick:</strong></p>
+                                      <div class="d-flex flex-wrap gap-2 mb-3">
                                         {% for pick in match.picks_blu %}
-                                          <li>{{ pick.campione.nome }}</li>
+                                          <div class="border border-primary rounded" style="padding: 2px;">
+                                            {% if pick.campione.immagine %}
+                                              <img src="{{ pick.campione.immagine.url }}"
+                                                   alt="{{ pick.campione.nome }}"
+                                                   style="width:40px;height:40px;object-fit:cover;">
+                                            {% else %}
+                                              <img src="{% static 'images/no_champion.png' %}"
+                                                   alt="N/A"
+                                                   style="width:40px;height:40px;object-fit:cover;">
+                                            {% endif %}
+                                          </div>
                                         {% endfor %}
-                                      </ul>
-                                      <p><strong>Ban:</strong></p>
-                                      <ul>
+                                      </div>
+
+                                      <!-- BAN BLU -->
+                                      <p class="mb-1"><strong>Ban:</strong></p>
+                                      <div class="d-flex flex-wrap gap-2 mb-3">
                                         {% for ban in match.bans_blu %}
-                                          <li>{{ ban.campione.nome }}</li>
+                                          <div class="border border-primary rounded" style="padding: 2px;">
+                                            {% if ban.campione.immagine %}
+                                              <img src="{{ ban.campione.immagine.url }}"
+                                                   alt="{{ ban.campione.nome }}"
+                                                   style="width:40px;height:40px;object-fit:cover;">
+                                            {% else %}
+                                              <img src="{% static 'images/no_champion.png' %}"
+                                                   alt="N/A"
+                                                   style="width:40px;height:40px;object-fit:cover;">
+                                            {% endif %}
+                                          </div>
                                         {% endfor %}
-                                      </ul>
+                                      </div>
                                     </div>
                                   </div>
 
                                   <hr>
-
                                   <!-- Roster -->
                                   <div class="row">
                                     <!-- Roster Rosso -->
@@ -537,11 +583,28 @@
                                   <hr>
 
                                   <!-- MVP e altri -->
-                                  <p>
-                                    <strong>MVP:</strong> {{ match.mvp }} |
-                                    <strong>Atakhan:</strong> {{ match.atakhan }} |
-                                    <strong>Anima:</strong> {{ match.anima }}
-                                  </p>
+                                  <div class="d-flex flex-wrap align-items-center gap-3 mt-3">
+
+                                    {% if match.mvp %}
+                                      <span class="badge bg-warning text-dark">
+                                        <i class="bi bi-trophy-fill me-1"></i> MVP: {{ match.mvp }}
+                                      </span>
+                                    {% endif %}
+
+                                    {% if match.atakhan %}
+                                      <span class="badge bg-danger">
+                                        <i class="bi bi-fire me-1"></i> Atakhan: {{ match.atakhan }}
+                                      </span>
+                                    {% endif %}
+
+                                    {% if match.anima %}
+                                      <span class="badge bg-info text-dark">
+                                        <i class="bi bi-lightning-fill me-1"></i> Anima: {{ match.anima }}
+                                      </span>
+                                    {% endif %}
+
+                                  </div>
+
                                 </div>
                               </div>
                               {% endfor %}
