@@ -1,5 +1,6 @@
 {% extends "modules/base/base.html" %}
 {% load static %}
+{% load humanize %}
 
 {% block title %}Dettaglio {{ squadra.nome }}{% endblock %}
 
@@ -434,6 +435,49 @@
                               <div class="collapse" id="matchCollapse{{ match.id }}">
                                 <div class="p-3 bg-dark text-light">
                                   <div class="row">
+
+                                    <!-- Dati generali partita -->
+                                    <div class="col-12 mb-3">
+                                      <div class="d-flex flex-wrap gap-2">
+
+                                        {% if match.fase_torneo %}
+                                          <span class="badge bg-info text-dark">
+                                            <i class="bi bi-flag"></i> {{ match.fase_torneo }}
+                                          </span>
+                                        {% endif %}
+
+                                        {% if match.modalita %}
+                                          <span class="badge bg-dark">
+                                            <i class="bi bi-controller"></i> {{ match.modalita }}
+                                          </span>
+                                        {% endif %}
+
+                                        {% if match.best_of and match.numero_partita_serie %}
+                                          <span class="badge bg-warning text-dark">
+                                            <i class="bi bi-list-ol me-1"></i> Game {{ match.numero_partita_serie }}/{{ match.best_of }}
+                                          </span>
+                                        {% elif match.numero_partita_serie %}
+                                          <span class="badge bg-secondary">
+                                            <i class="bi bi-hash me-1"></i> Game {{ match.numero_partita_serie }}
+                                          </span>
+                                        {% endif %}
+
+                                        {% if match.esito == "win" %}
+                                          <span class="badge bg-success">
+                                            <i class="bi bi-check-circle me-1"></i> Vittoria
+                                          </span>
+                                        {% elif match.esito == "loss" %}
+                                          <span class="badge bg-danger">
+                                            <i class="bi bi-x-circle me-1"></i> Sconfitta
+                                          </span>
+                                        {% elif match.esito == "draw" %}
+                                          <span class="badge bg-secondary">
+                                            <i class="bi bi-dash-circle me-1"></i> Pareggio
+                                          </span>
+                                        {% endif %}
+                                      </div>
+                                    </div>
+
                                     <!-- Pick e Ban Rosso -->
                                     <!-- Team Rosso -->
                                     <div class="col-md-6 mb-4">
@@ -579,31 +623,133 @@
                                       </table>
                                     </div>
                                   </div>
-
                                   <hr>
 
                                   <!-- MVP e altri -->
-                                  <div class="d-flex flex-wrap align-items-center gap-3 mt-3">
+                                  <div class="row mt-3">
+                                    <div class="col-12">
+                                      <div class="d-flex flex-wrap align-items-center gap-3">
 
-                                    {% if match.mvp %}
-                                      <span class="badge bg-warning text-dark">
-                                        <i class="bi bi-trophy-fill me-1"></i> MVP: {{ match.mvp }}
-                                      </span>
-                                    {% endif %}
+                                        {% if match.mvp %}
+                                          <span class="badge bg-warning text-dark">
+                                            <i class="bi bi-trophy-fill me-1"></i> MVP: {{ match.mvp }}
+                                          </span>
+                                        {% endif %}
 
-                                    {% if match.atakhan %}
-                                      <span class="badge bg-danger">
-                                        <i class="bi bi-fire me-1"></i> Atakhan: {{ match.atakhan }}
-                                      </span>
-                                    {% endif %}
+                                        {% if match.atakhan %}
+                                          <span class="badge bg-danger">
+                                            <i class="bi bi-fire me-1"></i> Atakhan: {{ match.atakhan }}
+                                          </span>
+                                        {% endif %}
 
-                                    {% if match.anima %}
-                                      <span class="badge bg-info text-dark">
-                                        <i class="bi bi-lightning-fill me-1"></i> Anima: {{ match.anima }}
-                                      </span>
-                                    {% endif %}
+                                        {% if match.anima %}
+                                          <span class="badge bg-info text-dark">
+                                            <i class="bi bi-lightning-fill me-1"></i> Anima: {{ match.anima }}
+                                          </span>
+                                        {% endif %}
 
+                                      </div>
+                                    </div>
                                   </div>
+                                  <hr>
+
+                                  <!-- Statistiche Team - Confronto -->
+                                  <div class="row text-center mb-4">
+
+                                    <!-- STATS -->
+                                    <div class="col-md-12">
+                                      <div class="row bg-dark rounded text-light p-3 mb-4">
+
+                                        <div class="row mb-3">
+                                          <div class="col-md-5 text-end text-danger fw-bold">
+                                              <i class="fas fa-skull"></i> {{ match.stat_rossa.kills }} / {{ match.stat_rossa.deaths }} / {{ match.stat_rossa.assists }}
+                                          </div>
+                                          <div class="col-md-2 text-center">
+                                              <span class="badge bg-dark">KDA</span>
+                                          </div>
+                                          <div class="col-md-5 text-start text-primary fw-bold">
+                                              <i class="fas fa-skull"></i> {{ match.stat_blu.kills }} / {{ match.stat_blu.deaths }} / {{ match.stat_blu.assists }}
+                                          </div>
+                                      </div>
+
+                                      <div class="row mb-3">
+                                          <div class="col-md-5 text-end text-danger fw-bold">
+                                              <i class="fas fa-fire"></i> {{ match.stat_rossa.danno|intcomma }}
+                                          </div>
+                                          <div class="col-md-2 text-center">
+                                              <span class="badge bg-dark">Damage</span>
+                                          </div>
+                                          <div class="col-md-5 text-start text-primary fw-bold">
+                                              <i class="fas fa-fire"></i> {{ match.stat_blu.danno|intcomma }}
+                                          </div>
+                                      </div>
+
+                                      <div class="row mb-3">
+                                          <div class="col-md-5 text-end text-danger fw-bold">
+                                              <i class="fas fa-coins"></i> {{ match.stat_rossa.gold|intcomma }}
+                                          </div>
+                                          <div class="col-md-2 text-center">
+                                              <span class="badge bg-dark">Gold</span>
+                                          </div>
+                                          <div class="col-md-5 text-start text-primary fw-bold">
+                                              <i class="fas fa-coins"></i> {{ match.stat_blu.gold|intcomma }}
+                                          </div>
+                                      </div>
+
+                                      <div class="row mb-3">
+                                          <div class="col-md-5 text-end text-danger fw-bold">
+                                              <i class="fas fa-tower"></i> {{ match.stat_rossa.torri|intcomma }}
+                                          </div>
+                                          <div class="col-md-2 text-center">
+                                              <span class="badge bg-dark">Towers</span>
+                                          </div>
+                                          <div class="col-md-5 text-start text-primary fw-bold">
+                                              <i class="fas fa-tower"></i> {{ match.stat_blu.torri|intcomma }}
+                                          </div>
+                                      </div>
+
+                                      <div class="row mb-3">
+                                          <div class="col-md-5 text-end text-danger fw-bold">
+                                              <i class="fas fa-dragon"></i> {{ match.stat_rossa.draghi|intcomma }}
+                                          </div>
+                                          <div class="col-md-2 text-center">
+                                              <span class="badge bg-dark">Drakes</span>
+                                          </div>
+                                          <div class="col-md-5 text-start text-primary fw-bold">
+                                              <i class="fas fa-dragon"></i> {{ match.stat_blu.draghi|intcomma }}
+                                          </div>
+                                      </div>
+
+                                      <div class="row mb-3">
+                                          <div class="col-md-5 text-end text-danger fw-bold">
+                                              <i class="fas fa-dragon"></i> {{ match.stat_rossa.anziani|intcomma }}
+                                          </div>
+                                          <div class="col-md-2 text-center">
+                                              <span class="badge bg-dark">Elder Dragons</span>
+                                          </div>
+                                          <div class="col-md-5 text-start text-primary fw-bold">
+                                              <i class="fas fa-dragon"></i> {{ match.stat_blu.anziani|intcomma }}
+                                          </div>
+                                      </div>
+
+                                      <div class="row mb-3">
+                                          <div class="col-md-5 text-end text-danger fw-bold">
+                                              <i class="fas fa-crown"></i> {{ match.stat_rossa.baroni|intcomma }}
+                                          </div>
+                                          <div class="col-md-2 text-center">
+                                              <span class="badge bg-dark">Barons</span>
+                                          </div>
+                                          <div class="col-md-5 text-start text-primary fw-bold">
+                                              <i class="fas fa-crown"></i> {{ match.stat_blu.baroni|intcomma }}
+                                          </div>
+                                      </div>
+
+                                      </div>
+
+                                    </div>
+                                  </div>
+                                  <hr>
+
 
                                 </div>
                               </div>

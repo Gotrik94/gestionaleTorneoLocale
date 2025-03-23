@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",  # Gestione sessioni
     "django.contrib.messages",  # Sistema di messaggi
     "django.contrib.staticfiles",  # Gestione file statici
+    "django.contrib.humanize",
 
     "rest_framework",  # Django REST Framework
     "backend",  # La nostra app backend
