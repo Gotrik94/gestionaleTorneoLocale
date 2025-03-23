@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 {% endblock %}
 
+
 {% block content %}
 <div class="container my-5 text-light">
 
@@ -35,8 +36,11 @@
       </div>
     </div>
   </div>
+  <!-- /HEADER -->
+
 
   <hr class="mb-4" style="border-top: 2px solid #ffc107;">
+
 
   <!-- STATISTICHE GLOBALI -->
   <div class="row gx-4 gy-4">
@@ -68,34 +72,40 @@
       <canvas id="kdaChart" data-chart-data="{{ chart_data|safe }}"></canvas>
     </div>
   </div>
+  <!-- /STATISTICHE GLOBALI -->
+
 
   <hr class="my-4">
+
 
   <div class="row">
-      <!-- Grafico delle prestazioni -->
-      <div class="col-md-6">
-          <h3 class="mb-3">Andamento delle Prestazioni</h3>
-          <div class="chart-container" style="position: relative; height:300px; width:100%;">
-              <canvas id="performanceChart"
-                  data-kda='{{ andamento_kda|safe }}'
-                  data-vittorie='{{ andamento_vittorie|safe }}'
-                  data-obiettivi='{{ andamento_obiettivi|safe }}'
-                  data-labels='{{ date_labels|safe }}'></canvas>
-          </div>
+    <!-- Grafico delle prestazioni -->
+    <div class="col-md-6">
+      <h3 class="mb-3">Andamento delle Prestazioni</h3>
+      <div class="chart-container" style="position: relative; height:300px; width:100%;">
+        <canvas id="performanceChart"
+          data-kda='{{ andamento_kda|safe }}'
+          data-vittorie='{{ andamento_vittorie|safe }}'
+          data-obiettivi='{{ andamento_obiettivi|safe }}'
+          data-labels='{{ date_labels|safe }}'></canvas>
       </div>
+    </div>
 
-      <!-- MVP della Squadra -->
-    <!-- Grafico MVP -->
-      <div class="col-md-6">
-          <h3 class="mb-3">MVP della Squadra</h3>
-          <div class="chart-container" style="position: relative; height:300px; width:100%;">
-              <canvas id="mvpChart"
-                  data-giocatori='{{ mvp_giocatori|safe }}'></canvas>
-          </div>
+    <!-- MVP della Squadra -->
+    <div class="col-md-6">
+      <h3 class="mb-3">MVP della Squadra</h3>
+      <div class="chart-container" style="position: relative; height:300px; width:100%;">
+        <canvas id="mvpChart"
+          data-giocatori='{{ mvp_giocatori|safe }}'></canvas>
       </div>
+    </div>
   </div>
+  <!-- /Grafici globali -->
+
 
   <hr class="my-4">
+
+
   <!-- TABELLA GIOCATORI con colonna "Top 3 pick" -->
   <h3 class="mt-4">Giocatori della squadra</h3>
   <table class="table table-dark table-striped table-hover">
@@ -143,13 +153,14 @@
       {% endfor %}
     </tbody>
   </table>
+  <!-- /TABELLA GIOCATORI -->
+
 
   <hr class="my-4">
 
-  <!-- Titolo sezione -->
-  <h2 class="mt-4 mb-3">Tornei</h2>
 
-  <!-- Contenitore accordion con la classe personalizzata -->
+  <!-- TORNEI -->
+  <h2 class="mt-4 mb-3">Tornei</h2>
   <div class="accordion accordion-dark" id="torneiAccordion">
 
     <!-- TORNEI IN CORSO -->
@@ -171,387 +182,345 @@
           {% if tornei_in_corso %}
             <ul class="list-group">
               {% for torneo in tornei_in_corso %}
-                <li class="list-group-item bg-dark text-light border-secondary p-2">
-
-                  <!-- Titolo torneo: clic per collassare -->
-                  <div class="rounded px-3 py-2 hoverable d-flex justify-content-between align-items-start"
-                       style="background-color: rgba(255,255,255,0.05);"
-                       data-bs-toggle="collapse"
-                       data-bs-target="#dettagli-corso-{{ torneo.id }}"
-                       role="button" aria-expanded="false"
-                       aria-controls="dettagli-corso-{{ torneo.id }}">
-                    <div class="d-flex align-items-center gap-2">
-                      <strong>{{ torneo.nome }}</strong>
-                      <small>(dal {{ torneo.data_inizio|date:"d/m/Y" }} al {{ torneo.data_fine|date:"d/m/Y" }})</small>
-                      <span class="badge bg-success">In corso</span>
-                    </div>
-                    <span class="text-muted toggle-arrow">
-                      <i class="bi bi-chevron-down"></i>
-                    </span>
+              <li class="list-group-item bg-dark text-light border-secondary p-2">
+                <div class="rounded px-3 py-2 hoverable d-flex justify-content-between align-items-start"
+                     style="background-color: rgba(255,255,255,0.05);"
+                     data-bs-toggle="collapse"
+                     data-bs-target="#dettagli-corso-{{ torneo.id }}"
+                     role="button" aria-expanded="false"
+                     aria-controls="dettagli-corso-{{ torneo.id }}">
+                  <div class="d-flex align-items-center gap-2">
+                    <strong>{{ torneo.nome }}</strong>
+                    <small>(dal {{ torneo.data_inizio|date:"d/m/Y" }} al {{ torneo.data_fine|date:"d/m/Y" }})</small>
+                    <span class="badge bg-success">In corso</span>
                   </div>
-                  <!-- /Titolo torneo -->
+                  <span class="text-muted toggle-arrow"><i class="bi bi-chevron-down"></i></span>
+                </div>
 
-                  <!-- Contenuto collassabile -->
-                  <div class="collapse mt-3" id="dettagli-corso-{{ torneo.id }}">
-                    <div class="pt-3 px-3">
+                <div class="collapse mt-3" id="dettagli-corso-{{ torneo.id }}">
+                  <div class="pt-3 px-3">
 
-                      <!-- CARD RIEPILOGO TORNEO -->
-                      <div class="card bg-secondary text-light mb-3">
-                        <div class="card-header d-flex align-items-center justify-content-between">
-                          <h5 class="mb-0">Riepilogo torneo</h5>
-                          <span class="badge bg-success">In corso</span>
-                        </div>
-                        <div class="card-body">
-                          <div class="row g-3">
-
-                            <!-- Colonna 1: Statistiche globali -->
-                            <div class="col-md-3">
-                              <div class="card bg-dark text-light h-100">
-                                <div class="card-header text-warning">
-                                  <i class="bi bi-graph-up"></i> Statistiche globali
-                                </div>
-                                <ul class="list-group list-group-flush">
-                                  <li class="list-group-item bg-dark text-light">
-                                    ⚔️ Partite giocate:
-                                    <span class="float-end">{{ torneo.dettagli.totali.partite }}</span>
-                                  </li>
-                                  <li class="list-group-item bg-dark text-success">
-                                    🟢 Vittorie:
-                                    <span class="float-end">{{ torneo.dettagli.totali.vittorie }}</span>
-                                  </li>
-                                  <li class="list-group-item bg-dark text-warning">
-                                    ⚪ Pareggi:
-                                    <span class="float-end">{{ torneo.dettagli.totali.pareggi }}</span>
-                                  </li>
-                                  <li class="list-group-item bg-dark text-danger">
-                                    🔴 Sconfitte:
-                                    <span class="float-end">{{ torneo.dettagli.totali.sconfitte }}</span>
-                                  </li>
-                                </ul>
-
-                                <!-- GRAFICO AD ANELLO -->
-                                <div class="card-body">
-                                  <div class="chart-container" style="height:200px;">
-                                    <canvas id="statsDonut-{{ torneo.id }}"
-                                      data-vittorie="{{ torneo.dettagli.totali.vittorie|default:'0' }}"
-                                      data-pareggi="{{ torneo.dettagli.totali.pareggi|default:'0' }}"
-                                      data-sconfitte="{{ torneo.dettagli.totali.sconfitte|default:'0' }}">
-                                    </canvas>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            <!-- /Colonna 1 -->
-
-                            <!-- Colonna 2: MVP e Pick/Ban -->
-                            <div class="col-md-3">
-                              <!-- MVP -->
-                              <div class="card bg-dark text-light mb-3">
-                                <div class="card-header text-warning">
-                                  <i class="bi bi-trophy-fill"></i> MVP della squadra
-                                </div>
-                                <ul class="list-group list-group-flush">
-                                  {% for nome, count in torneo.dettagli.mvp.items %}
-                                    <li class="list-group-item bg-dark text-light">
-                                      {{ nome }} — {{ count }} MVP
-                                    </li>
-                                  {% empty %}
-                                    <li class="list-group-item bg-dark text-muted">Nessun MVP</li>
-                                  {% endfor %}
-                                </ul>
-                              </div>
-                              <!-- Top 5 Pick / Ban in 2 piccole card affiancate -->
-                              <div class="row row-cols-1 row-cols-sm-2 g-2">
-                                <div class="col">
-                                  <div class="card bg-dark text-light">
-                                    <div class="card-header text-info">
-                                      <i class="bi bi-magic"></i> Pick
-                                    </div>
-                                    <div class="card-body">
-                                      {% for p in torneo.dettagli.top_picks %}
-                                        <span class="badge bg-primary m-1">
-                                          {{ p.campione.nome }} ({{ p.num_picks }})
-                                        </span>
-                                      {% endfor %}
-                                    </div>
-                                  </div>
-                                </div>
-                                <div class="col">
-                                  <div class="card bg-dark text-light">
-                                    <div class="card-header text-danger">
-                                      <i class="bi bi-slash-circle"></i> Ban
-                                    </div>
-                                    <div class="card-body">
-                                      {% for b in torneo.dettagli.top_bans %}
-                                        <span class="badge bg-danger m-1">
-                                          {{ b.campione.nome }} ({{ b.num_bans }})
-                                        </span>
-                                      {% endfor %}
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            <!-- /Colonna 2 -->
-
-                            <!-- Colonna 3: Best players + % Primo sangue -->
-                            <div class="col-md-3">
-                              <div class="card bg-dark text-light">
-                                <div class="card-header text-warning">
-                                  <i class="bi bi-stars"></i> Best players
-                                </div>
-                                <ul class="list-group list-group-flush">
-                                  <li class="list-group-item bg-dark text-light">
-                                    💥 DPS: {{ torneo.dettagli.best_players.dps|default:"–" }}
-                                  </li>
-                                  <li class="list-group-item bg-dark text-light">
-                                    🛡️ Tank: {{ torneo.dettagli.best_players.tank|default:"–" }}
-                                  </li>
-                                  <li class="list-group-item bg-dark text-light">
-                                    🧠 Visione: {{ torneo.dettagli.best_players.visione|default:"–" }}
-                                  </li>
-                                  <li class="list-group-item bg-dark text-light">
-                                    💰 GPM: {{ torneo.dettagli.best_players.gpm|default:"–" }}
-                                  </li>
-                                </ul>
-                              </div>
-                                <!-- Sezione % Primo sangue -->
-                                <div class="mt-3">
-                                  <p class="mb-1">
-                                    🩸 % Primo sangue:
-                                    <strong class="text-warning">{{ torneo.dettagli.first_blood_pct|floatformat:2 }}%</strong>
-                                  </p>
-                                  <div class="progress" style="height: 20px; max-width: 300px;">
-                                    <div
-                                      class="progress-bar bg-danger"
-                                      role="progressbar"
-                                      style="width: {{ torneo.dettagli.first_blood_pct|floatformat:0 }}%;"
-                                      aria-valuenow="{{ torneo.dettagli.first_blood_pct|floatformat:0 }}"
-                                      aria-valuemin="0"
-                                      aria-valuemax="100">
-                                      {{ torneo.dettagli.first_blood_pct|floatformat:0 }}%
-                                    </div>
-                                  </div>
-                                </div>
-                            </div>
-                            <!-- /Colonna 3 -->
-
-                            <!-- Colonna 4: spazio extra (se serve) -->
-                            <div class="col-md-3">
-                              <!-- ...puoi aggiungere altre info o lasciare vuoto... -->
-                            </div>
-                            <!-- /Colonna 4 -->
-
-                          </div><!-- /row -->
-                        </div><!-- /card-body -->
-                      </div><!-- /card riepilogo -->
-
-                      <!-- ROW comune per entrambi i grafici -->
-                      <div class="row g-3 mt-4">
-                        <!-- Colonna sinistra: Grafico Obiettivi -->
-                        <div class="col-md-6">
-                          <div class="card bg-dark text-light">
-                            <div class="card-header text-info">
-                              <i class="bi bi-bar-chart-line"></i> Grafico Obiettivi
-                            </div>
-                            <div class="card-body">
-                              <div class="chart-container" style="height:300px;">
-                                <canvas id="grafico-obiettivi-corso-{{ torneo.id }}"
-                                  data-labels='{{ torneo.dettagli.grafico_obiettivi.labels|safe }}'
-                                  data-torri='{{ torneo.dettagli.grafico_obiettivi.torri|safe }}'
-                                  data-draghi='{{ torneo.dettagli.grafico_obiettivi.draghi|safe }}'
-                                  data-baroni='{{ torneo.dettagli.grafico_obiettivi.baroni|safe }}'
-                                  data-araldi='{{ torneo.dettagli.grafico_obiettivi.araldi|safe }}'
-                                  data-anziani='{{ torneo.dettagli.grafico_obiettivi.anziani|safe }}'
-                                  data-atakhan='{{ torneo.dettagli.grafico_obiettivi.atakhan|safe }}'>
-                                </canvas>
-                              </div>
-                            </div>
-                          </div><!-- /card -->
-                        </div><!-- /col-md-6 -->
-
-                        <!-- Colonna destra: Andamento delle Prestazioni -->
-                        <div class="col-md-6">
-                          <div class="card bg-dark text-light">
-                            <div class="card-header text-info">
-                              <i class="bi bi-activity"></i> Andamento delle Prestazioni
-                            </div>
-                            <div class="card-body">
-                              <div class="chart-container" style="height:300px;">
-                                <canvas id="prestazioni-torneo-{{ torneo.id }}"
-                                  data-kda='{{ torneo.dettagli.andamento_kda|default:"[]"|safe }}'
-                                  data-vittorie='{{ torneo.dettagli.andamento_vittorie|default:"[]"|safe }}'
-                                  data-obiettivi='{{ torneo.dettagli.andamento_obiettivi|default:"[]"|safe }}'
-                                  data-labels='{{ torneo.dettagli.date_labels|default:"[]"|safe }}'>
-                                </canvas>
-                              </div>
-                            </div>
-                          </div><!-- /card -->
-                        </div><!-- /col-md-6 -->
-                      </div><!-- /row -->
-
-
-                      <h3 class="mt-4 mb-3">Partite</h3>
-
-                      <div class="list-group">
-                        {% for match in partite_dettaglio %}
-                          <!-- Determino la classe in base a match.esito -->
-                          {% if match.esito == "win" %}
-                            <div class="list-group-item match-vittoria" data-bs-toggle="collapse" data-bs-target="#matchCollapse{{ match.id }}">
-                          {% elif match.esito == "draw" %}
-                            <div class="list-group-item match-pareggio" data-bs-toggle="collapse" data-bs-target="#matchCollapse{{ match.id }}">
-                          {% else %}
-                            <div class="list-group-item match-sconfitta" data-bs-toggle="collapse" data-bs-target="#matchCollapse{{ match.id }}">
-                          {% endif %}
-
-                            <div class="d-flex justify-content-between align-items-center">
-                              <!-- Lato sinistro: logo + nome rossa -->
-                              <div class="d-flex align-items-center gap-2">
-                                {% if match.logo_rossa %}
-                                  <img src="{{ match.logo_rossa }}" alt="logo rossa" style="width:30px;height:30px;object-fit:cover;">
-                                {% endif %}
-                                <span class="fw-bold text-light">{{ match.squadra_rossa }}</span>
-                              </div>
-
-                              <!-- Al centro, la data -->
-                              <div class="text-muted">
-                                {{ match.data_evento|date:"d/m/Y" }} - {{ match.durata }} min
-                              </div>
-
-                              <!-- Lato destro: logo + nome blu -->
-                              <div class="d-flex align-items-center gap-2">
-                                <span class="fw-bold text-light">{{ match.squadra_blu }}</span>
-                                {% if match.logo_blu %}
-                                  <img src="{{ match.logo_blu }}" alt="logo blu" style="width:30px;height:30px;object-fit:cover;">
-                                {% endif %}
-                              </div>
-                            </div>
-                          </div><!-- Fine list-group-item riga principale -->
-
-                          <!-- Contenuto collassabile (dettagli) -->
-                          <div class="collapse" id="matchCollapse{{ match.id }}">
-                            <div class="p-3 bg-dark text-light">
-                              <!-- Qui ci metti pick/ban, roster, statistiche di team, ecc. -->
-
-                              <div class="row">
-                                <!-- Colonna Rossa -->
-                                <div class="col-md-6">
-                                  <h5 class="text-danger mb-2">Team Rosso: {{ match.squadra_rossa }}</h5>
-                                  <p>Pick:</p>
-                                  <ul>
-                                    {% for pick in match.picks_rossa %}
-                                      <li>{{ pick.campione.nome }}</li>
-                                    {% endfor %}
-                                  </ul>
-                                  <p>Ban:</p>
-                                  <ul>
-                                    {% for ban in match.bans_rossa %}
-                                      <li>{{ ban.campione.nome }}</li>
-                                    {% endfor %}
-                                  </ul>
-
-                                  <hr>
-                                  <h6>Roster</h6>
-                                  <table class="table table-dark table-sm">
-                                    <thead>
-                                      <tr><th>Giocatore</th><th>Campione</th><th>K/D/A</th><th>KDA</th></tr>
-                                    </thead>
-                                    <tbody>
-                                      {% for r in match.roster_rossa %}
-                                        <tr>
-                                          <td>{{ r.giocatore_nome }}</td>
-                                          <td>
-                                            {% if r.campione_img %}
-                                              <img src="{{ r.campione_img }}" alt="campione" style="width:20px;height:20px;">
-                                            {% endif %}
-                                            {{ r.campione_nome }}
-                                          </td>
-                                          <td>{{ r.kills }}/{{ r.deaths }}/{{ r.assists }}</td>
-                                          <td>{{ r.kda }}</td>
-                                        </tr>
-                                      {% endfor %}
-                                    </tbody>
-                                  </table>
-
-                                  <p>
-                                    Draghi: {{ match.draghi_rossa }}<br>
-                                    Kills totali: {{ match.kills_rossa }}<br>
-                                    Danno tot: {{ match.danno_rossa }}<br>
-                                    Visione tot: {{ match.visione_rossa }}<br>
-                                    ...
-                                  </p>
-                                </div>
-
-                                <!-- Colonna Blu -->
-                                <div class="col-md-6">
-                                  <h5 class="text-primary mb-2">Team Blu: {{ match.squadra_blu }}</h5>
-                                  <p>Pick:</p>
-                                  <ul>
-                                    {% for pick in match.picks_blu %}
-                                      <li>{{ pick.campione.nome }}</li>
-                                    {% endfor %}
-                                  </ul>
-                                  <p>Ban:</p>
-                                  <ul>
-                                    {% for ban in match.bans_blu %}
-                                      <li>{{ ban.campione.nome }}</li>
-                                    {% endfor %}
-                                  </ul>
-
-                                  <hr>
-                                  <h6>Roster</h6>
-                                  <table class="table table-dark table-sm">
-                                    <thead>
-                                      <tr><th>Giocatore</th><th>Campione</th><th>K/D/A</th><th>KDA</th></tr>
-                                    </thead>
-                                    <tbody>
-                                      {% for r in match.roster_blu %}
-                                        <tr>
-                                          <td>{{ r.giocatore_nome }}</td>
-                                          <td>
-                                            {% if r.campione_img %}
-                                              <img src="{{ r.campione_img }}" alt="campione" style="width:20px;height:20px;">
-                                            {% endif %}
-                                            {{ r.campione_nome }}
-                                          </td>
-                                          <td>{{ r.kills }}/{{ r.deaths }}/{{ r.assists }}</td>
-                                          <td>{{ r.kda }}</td>
-                                        </tr>
-                                      {% endfor %}
-                                    </tbody>
-                                  </table>
-
-                                  <p>
-                                    Draghi: {{ match.draghi_blu }}<br>
-                                    Kills totali: {{ match.kills_blu }}<br>
-                                    Danno tot: {{ match.danno_blu }}<br>
-                                    Visione tot: {{ match.visione_blu }}<br>
-                                    ...
-                                  </p>
-                                </div>
-                              </div>
-
-                              <hr>
-                              <p>MVP: {{ match.mvp }} | Atakhan: {{ match.atakhan }} | Anima: {{ match.anima }}</p>
-                            </div>
-                          </div><!-- /collapse -->
-
-                        {% endfor %}
+                    <!-- CARD RIEPILOGO TORNEO -->
+                    <div class="card bg-secondary text-light mb-3">
+                      <div class="card-header d-flex align-items-center justify-content-between">
+                        <h5 class="mb-0">Riepilogo torneo</h5>
+                        <span class="badge bg-success">In corso</span>
                       </div>
+                      <div class="card-body">
+                        <div class="row g-3">
 
+                          <!-- Colonna 1: Statistiche globali -->
+                          <div class="col-md-3">
+                            <div class="card bg-dark text-light h-100">
+                              <div class="card-header text-warning">
+                                <i class="bi bi-graph-up"></i> Statistiche globali
+                              </div>
+                              <ul class="list-group list-group-flush">
+                                <li class="list-group-item bg-dark text-light">
+                                  ⚔️ Partite giocate:
+                                  <span class="float-end">{{ torneo.dettagli.totali.partite }}</span>
+                                </li>
+                                <li class="list-group-item bg-dark text-success">
+                                  🟢 Vittorie:
+                                  <span class="float-end">{{ torneo.dettagli.totali.vittorie }}</span>
+                                </li>
+                                <li class="list-group-item bg-dark text-warning">
+                                  ⚪ Pareggi:
+                                  <span class="float-end">{{ torneo.dettagli.totali.pareggi }}</span>
+                                </li>
+                                <li class="list-group-item bg-dark text-danger">
+                                  🔴 Sconfitte:
+                                  <span class="float-end">{{ torneo.dettagli.totali.sconfitte }}</span>
+                                </li>
+                              </ul>
 
-                    </div><!-- /pt-3 px-3 -->
-                  </div><!-- /collapse mt-3 -->
+                              <!-- GRAFICO AD ANELLO -->
+                              <div class="card-body">
+                                <div class="chart-container" style="height:200px;">
+                                  <canvas id="statsDonut-{{ torneo.id }}"
+                                    data-vittorie="{{ torneo.dettagli.totali.vittorie|default:'0' }}"
+                                    data-pareggi="{{ torneo.dettagli.totali.pareggi|default:'0' }}"
+                                    data-sconfitte="{{ torneo.dettagli.totali.sconfitte|default:'0' }}">
+                                  </canvas>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <!-- /Colonna 1 -->
 
-                </li><!-- /list-group-item -->
+                          <!-- Colonna 2: MVP e Pick/Ban -->
+                          <div class="col-md-3">
+                            <!-- MVP -->
+                            <div class="card bg-dark text-light mb-3">
+                              <div class="card-header text-warning">
+                                <i class="bi bi-trophy-fill"></i> MVP della squadra
+                              </div>
+                              <ul class="list-group list-group-flush">
+                                {% for nome, count in torneo.dettagli.mvp.items %}
+                                <li class="list-group-item bg-dark text-light">
+                                  {{ nome }} — {{ count }} MVP
+                                </li>
+                                {% empty %}
+                                <li class="list-group-item bg-dark text-muted">Nessun MVP</li>
+                                {% endfor %}
+                              </ul>
+                            </div>
+
+                            <!-- Pick/Ban -->
+                            <div class="row row-cols-1 row-cols-sm-2 g-2">
+                              <div class="col">
+                                <div class="card bg-dark text-light">
+                                  <div class="card-header text-info">
+                                    <i class="bi bi-magic"></i> Pick
+                                  </div>
+                                  <div class="card-body">
+                                    {% for p in torneo.dettagli.top_picks %}
+                                      <span class="badge bg-primary m-1">
+                                        {{ p.campione.nome }} ({{ p.num_picks }})
+                                      </span>
+                                    {% endfor %}
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="col">
+                                <div class="card bg-dark text-light">
+                                  <div class="card-header text-danger">
+                                    <i class="bi bi-slash-circle"></i> Ban
+                                  </div>
+                                  <div class="card-body">
+                                    {% for b in torneo.dettagli.top_bans %}
+                                      <span class="badge bg-danger m-1">
+                                        {{ b.campione.nome }} ({{ b.num_bans }})
+                                      </span>
+                                    {% endfor %}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <!-- /Colonna 2 -->
+
+                          <!-- Colonna 3: Best players e % Primo sangue -->
+                          <div class="col-md-3">
+                            <div class="card bg-dark text-light">
+                              <div class="card-header text-warning">
+                                <i class="bi bi-stars"></i> Best players
+                              </div>
+                              <ul class="list-group list-group-flush">
+                                <li class="list-group-item bg-dark text-light">
+                                  💥 DPS: {{ torneo.dettagli.best_players.dps|default:"–" }}
+                                </li>
+                                <li class="list-group-item bg-dark text-light">
+                                  🛡️ Tank: {{ torneo.dettagli.best_players.tank|default:"–" }}
+                                </li>
+                                <li class="list-group-item bg-dark text-light">
+                                  🧠 Visione: {{ torneo.dettagli.best_players.visione|default:"–" }}
+                                </li>
+                                <li class="list-group-item bg-dark text-light">
+                                  💰 GPM: {{ torneo.dettagli.best_players.gpm|default:"–" }}
+                                </li>
+                              </ul>
+                            </div>
+                            <!-- % Primo sangue -->
+                            <div class="mt-3">
+                              <p class="mb-1">
+                                🩸 % Primo sangue:
+                                <strong class="text-warning">{{ torneo.dettagli.first_blood_pct|floatformat:2 }}%</strong>
+                              </p>
+                              <div class="progress" style="height: 20px; max-width: 300px;">
+                                <div class="progress-bar bg-danger"
+                                     role="progressbar"
+                                     style="width: {{ torneo.dettagli.first_blood_pct|floatformat:0 }}%;"
+                                     aria-valuenow="{{ torneo.dettagli.first_blood_pct|floatformat:0 }}"
+                                     aria-valuemin="0"
+                                     aria-valuemax="100">
+                                  {{ torneo.dettagli.first_blood_pct|floatformat:0 }}%
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <!-- /Colonna 3 -->
+
+                          <!-- Colonna 4: (libera o per future espansioni) -->
+                          <div class="col-md-3">
+                            <!-- Vuota o info extra -->
+                          </div>
+                          <!-- /Colonna 4 -->
+
+                        </div> <!-- /row g-3 -->
+
+                        <!-- ROW: Grafici Obiettivi + Prestazioni -->
+                        <div class="row mt-4">
+                          <div class="col-md-6">
+                            <div class="card bg-dark text-light">
+                              <div class="card-header text-info">
+                                <i class="bi bi-bar-chart-line"></i> Grafico Obiettivi
+                              </div>
+                              <div class="card-body">
+                                <div class="chart-container" style="height:300px;">
+                                  <canvas id="grafico-obiettivi-corso-{{ torneo.id }}"
+                                    data-labels='{{ torneo.dettagli.grafico_obiettivi.labels|safe }}'
+                                    data-torri='{{ torneo.dettagli.grafico_obiettivi.torri|safe }}'
+                                    data-draghi='{{ torneo.dettagli.grafico_obiettivi.draghi|safe }}'
+                                    data-baroni='{{ torneo.dettagli.grafico_obiettivi.baroni|safe }}'
+                                    data-araldi='{{ torneo.dettagli.grafico_obiettivi.araldi|safe }}'
+                                    data-anziani='{{ torneo.dettagli.grafico_obiettivi.anziani|safe }}'
+                                    data-atakhan='{{ torneo.dettagli.grafico_obiettivi.atakhan|safe }}'>
+                                  </canvas>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="col-md-6">
+                            <div class="card bg-dark text-light">
+                              <div class="card-header text-info">
+                                <i class="bi bi-activity"></i> Andamento delle Prestazioni
+                              </div>
+                              <div class="card-body">
+                                <div class="chart-container" style="height:300px;">
+                                  <canvas id="prestazioni-torneo-{{ torneo.id }}"
+                                    data-kda='{{ torneo.dettagli.andamento_kda|default:"[]"|safe }}'
+                                    data-vittorie='{{ torneo.dettagli.andamento_vittorie|default:"[]"|safe }}'
+                                    data-obiettivi='{{ torneo.dettagli.andamento_obiettivi|default:"[]"|safe }}'
+                                    data-labels='{{ torneo.dettagli.date_labels|default:"[]"|safe }}'>
+                                  </canvas>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- /ROW grafici Obiettivi+Prestazioni -->
+
+                        <!-- ROW: Partite del torneo -->
+                        <div class="row mt-4">
+                          <div class="col-12">
+                            <!-- PARTITE: usiamo la chiave 'partite_dettaglio' -->
+                            <h3 class="mt-4 mb-3">Partite</h3>
+
+                            <div class="list-group">
+                              {% for match in torneo.dettagli.partite_dettaglio %}
+                                <!-- Riga principale -->
+                                <div class="list-group-item bg-dark text-light {{ match.esito }}"
+                                     data-bs-toggle="collapse"
+                                     data-bs-target="#matchCollapse{{ match.id }}"
+                                     style="cursor:pointer;">
+                                  <div class="d-flex justify-content-between align-items-center">
+                                    <!-- Sinistra: logo + nome rossa -->
+                                    <div class="d-flex align-items-center gap-2">
+                                      {% if match.logo_rossa %}
+                                        <img src="{{ match.logo_rossa }}" alt="logo rossa" style="width:30px;height:30px;object-fit:cover;">
+                                      {% endif %}
+                                      <strong class="text-light">{{ match.squadra_rossa }}</strong>
+                                    </div>
+
+                                    <!-- Centro: data e durata -->
+                                    <div class="text-light small">
+                                      {{ match.data_evento|date:"d/m/Y" }} - {{ match.durata|default:"--" }} min
+                                    </div>
+
+                                    <!-- Destra: logo + nome blu -->
+                                    <div class="d-flex align-items-center gap-2">
+                                      <strong class="text-light">{{ match.squadra_blu }}</strong>
+                                      {% if match.logo_blu %}
+                                        <img src="{{ match.logo_blu }}" alt="logo blu" style="width:30px;height:30px;object-fit:cover;">
+                                      {% endif %}
+                                    </div>
+                                  </div>
+                                </div> <!-- Fine testata match -->
+
+                                <!-- Collassabile con i dettagli -->
+                                <div class="collapse" id="matchCollapse{{ match.id }}">
+                                  <div class="p-3 bg-dark text-light">
+                                    <!-- Esempio: pick/ban rossa -->
+                                    <div class="row">
+                                      <div class="col-md-6">
+                                        <h5 class="text-danger">Pick & Ban Rosso</h5>
+                                        <strong>Pick:</strong>
+                                        <ul>
+                                          {% for p in match.picks_rossa %}
+                                            <li>{{ p.campione.nome }}</li>
+                                          {% endfor %}
+                                        </ul>
+                                        <strong>Ban:</strong>
+                                        <ul>
+                                          {% for b in match.bans_rossa %}
+                                            <li>{{ b.campione.nome }}</li>
+                                          {% endfor %}
+                                        </ul>
+                                      </div>
+                                      <div class="col-md-6">
+                                        <h5 class="text-primary">Pick & Ban Blu</h5>
+                                        <!-- Idem per picks_blu e bans_blu -->
+                                      </div>
+                                    </div>
+
+                                    <hr>
+                                    <!-- Roster -->
+                                    <div class="row">
+                                      <div class="col-md-6">
+                                        <h6 class="text-danger">Roster Rosso</h6>
+                                        <table class="table table-dark table-sm">
+                                          <thead>
+                                            <tr><th>Giocatore</th><th>Campione</th><th>K/D/A</th><th>KDA</th></tr>
+                                          </thead>
+                                          <tbody>
+                                            {% for r in match.roster_rossa %}
+                                            <tr>
+                                              <td>{{ r.giocatore_nome }}</td>
+                                              <td>
+                                                {% if r.campione_img %}
+                                                  <img src="{{ r.campione_img }}" alt="Campione"
+                                                       style="width:20px;height:20px;object-fit:cover;border-radius:50%;">
+                                                {% endif %}
+                                                {{ r.campione_nome }}
+                                              </td>
+                                              <td>{{ r.kills }}/{{ r.deaths }}/{{ r.assists }}</td>
+                                              <td>{{ r.kda }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                          </tbody>
+                                        </table>
+                                      </div>
+
+                                      <div class="col-md-6">
+                                        <h6 class="text-primary">Roster Blu</h6>
+                                        <!-- Tabella analoga per roster_blu -->
+                                      </div>
+                                    </div>
+
+                                    <hr>
+                                    <!-- MVP e altri dati -->
+                                    <p>
+                                      <strong>MVP:</strong> {{ match.mvp }} |
+                                      <strong>Atakhan:</strong> {{ match.atakhan }} |
+                                      <strong>Anima:</strong> {{ match.anima }}
+                                    </p>
+                                  </div>
+                                </div> <!-- Fine collapse match -->
+                              {% endfor %}
+                            </div>
+
+                            
+                          </div> <!-- /col-12 -->
+                        </div> <!-- /row mt-4 - Partite del torneo -->
+
+                      </div> <!-- /card-body -->
+                    </div> <!-- /card bg-secondary text-light mb-3 -->
+
+                  </div> <!-- /pt-3 px-3 -->
+                </div> <!-- /collapse mt-3 -->
+
+              </li> <!-- /list-group-item -->
               {% endfor %}
+              <!-- /FINE for torneo in tornei_in_corso -->
             </ul>
           {% else %}
             <p class="text-light">Nessun torneo in corso.</p>
           {% endif %}
-        </div><!-- /accordion-body -->
-      </div><!-- /collapseInCorso -->
-    </div><!-- /accordion-item (Tornei in corso) -->
+        </div> <!-- /accordion-body -->
+      </div> <!-- /collapseInCorso -->
+    </div> <!-- /accordion-item (Tornei in corso) -->
 
 
     <!-- TORNEI CONCLUSI -->
@@ -573,144 +542,142 @@
           {% if tornei_conclusi %}
             <ul class="list-group">
               {% for torneo in tornei_conclusi %}
-                <li class="list-group-item bg-dark text-light border-secondary p-2">
+              <li class="list-group-item bg-dark text-light border-secondary p-2">
 
-                  <!-- Titolo torneo -->
-                  <div class="rounded px-3 py-2 hoverable d-flex justify-content-between align-items-start"
-                       style="background-color: rgba(255,255,255,0.05);"
-                       data-bs-toggle="collapse"
-                       data-bs-target="#dettagli-conclusi-{{ torneo.id }}"
-                       role="button" aria-expanded="false"
-                       aria-controls="dettagli-conclusi-{{ torneo.id }}">
-                    <div class="d-flex align-items-center gap-2">
-                      <strong>{{ torneo.nome }}</strong>
-                      <small>(dal {{ torneo.data_inizio|date:"d/m/Y" }} al {{ torneo.data_fine|date:"d/m/Y" }})</small>
-                      <span class="badge bg-danger">Concluso</span>
-                    </div>
-                    <span class="text-muted toggle-arrow">
-                      <i class="bi bi-chevron-down"></i>
-                    </span>
+                <!-- Titolo torneo -->
+                <div class="rounded px-3 py-2 hoverable d-flex justify-content-between align-items-start"
+                     style="background-color: rgba(255,255,255,0.05);"
+                     data-bs-toggle="collapse"
+                     data-bs-target="#dettagli-conclusi-{{ torneo.id }}"
+                     role="button" aria-expanded="false"
+                     aria-controls="dettagli-conclusi-{{ torneo.id }}">
+                  <div class="d-flex align-items-center gap-2">
+                    <strong>{{ torneo.nome }}</strong>
+                    <small>(dal {{ torneo.data_inizio|date:"d/m/Y" }} al {{ torneo.data_fine|date:"d/m/Y" }})</small>
+                    <span class="badge bg-danger">Concluso</span>
                   </div>
-                  <!-- /Titolo torneo -->
+                  <span class="text-muted toggle-arrow">
+                    <i class="bi bi-chevron-down"></i>
+                  </span>
+                </div>
+                <!-- /Titolo torneo -->
 
-                  <!-- Contenuto collassabile -->
-                  <div class="collapse mt-3" id="dettagli-conclusi-{{ torneo.id }}">
-                    <div class="bg-dark border-top border-secondary pt-3 px-3">
+                <!-- Contenuto collassabile -->
+                <div class="collapse mt-3" id="dettagli-conclusi-{{ torneo.id }}">
+                  <div class="bg-dark border-top border-secondary pt-3 px-3">
 
-                      <!-- Riepilogo torneo (colonne) -->
-                      <div class="row mb-3">
-                        <div class="col-md-6">
-                          <h6 class="mb-2">📊 Riepilogo torneo</h6>
-                          <ul class="list-group">
-                            <li class="list-group-item bg-dark text-light">
-                              ⚔️ Partite giocate: {{ torneo.dettagli.totali.partite }}
-                            </li>
-                            <li class="list-group-item bg-dark text-success">
-                              🟢 Vittorie: {{ torneo.dettagli.totali.vittorie }}
-                            </li>
-                            <li class="list-group-item bg-dark text-warning">
-                              ⚪ Pareggi: {{ torneo.dettagli.totali.pareggi }}
-                            </li>
-                            <li class="list-group-item bg-dark text-danger">
-                              🔴 Sconfitte: {{ torneo.dettagli.totali.sconfitte }}
-                            </li>
-                          </ul>
-                        </div>
-                        <div class="col-md-6">
-                          <h6 class="mb-2">🏆 MVP della squadra</h6>
-                          <ul class="list-group">
-                            {% for nome, count in torneo.dettagli.mvp.items %}
-                              <li class="list-group-item bg-dark text-light">
-                                {{ nome }} — {{ count }} MVP
-                              </li>
-                            {% empty %}
-                              <li class="list-group-item bg-dark text-muted">
-                                Nessun MVP registrato
-                              </li>
-                            {% endfor %}
-                          </ul>
-                        </div>
+                    <!-- Riepilogo torneo (colonne) -->
+                    <div class="row mb-3">
+                      <div class="col-md-6">
+                        <h6 class="mb-2">📊 Riepilogo torneo</h6>
+                        <ul class="list-group">
+                          <li class="list-group-item bg-dark text-light">
+                            ⚔️ Partite giocate: {{ torneo.dettagli.totali.partite }}
+                          </li>
+                          <li class="list-group-item bg-dark text-success">
+                            🟢 Vittorie: {{ torneo.dettagli.totali.vittorie }}
+                          </li>
+                          <li class="list-group-item bg-dark text-warning">
+                            ⚪ Pareggi: {{ torneo.dettagli.totali.pareggi }}
+                          </li>
+                          <li class="list-group-item bg-dark text-danger">
+                            🔴 Sconfitte: {{ torneo.dettagli.totali.sconfitte }}
+                          </li>
+                        </ul>
                       </div>
-                      <!-- /row mb-3 -->
-
-                      <!-- Pick & Ban -->
-                      <div class="row mb-3">
-                        <div class="col-md-6">
-                          <h6 class="mb-2">🧙 Top 5 Pick</h6>
-                          <ul class="list-inline">
-                            {% for p in torneo.dettagli.top_picks %}
-                              <li class="list-inline-item badge bg-primary m-1">
-                                {{ p.campione.nome }} ({{ p.num_picks }})
-                              </li>
-                            {% endfor %}
-                          </ul>
-                        </div>
-                        <div class="col-md-6">
-                          <h6 class="mb-2">🚫 Top 5 Ban</h6>
-                          <ul class="list-inline">
-                            {% for b in torneo.dettagli.top_bans %}
-                              <li class="list-inline-item badge bg-danger m-1">
-                                {{ b.campione.nome }} ({{ b.num_bans }})
-                              </li>
-                            {% endfor %}
-                          </ul>
-                        </div>
+                      <div class="col-md-6">
+                        <h6 class="mb-2">🏆 MVP della squadra</h6>
+                        <ul class="list-group">
+                          {% for nome, count in torneo.dettagli.mvp.items %}
+                          <li class="list-group-item bg-dark text-light">
+                            {{ nome }} — {{ count }} MVP
+                          </li>
+                          {% empty %}
+                          <li class="list-group-item bg-dark text-muted">
+                            Nessun MVP registrato
+                          </li>
+                          {% endfor %}
+                        </ul>
                       </div>
-                      <!-- /Pick & Ban -->
+                    </div>
+                    <!-- /row mb-3 -->
 
-                      <!-- Best Players -->
-                      <h6 class="mb-2 mt-3">🔥 Best players</h6>
-                      <ul class="list-group list-group-flush mb-3">
-                        <li class="list-group-item bg-dark text-light">
-                          💥 DPS: {{ torneo.dettagli.best_players.dps|default:"–" }}
-                        </li>
-                        <li class="list-group-item bg-dark text-light">
-                          🛡️ Tank: {{ torneo.dettagli.best_players.tank|default:"–" }}
-                        </li>
-                        <li class="list-group-item bg-dark text-light">
-                          🧠 Visione: {{ torneo.dettagli.best_players.visione|default:"–" }}
-                        </li>
-                        <li class="list-group-item bg-dark text-light">
-                          💰 GPM: {{ torneo.dettagli.best_players.gpm|default:"–" }}
-                        </li>
-                      </ul>
-
-                      <p class="text-light mt-3 mb-1">
-                        🩸 % Primo sangue: {{ torneo.dettagli.first_blood_pct|floatformat:2 }}%
-                      </p>
-
-                      <!-- Grafico obiettivi -->
-                      <div class="chart-container mt-4">
-                        <canvas id="grafico-obiettivi-conclusi-{{ torneo.id }}"
-                                data-labels="{{ torneo.dettagli.grafico_obiettivi.labels|safe }}"
-                                data-torri="{{ torneo.dettagli.grafico_obiettivi.torri|safe }}"
-                                data-draghi="{{ torneo.dettagli.grafico_obiettivi.draghi|safe }}"
-                                data-baroni="{{ torneo.dettagli.grafico_obiettivi.baroni|safe }}"
-                                data-araldi="{{ torneo.dettagli.grafico_obiettivi.araldi|safe }}"
-                                data-anziani="{{ torneo.dettagli.grafico_obiettivi.anziani|safe }}"
-                                data-atakhan="{{ torneo.dettagli.grafico_obiettivi.atakhan|safe }}">
-                        </canvas>
+                    <!-- Pick & Ban -->
+                    <div class="row mb-3">
+                      <div class="col-md-6">
+                        <h6 class="mb-2">🧙 Top 5 Pick</h6>
+                        <ul class="list-inline">
+                          {% for p in torneo.dettagli.top_picks %}
+                          <li class="list-inline-item badge bg-primary m-1">
+                            {{ p.campione.nome }} ({{ p.num_picks }})
+                          </li>
+                          {% endfor %}
+                        </ul>
                       </div>
-                      <!-- /grafico obiettivi -->
+                      <div class="col-md-6">
+                        <h6 class="mb-2">🚫 Top 5 Ban</h6>
+                        <ul class="list-inline">
+                          {% for b in torneo.dettagli.top_bans %}
+                          <li class="list-inline-item badge bg-danger m-1">
+                            {{ b.campione.nome }} ({{ b.num_bans }})
+                          </li>
+                          {% endfor %}
+                        </ul>
+                      </div>
+                    </div>
+                    <!-- /Pick & Ban -->
 
-                    </div><!-- /bg-dark border-top ... -->
-                  </div><!-- /collapse mt-3 -->
+                    <!-- Best Players -->
+                    <h6 class="mb-2 mt-3">🔥 Best players</h6>
+                    <ul class="list-group list-group-flush mb-3">
+                      <li class="list-group-item bg-dark text-light">
+                        💥 DPS: {{ torneo.dettagli.best_players.dps|default:"–" }}
+                      </li>
+                      <li class="list-group-item bg-dark text-light">
+                        🛡️ Tank: {{ torneo.dettagli.best_players.tank|default:"–" }}
+                      </li>
+                      <li class="list-group-item bg-dark text-light">
+                        🧠 Visione: {{ torneo.dettagli.best_players.visione|default:"–" }}
+                      </li>
+                      <li class="list-group-item bg-dark text-light">
+                        💰 GPM: {{ torneo.dettagli.best_players.gpm|default:"–" }}
+                      </li>
+                    </ul>
 
-                </li><!-- /list-group-item -->
+                    <p class="text-light mt-3 mb-1">
+                      🩸 % Primo sangue: {{ torneo.dettagli.first_blood_pct|floatformat:2 }}%
+                    </p>
+
+                    <!-- Grafico obiettivi -->
+                    <div class="chart-container mt-4">
+                      <canvas id="grafico-obiettivi-conclusi-{{ torneo.id }}"
+                              data-labels="{{ torneo.dettagli.grafico_obiettivi.labels|safe }}"
+                              data-torri="{{ torneo.dettagli.grafico_obiettivi.torri|safe }}"
+                              data-draghi="{{ torneo.dettagli.grafico_obiettivi.draghi|safe }}"
+                              data-baroni="{{ torneo.dettagli.grafico_obiettivi.baroni|safe }}"
+                              data-araldi="{{ torneo.dettagli.grafico_obiettivi.araldi|safe }}"
+                              data-anziani="{{ torneo.dettagli.grafico_obiettivi.anziani|safe }}"
+                              data-atakhan="{{ torneo.dettagli.grafico_obiettivi.atakhan|safe }}">
+                      </canvas>
+                    </div>
+                    <!-- /grafico obiettivi -->
+
+                  </div> <!-- /bg-dark border-top ... -->
+                </div> <!-- /collapse mt-3 -->
+
+              </li> <!-- /list-group-item -->
               {% endfor %}
+              <!-- /FINE for torneo in tornei_conclusi -->
             </ul>
           {% else %}
             <p class="text-light">Nessun torneo concluso.</p>
           {% endif %}
-        </div><!-- /accordion-body -->
-      </div><!-- /collapseConclusi -->
-    </div><!-- /accordion-item (Tornei conclusi) -->
+        </div> <!-- /accordion-body -->
+      </div> <!-- /collapseConclusi -->
+    </div> <!-- /accordion-item (Tornei conclusi) -->
 
-  </div><!-- /accordion accordion-dark -->
-
-
-
-
+  </div> <!-- /accordion accordion-dark -->
+  <!-- /Tornei -->
 
 
   <hr class="my-4">
@@ -720,61 +687,67 @@
   {% if top_picks %}
     <div class="row row-cols-1 row-cols-md-3 g-4">
       {% for pick in top_picks %}
-        <div class="col">
-          <div class="card h-100 bg-secondary text-light">
-            {% if pick.campione.immagine %}
-              <img src="{{ pick.campione.immagine.url }}"
-                   class="card-img-top p-2"
-                   alt="{{ pick.campione.nome }}"
-                   style="height:200px;object-fit:contain;">
-            {% else %}
-              <img src="{% static 'images/no_champion.png' %}"
-                   class="card-img-top p-2"
-                   style="height:200px;object-fit:contain;">
-            {% endif %}
-            <div class="card-body">
-              <h5 class="card-title">{{ pick.campione.nome }}</h5>
-              <p class="card-text">Pick totali: {{ pick.num_picks }}</p>
-            </div>
+      <div class="col">
+        <div class="card h-100 bg-secondary text-light">
+          {% if pick.campione.immagine %}
+            <img src="{{ pick.campione.immagine.url }}"
+                 class="card-img-top p-2"
+                 alt="{{ pick.campione.nome }}"
+                 style="height:200px;object-fit:contain;">
+          {% else %}
+            <img src="{% static 'images/no_champion.png' %}"
+                 class="card-img-top p-2"
+                 style="height:200px;object-fit:contain;">
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title">{{ pick.campione.nome }}</h5>
+            <p class="card-text">Pick totali: {{ pick.num_picks }}</p>
           </div>
         </div>
+      </div>
       {% endfor %}
+      <!-- /FINE for pick in top_picks -->
     </div>
   {% else %}
     <p>Nessun pick registrato.</p>
   {% endif %}
+  <!-- /TOP 5 PICK -->
+
   <h3 class="mb-3">Ban più frequenti (Team)</h3>
   {% if top_bans %}
-      <div class="row row-cols-1 row-cols-md-3 g-4">
-          {% for ban in top_bans %}
-              <div class="col">
-                  <div class="card h-100 bg-secondary text-light">
-                      {% if ban.campione.immagine %}
-                          <img src="{{ ban.campione.immagine.url }}"
-                              class="card-img-top p-2"
-                              alt="{{ ban.campione.nome }}"
-                              style="height:120px;object-fit:contain;">
-                      {% else %}
-                          <img src="{% static 'images/no_champion.png' %}"
-                              class="card-img-top p-2"
-                              style="height:120px;object-fit:contain;">
-                      {% endif %}
-                      <div class="card-body">
-                          <h5 class="card-title">{{ ban.campione.nome }}</h5>
-                          <p class="card-text">Ban totali: {{ ban.num_bans }}</p>
-                      </div>
-                  </div>
-              </div>
-          {% endfor %}
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      {% for ban in top_bans %}
+      <div class="col">
+        <div class="card h-100 bg-secondary text-light">
+          {% if ban.campione.immagine %}
+            <img src="{{ ban.campione.immagine.url }}"
+                 class="card-img-top p-2"
+                 alt="{{ ban.campione.nome }}"
+                 style="height:120px;object-fit:contain;">
+          {% else %}
+            <img src="{% static 'images/no_champion.png' %}"
+                 class="card-img-top p-2"
+                 style="height:120px;object-fit:contain;">
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title">{{ ban.campione.nome }}</h5>
+            <p class="card-text">Ban totali: {{ ban.num_bans }}</p>
+          </div>
+        </div>
       </div>
+      {% endfor %}
+      <!-- /FINE for ban in top_bans -->
+    </div>
   {% else %}
-      <p>Nessun ban registrato.</p>
+    <p>Nessun ban registrato.</p>
   {% endif %}
+  <!-- /TOP 5 BAN -->
+
 
   <hr class="my-4">
 
+</div> <!-- /container my-5 -->
 
-</div>
 
 <!-- Modale per il dettaglio del campione -->
 <div class="modal fade" id="championModal" tabindex="-1" aria-labelledby="championModalLabel" aria-hidden="true">
@@ -792,11 +765,11 @@
     </div>
   </div>
 </div>
-{% endblock %}
+{% endblock content %}
 
 
 {% block extra_js %}
 <!-- Carichiamo Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="{% static 'squadre/dettaglio_squadre/dettaglio_squadre.js' %}"></script>
-{% endblock %}
+{% endblock extra_js %}
