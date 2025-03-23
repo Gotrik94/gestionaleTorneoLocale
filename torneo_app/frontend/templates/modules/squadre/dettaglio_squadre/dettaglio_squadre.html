@@ -391,119 +391,163 @@
                           </div>
                         </div>
                         <!-- /ROW grafici Obiettivi+Prestazioni -->
-
                         <!-- ROW: Partite del torneo -->
                         <div class="row mt-4">
                           <div class="col-12">
-                            <!-- PARTITE: usiamo la chiave 'partite_dettaglio' -->
-                            <h3 class="mt-4 mb-3">Partite</h3>
-
+                            <h3 class="mb-3">Partite</h3>
                             <div class="list-group">
                               {% for match in torneo.dettagli.partite_dettaglio %}
-                                <!-- Riga principale -->
-                                <div class="list-group-item bg-dark text-light {{ match.esito }}"
-                                     data-bs-toggle="collapse"
-                                     data-bs-target="#matchCollapse{{ match.id }}"
-                                     style="cursor:pointer;">
-                                  <div class="d-flex justify-content-between align-items-center">
-                                    <!-- Sinistra: logo + nome rossa -->
-                                    <div class="d-flex align-items-center gap-2">
-                                      {% if match.logo_rossa %}
-                                        <img src="{{ match.logo_rossa }}" alt="logo rossa" style="width:30px;height:30px;object-fit:cover;">
-                                      {% endif %}
-                                      <strong class="text-light">{{ match.squadra_rossa }}</strong>
+                              <!-- Riga principale cliccabile -->
+                              <div class="list-group-item text-light
+                                          {% if match.esito == 'win' %}match-vittoria
+                                          {% elif match.esito == 'draw' %}match-pareggio
+                                          {% else %}match-sconfitta{% endif %}"
+                                   data-bs-toggle="collapse"
+                                   data-bs-target="#matchCollapse{{ match.id }}"
+                                   style="cursor:pointer;">
+
+                                <div class="d-flex justify-content-between align-items-center">
+                                  <!-- Colonna sinistra: squadra rossa -->
+                                  <div class="d-flex align-items-center gap-2">
+                                    {% if match.logo_rossa %}
+                                      <img src="{{ match.logo_rossa }}" alt="logo rossa" style="width:50px;height:50px;object-fit:cover;">
+                                    {% endif %}
+                                    <strong class="text-light">{{ match.squadra_rossa }}</strong>
+                                  </div>
+
+                                  <!-- Centro: data e durata -->
+                                  <div class="text-light small">
+                                    {{ match.data_evento|date:"d/m/Y" }} - {{ match.durata|default:"--" }} min
+                                  </div>
+
+                                  <!-- Colonna destra: squadra blu -->
+                                  <div class="d-flex align-items-center gap-2">
+                                    <strong class="text-light">{{ match.squadra_blu }}</strong>
+                                    {% if match.logo_blu %}
+                                      <img src="{{ match.logo_blu }}" alt="logo blu" style="width:50px;height:50px;object-fit:cover;">
+                                    {% endif %}
+                                  </div>
+                                </div>
+                              </div>
+
+                              <!-- Collassabile dettagli match -->
+                              <div class="collapse" id="matchCollapse{{ match.id }}">
+                                <div class="p-3 bg-dark text-light">
+                                  <div class="row">
+                                    <!-- Pick e Ban Rosso -->
+                                    <div class="col-md-6">
+                                      <h5 class="text-danger mb-2">Pick & Ban Rosso</h5>
+                                      <p><strong>Pick:</strong></p>
+                                      <ul>
+                                        {% for pick in match.picks_rossa %}
+                                          <li>{{ pick.campione.nome }}</li>
+                                        {% endfor %}
+                                      </ul>
+                                      <p><strong>Ban:</strong></p>
+                                      <ul>
+                                        {% for ban in match.bans_rossa %}
+                                          <li>{{ ban.campione.nome }}</li>
+                                        {% endfor %}
+                                      </ul>
                                     </div>
 
-                                    <!-- Centro: data e durata -->
-                                    <div class="text-light small">
-                                      {{ match.data_evento|date:"d/m/Y" }} - {{ match.durata|default:"--" }} min
-                                    </div>
-
-                                    <!-- Destra: logo + nome blu -->
-                                    <div class="d-flex align-items-center gap-2">
-                                      <strong class="text-light">{{ match.squadra_blu }}</strong>
-                                      {% if match.logo_blu %}
-                                        <img src="{{ match.logo_blu }}" alt="logo blu" style="width:30px;height:30px;object-fit:cover;">
-                                      {% endif %}
+                                    <!-- Pick e Ban Blu -->
+                                    <div class="col-md-6">
+                                      <h5 class="text-primary mb-2">Pick & Ban Blu</h5>
+                                      <p><strong>Pick:</strong></p>
+                                      <ul>
+                                        {% for pick in match.picks_blu %}
+                                          <li>{{ pick.campione.nome }}</li>
+                                        {% endfor %}
+                                      </ul>
+                                      <p><strong>Ban:</strong></p>
+                                      <ul>
+                                        {% for ban in match.bans_blu %}
+                                          <li>{{ ban.campione.nome }}</li>
+                                        {% endfor %}
+                                      </ul>
                                     </div>
                                   </div>
-                                </div> <!-- Fine testata match -->
 
-                                <!-- Collassabile con i dettagli -->
-                                <div class="collapse" id="matchCollapse{{ match.id }}">
-                                  <div class="p-3 bg-dark text-light">
-                                    <!-- Esempio: pick/ban rossa -->
-                                    <div class="row">
-                                      <div class="col-md-6">
-                                        <h5 class="text-danger">Pick & Ban Rosso</h5>
-                                        <strong>Pick:</strong>
-                                        <ul>
-                                          {% for p in match.picks_rossa %}
-                                            <li>{{ p.campione.nome }}</li>
+                                  <hr>
+
+                                  <!-- Roster -->
+                                  <div class="row">
+                                    <!-- Roster Rosso -->
+                                    <div class="col-md-6">
+                                      <h6 class="text-danger">Roster Rosso</h6>
+                                      <table class="table table-dark table-sm align-middle">
+                                        <thead>
+                                          <tr>
+                                            <th>Giocatore</th>
+                                            <th>Campione</th>
+                                            <th>K/D/A</th>
+                                            <th>KDA</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          {% for r in match.roster_rossa %}
+                                          <tr>
+                                            <td>{{ r.giocatore_nome }}</td>
+                                            <td>
+                                              {% if r.campione_img %}
+                                                <img src="{{ r.campione_img }}" alt="campione" style="width:35px;height:35px;object-fit:cover;border-radius:50%;">
+                                              {% endif %}
+                                              {{ r.campione_nome }}
+                                            </td>
+                                            <td>{{ r.kills }}/{{ r.deaths }}/{{ r.assists }}</td>
+                                            <td>{{ r.kda }}</td>
+                                          </tr>
                                           {% endfor %}
-                                        </ul>
-                                        <strong>Ban:</strong>
-                                        <ul>
-                                          {% for b in match.bans_rossa %}
-                                            <li>{{ b.campione.nome }}</li>
-                                          {% endfor %}
-                                        </ul>
-                                      </div>
-                                      <div class="col-md-6">
-                                        <h5 class="text-primary">Pick & Ban Blu</h5>
-                                        <!-- Idem per picks_blu e bans_blu -->
-                                      </div>
+                                        </tbody>
+                                      </table>
                                     </div>
 
-                                    <hr>
-                                    <!-- Roster -->
-                                    <div class="row">
-                                      <div class="col-md-6">
-                                        <h6 class="text-danger">Roster Rosso</h6>
-                                        <table class="table table-dark table-sm">
-                                          <thead>
-                                            <tr><th>Giocatore</th><th>Campione</th><th>K/D/A</th><th>KDA</th></tr>
-                                          </thead>
-                                          <tbody>
-                                            {% for r in match.roster_rossa %}
-                                            <tr>
-                                              <td>{{ r.giocatore_nome }}</td>
-                                              <td>
-                                                {% if r.campione_img %}
-                                                  <img src="{{ r.campione_img }}" alt="Campione"
-                                                       style="width:20px;height:20px;object-fit:cover;border-radius:50%;">
-                                                {% endif %}
-                                                {{ r.campione_nome }}
-                                              </td>
-                                              <td>{{ r.kills }}/{{ r.deaths }}/{{ r.assists }}</td>
-                                              <td>{{ r.kda }}</td>
-                                            </tr>
-                                            {% endfor %}
-                                          </tbody>
-                                        </table>
-                                      </div>
-
-                                      <div class="col-md-6">
-                                        <h6 class="text-primary">Roster Blu</h6>
-                                        <!-- Tabella analoga per roster_blu -->
-                                      </div>
+                                    <!-- Roster Blu -->
+                                    <div class="col-md-6">
+                                      <h6 class="text-primary">Roster Blu</h6>
+                                      <table class="table table-dark table-sm align-middle">
+                                        <thead>
+                                          <tr>
+                                            <th>Giocatore</th>
+                                            <th>Campione</th>
+                                            <th>K/D/A</th>
+                                            <th>KDA</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          {% for r in match.roster_blu %}
+                                          <tr>
+                                            <td>{{ r.giocatore_nome }}</td>
+                                            <td>
+                                              {% if r.campione_img %}
+                                                <img src="{{ r.campione_img }}" alt="campione" style="width:20px;height:20px;object-fit:cover;border-radius:50%;">
+                                              {% endif %}
+                                              {{ r.campione_nome }}
+                                            </td>
+                                            <td>{{ r.kills }}/{{ r.deaths }}/{{ r.assists }}</td>
+                                            <td>{{ r.kda }}</td>
+                                          </tr>
+                                          {% endfor %}
+                                        </tbody>
+                                      </table>
                                     </div>
-
-                                    <hr>
-                                    <!-- MVP e altri dati -->
-                                    <p>
-                                      <strong>MVP:</strong> {{ match.mvp }} |
-                                      <strong>Atakhan:</strong> {{ match.atakhan }} |
-                                      <strong>Anima:</strong> {{ match.anima }}
-                                    </p>
                                   </div>
-                                </div> <!-- Fine collapse match -->
+
+                                  <hr>
+
+                                  <!-- MVP e altri -->
+                                  <p>
+                                    <strong>MVP:</strong> {{ match.mvp }} |
+                                    <strong>Atakhan:</strong> {{ match.atakhan }} |
+                                    <strong>Anima:</strong> {{ match.anima }}
+                                  </p>
+                                </div>
+                              </div>
                               {% endfor %}
                             </div>
-
-                            
-                          </div> <!-- /col-12 -->
-                        </div> <!-- /row mt-4 - Partite del torneo -->
+                          </div>
+                        </div>
 
                       </div> <!-- /card-body -->
                     </div> <!-- /card bg-secondary text-light mb-3 -->
