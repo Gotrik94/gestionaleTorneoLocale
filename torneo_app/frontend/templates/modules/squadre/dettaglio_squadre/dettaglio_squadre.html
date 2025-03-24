@@ -116,6 +116,7 @@
         <th>Data iscrizione</th>
         <th>Stato</th>
         <th>Top 3 pick</th>
+        <th class="text-center align-middle">Scheda Giocatore</th>
       </tr>
     </thead>
     <tbody>
@@ -147,6 +148,12 @@
           {% else %}
             Nessun pick registrato
           {% endif %}
+        </td>
+        <td class="text-center align-middle">
+            <a href="{}" class="text-warning"
+               data-bs-toggle="tooltip" data-bs-placement="top" title="Scheda Giocatore">
+                <i class="bi bi-person-vcard-fill"></i>
+            </a>
         </td>
       </tr>
       {% empty %}

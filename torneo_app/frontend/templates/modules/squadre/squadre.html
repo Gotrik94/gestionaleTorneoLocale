@@ -95,35 +95,42 @@
 
 
 <!-- Overlay della Modale -->
-<!-- MODALE NUOVA SQUADRA -->
-<div class="modal fade" id="nuovaSquadraModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content bg-dark text-light">
-            <div class="modal-header">
-                <h5 class="modal-title text-warning">Crea Nuova Squadra</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div class="mb-3">
-                    <label for="nomeSquadra" class="form-label">Nome Squadra</label>
-                    <input type="text" class="form-control" id="nomeSquadra" placeholder="Inserisci il nome">
-                </div>
-                <div class="mb-3">
-                    <label for="logoSquadra" class="form-label">Logo Squadra</label>
-                    <input type="file" class="form-control" id="logoSquadra">
-                </div>
-                <div class="mb-3">
-                    <label for="dataIscrizione" class="form-label">Data Iscrizione</label>
-                    <input type="date" class="form-control" id="dataIscrizione">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
-                <button type="button" class="btn btn-warning" onclick="creaNuovaSquadra()">Crea</button>
-            </div>
+<!-- Modale per Crea Nuova Squadra -->
+<div class="modal fade" id="openCreateSquadraModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content bg-dark text-light">
+      <div class="modal-header">
+        <h5 class="modal-title text-warning">Crea Nuova Squadra</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="nomeSquadra" class="form-label">Nome Squadra</label>
+          <input type="text" class="form-control" id="nomeSquadra" placeholder="Inserisci il nome">
         </div>
+        <div class="mb-3">
+          <label for="logoSquadra" class="form-label">Logo Squadra</label>
+          <input type="file" class="form-control" id="logoSquadra">
+        </div>
+        <div class="mb-3">
+          <label for="dataIscrizione" class="form-label">Data Iscrizione</label>
+          <input type="date" class="form-control" id="dataIscrizione">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <!-- Bottone Annulla -->
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Annulla
+        </button>
+        <!-- Bottone Crea (NOTA: nessun onclick inline) -->
+        <button type="button" class="btn btn-warning" id="btnCreaSquadra">
+          Crea
+        </button>
+      </div>
     </div>
+  </div>
 </div>
+
 
 
 

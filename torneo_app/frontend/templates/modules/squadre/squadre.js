@@ -176,4 +176,71 @@ document.addEventListener("DOMContentLoaded", function () {
         window.location.href = `/squadre/dettaglio/${squadraId}/`;
     }
 
+      // 🔹 Bottone "Crea" dentro la modale
+  const creaSquadraButton = document.getElementById("btnCreaSquadra");
+  if (creaSquadraButton) {
+    creaSquadraButton.addEventListener("click", () => {
+      creaNuovaSquadra();
+    });
+  }
+
+  // 🔹 Funzione per aprire la modale di creazione (richiamata da onclick nel template)
+  window.openCreateSquadraModal = function () {
+    const modal = new bootstrap.Modal(document.getElementById("openCreateSquadraModal"));
+    modal.show();
+  };
+
+  // 🔹 Funzione per creare nuova squadra
+  function creaNuovaSquadra() {
+    const nome = document.getElementById("nomeSquadra").value;
+    const logoInput = document.getElementById("logoSquadra");
+    const dataIscrizione = document.getElementById("dataIscrizione").value;
+    const logoFile = logoInput.files.length > 0 ? logoInput.files[0] : null;
+
+    if (!nome || !dataIscrizione || !logoFile) {
+        Swal.fire({
+            icon: "error",
+            title: "Errore!",
+            text: "Compila tutti i campi e seleziona un logo!"
+        });
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("nome", nome);
+    formData.append("data_iscrizione", dataIscrizione);
+    formData.append("logo", logoFile);
+
+    fetch("/api/squadre/crea_squadra/", {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": getCSRFToken()
+      },
+      body: formData
+    })
+      .then((res) => res.json())
+      .then(data => {
+             Swal.fire({
+                 icon: 'success',
+                 title: 'Squadra Creata!',
+                 text: 'La squadra è stata aggiunta con successo.',
+                 timer: 2500,
+                 showConfirmButton: false
+             });
+             setTimeout(() => location.reload(), 1500);
+         })
+         .catch(error => {
+             console.error('Errore:', error);
+             Swal.fire({
+                 icon: 'error',
+                 title: 'Errore!',
+                 text: 'Errore nella creazione della squadra.'
+             });
+             console.error("Errore:", error);
+             Swal.fire({ icon: "error", title: "Errore!", text: "Errore nella creazione della squadra." });
+         });
+  }
+
+
+
 });
