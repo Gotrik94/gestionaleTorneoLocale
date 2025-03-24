@@ -388,5 +388,223 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
+    document.querySelectorAll('canvas[id^="graficoGoldDamage-"]').forEach(canvas => {
+      try {
+        const id = canvas.id.split('-')[1];
+        let statsRossa = {};
+        let statsBlu = {};
+
+        try {
+          statsRossa = JSON.parse(canvas.dataset.rossa);
+        } catch (e) {
+          console.error("❌ Errore nel parsing data-rossa (GoldDamage):", canvas.dataset.rossa, e);
+        }
+        try {
+          statsBlu = JSON.parse(canvas.dataset.blu);
+        } catch (e) {
+          console.error("❌ Errore nel parsing data-blu (GoldDamage):", canvas.dataset.blu, e);
+        }
+
+        const nomeRossa = canvas.dataset.nomeRossa || "Team Rossa";
+        const nomeBlu = canvas.dataset.nomeBlu || "Team Blu";
+        const ctx = canvas.getContext("2d");
+
+        new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels: ["Gold", "Damage"],
+            datasets: [
+              {
+                label: nomeRossa,
+                data: [statsRossa.gold, statsRossa.danno],
+                backgroundColor: "rgba(255,99,132,0.6)",
+                borderColor: "rgba(255,99,132,1)",
+                borderWidth: 1
+              },
+              {
+                label: nomeBlu,
+                data: [statsBlu.gold, statsBlu.danno],
+                backgroundColor: "rgba(54,162,235,0.6)",
+                borderColor: "rgba(54,162,235,1)",
+                borderWidth: 1
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { labels: { color: "#fff" } },
+              title: {
+                display: true,
+                text: `Gold e Danni: ${nomeRossa} vs ${nomeBlu}`,
+                color: "#fff"
+              }
+            },
+            scales: {
+              x: { ticks: { color: "#fff" }, grid: { color: "rgba(255,255,255,0.1)" } },
+              y: { beginAtZero: true, ticks: { color: "#fff" }, grid: { color: "rgba(255,255,255,0.1)" } }
+            }
+          }
+        });
+      } catch (e) {
+        console.error("❌ Errore nel rendering del grafico Gold & Damage:", e);
+      }
+    });
+    document.querySelectorAll('canvas[id^="graficoObiettivi-"]').forEach(canvas => {
+      try {
+        const statsRossa = JSON.parse(canvas.dataset.rossa);
+        const statsBlu = JSON.parse(canvas.dataset.blu);
+        const nomeRossa = canvas.dataset.nomeRossa || "Rossa";
+        const nomeBlu = canvas.dataset.nomeBlu || "Blu";
+        const ctx = canvas.getContext("2d");
+
+        new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels: ["Towers", "Drakes", "Elder", "Barons"],
+            datasets: [
+              {
+                label: nomeRossa,
+                data: [statsRossa.torri, statsRossa.draghi, statsRossa.anziani, statsRossa.baroni],
+                backgroundColor: "rgba(255,99,132,0.6)",
+                borderColor: "rgba(255,99,132,1)",
+                borderWidth: 1
+              },
+              {
+                label: nomeBlu,
+                data: [statsBlu.torri, statsBlu.draghi, statsBlu.anziani, statsBlu.baroni],
+                backgroundColor: "rgba(54,162,235,0.6)",
+                borderColor: "rgba(54,162,235,1)",
+                borderWidth: 1
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              title: {
+                display: true,
+                text: `Obiettivi: ${nomeRossa} vs ${nomeBlu}`,
+                color: "#fff"
+              },
+              legend: { labels: { color: "#fff" } }
+            },
+            scales: {
+              x: { ticks: { color: "#fff" }, grid: { color: "rgba(255,255,255,0.1)" } },
+              y: { beginAtZero: true, ticks: { color: "#fff" }, grid: { color: "rgba(255,255,255,0.1)" } }
+            }
+          }
+        });
+      } catch (e) {
+        console.error("❌ Errore rendering grafico Obiettivi:", e);
+      }
+    });
+    document.querySelectorAll('canvas[id^="graficoKDA-"]').forEach(canvas => {
+      try {
+        const statsRossa = JSON.parse(canvas.dataset.rossa);
+        const statsBlu = JSON.parse(canvas.dataset.blu);
+        const nomeRossa = canvas.dataset.nomeRossa || "Rossa";
+        const nomeBlu = canvas.dataset.nomeBlu || "Blu";
+        const ctx = canvas.getContext("2d");
+
+        new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels: ["Kills", "Deaths", "Assists"],
+            datasets: [
+              {
+                label: nomeRossa,
+                data: [statsRossa.kills, statsRossa.deaths, statsRossa.assists],
+                backgroundColor: "rgba(255,99,132,0.6)",
+                borderColor: "rgba(255,99,132,1)",
+                borderWidth: 1
+              },
+              {
+                label: nomeBlu,
+                data: [statsBlu.kills, statsBlu.deaths, statsBlu.assists],
+                backgroundColor: "rgba(54,162,235,0.6)",
+                borderColor: "rgba(54,162,235,1)",
+                borderWidth: 1
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              title: {
+                display: true,
+                text: `KDA: ${nomeRossa} vs ${nomeBlu}`,
+                color: "#fff"
+              },
+              legend: { labels: { color: "#fff" } }
+            },
+            scales: {
+              x: { ticks: { color: "#fff" }, grid: { color: "rgba(255,255,255,0.1)" } },
+              y: { beginAtZero: true, ticks: { color: "#fff" }, grid: { color: "rgba(255,255,255,0.1)" } }
+            }
+          }
+        });
+      } catch (e) {
+        console.error("❌ Errore rendering grafico KDA:", e);
+      }
+    });
+
+    document.querySelectorAll('canvas[id^="graficoVisione-"]').forEach(canvas => {
+      try {
+        const ctx = canvas.getContext("2d");
+        const statsRossa = JSON.parse(canvas.dataset.rossa);
+        const statsBlu = JSON.parse(canvas.dataset.blu);
+        const nomeRossa = canvas.dataset.nomeRossa || "Team Rossa";
+        const nomeBlu = canvas.dataset.nomeBlu || "Team Blu";
+
+        new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels: ["Vision Score", "Wards Placed", "Wards Destroyed"],
+            datasets: [
+              {
+                label: nomeRossa,
+                data: [
+                  statsRossa.vision_score || 0,
+                  statsRossa.ward_placed || 0,
+                  statsRossa.ward_destroyed || 0
+                ],
+                backgroundColor: "rgba(255,99,132,0.6)",
+                borderColor: "rgba(255,99,132,1)",
+                borderWidth: 1
+              },
+              {
+                label: nomeBlu,
+                data: [
+                  statsBlu.vision_score || 0,
+                  statsBlu.ward_placed || 0,
+                  statsBlu.ward_destroyed || 0
+                ],
+                backgroundColor: "rgba(54,162,235,0.6)",
+                borderColor: "rgba(54,162,235,1)",
+                borderWidth: 1
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              title: {
+                display: true,
+                text: `Visione: ${nomeRossa} vs ${nomeBlu}`,
+                color: "#fff"
+              },
+              legend: { labels: { color: "#fff" } }
+            },
+            scales: {
+              x: { ticks: { color: "#fff" }, grid: { color: "rgba(255,255,255,0.1)" } },
+              y: { beginAtZero: true, ticks: { color: "#fff" }, grid: { color: "rgba(255,255,255,0.1)" } }
+            }
+          }
+        });
+      } catch (e) {
+        console.error("❌ Errore rendering grafico Visione:", e);
+      }
+    });
 
 });

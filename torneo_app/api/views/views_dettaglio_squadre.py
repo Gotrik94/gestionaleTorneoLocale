@@ -3,6 +3,7 @@ import json
 from collections import defaultdict, Counter
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q, Sum, Count
+
 from backend.models.squadra import Squadra
 from backend.models.iscrizione import Iscrizione
 from backend.models.torneo import Torneo
@@ -30,7 +31,7 @@ def dettaglio_squadra(request, squadra_id):
     pareggi = partite.filter(vincitore__isnull=True).count()
     sconfitte = partite.count() - vittorie - pareggi
 
-    # Draghi e baroni totali (per curiosità)
+    # Totale draghi e baroni (curiosità)
     draghi = partite.aggregate(Sum('draghi_rossa'), Sum('draghi_blu'))
     baroni = partite.aggregate(Sum('baroni_rossa'), Sum('baroni_blu'))
     draghi_totali = sum(v for v in draghi.values() if v)
@@ -70,7 +71,6 @@ def dettaglio_squadra(request, squadra_id):
             camp = Campione.objects.filter(id=s_item['campione_usato_id']).first()
             if camp:
                 top_picks_per_giocatore[s_item['giocatore_id']].append((camp, s_item['n']))
-
     for g in giocatori:
         setattr(g, 'top_picks', top_picks_per_giocatore.get(g.id, []))
 
@@ -89,23 +89,18 @@ def dettaglio_squadra(request, squadra_id):
     andamento_vittorie = []
     andamento_obiettivi = []
     date_labels = []
-
     for p in ultime_10_partite:
         stats_p = StatisticheGiocatorePartita.objects.filter(partita=p, giocatore__squadra=squadra)
         kills = sum(sp.kills for sp in stats_p)
         deaths = sum(sp.deaths for sp in stats_p)
         assists = sum(sp.assists for sp in stats_p)
-
         kda_partita = round((kills + assists) / max(1, deaths), 2)
-
         if p.vincitore == squadra:
             esito = 1
         elif p.vincitore is None:
             esito = 0
         else:
             esito = -1
-
-        # Obiettivi
         if p.squadra_rossa == squadra:
             obj = p.draghi_rossa + p.baroni_rossa + p.araldo_rossa + p.drago_anziano_rossa
             if p.atakhan_taken == squadra:
@@ -116,7 +111,6 @@ def dettaglio_squadra(request, squadra_id):
             if p.atakhan_taken == squadra:
                 obj += 1
             obj += sum(sp.torri_distrutte for sp in stats_p)
-
         andamento_kda.append(kda_partita)
         andamento_vittorie.append(esito)
         andamento_obiettivi.append(obj)
@@ -124,15 +118,12 @@ def dettaglio_squadra(request, squadra_id):
 
     # 7) Costruiamo un dizionario “dettagli” per ogni torneo
     dettagli_torneo_per_squadra = {}
-
     for torneo in tornei_partecipati:
         partite_t = (Partita.objects
                      .filter(torneo=torneo)
                      .filter(Q(squadra_rossa=squadra) | Q(squadra_blu=squadra))
                      .order_by('numero_partita_nella_serie', 'data_evento'))
         stats_t = StatisticheGiocatorePartita.objects.filter(partita__in=partite_t, giocatore__squadra=squadra)
-
-        # MVP e pick/ban
         mvp_t = Counter(p.mvp.nome for p in partite_t if p.mvp and p.mvp.squadra == squadra)
         pick_t = (PickBanPartita.objects
                   .filter(partita__in=partite_t, squadra=squadra, tipo='pick')
@@ -140,31 +131,25 @@ def dettaglio_squadra(request, squadra_id):
                   .annotate(c=Count('id'))
                   .order_by('-c')[:5])
         top_picks_t = [{'campione': Campione.objects.get(id=x['campione_id']), 'num_picks': x['c']} for x in pick_t]
-
         ban_t = (PickBanPartita.objects
                  .filter(partita__in=partite_t, squadra=squadra, tipo='ban')
                  .values('campione_id')
                  .annotate(c=Count('id'))
                  .order_by('-c')[:5])
         top_bans_t = [{'campione': Campione.objects.get(id=b['campione_id']), 'num_bans': b['c']} for b in ban_t]
-
-        # Best players
         dps = stats_t.order_by('-danni_totali_campioni').first()
         tank = stats_t.order_by('-danni_presi_totali').first()
         visione = stats_t.order_by('-punteggio_visione').first()
-
-        # GPM
-        gpm_sorted = sorted(stats_t,
-                            key=lambda s: (s.oro_totale or 0) / max(1, s.partita.durata_minuti or 1),
-                            reverse=True)
+        gpm_sorted = sorted(
+            stats_t,
+            key=lambda s: (s.oro_totale or 0) / max(1, s.partita.durata_minuti or 1),
+            reverse=True
+        )
         best_gpm = gpm_sorted[0] if gpm_sorted else None
-
-        # first blood
         first = stats_t.filter(primo_sangue=True).count()
         tot_fs = stats_t.filter(primo_sangue__isnull=False).count()
         first_blood_pct = round((first / tot_fs) * 100, 2) if tot_fs else 0
 
-        # Grafico obiettivi
         ob_graph_raw = []
         for pz in partite_t:
             s_qs = StatisticheGiocatorePartita.objects.filter(partita=pz, giocatore__squadra=squadra)
@@ -187,13 +172,10 @@ def dettaglio_squadra(request, squadra_id):
             'atakhan': json.dumps([x['atakhan'] for x in ob_graph_raw]),
         }
 
-        # Andamento prestazioni per singolo torneo
         andamento_kda_t = []
         andamento_vittorie_t = []
         andamento_obiettivi_t = []
         date_labels_t = []
-
-        # COSTRUIAMO anche la LISTA “partite_dettaglio” SPECIFICA per questo torneo
         arr_partite_enriched = []
 
         for pt in partite_t:
@@ -202,15 +184,12 @@ def dettaglio_squadra(request, squadra_id):
             deaths = sum(sg.deaths for sg in stats_squadra)
             assists = sum(sg.assists for sg in stats_squadra)
             kda_calc = round((kills + assists) / max(1, deaths), 2)
-
             if pt.vincitore == squadra:
                 esito = "win"
             elif pt.vincitore is None:
                 esito = "draw"
             else:
                 esito = "loss"
-
-            # Calcolo obiettivi
             if pt.squadra_rossa == squadra:
                 obj = pt.draghi_rossa + pt.baroni_rossa + pt.araldo_rossa + pt.drago_anziano_rossa
                 if pt.atakhan_taken == squadra:
@@ -221,22 +200,18 @@ def dettaglio_squadra(request, squadra_id):
                 if pt.atakhan_taken == squadra:
                     obj += 1
                 obj += sum(sg.torri_distrutte for sg in stats_squadra)
-
             andamento_kda_t.append(kda_calc)
             andamento_vittorie_t.append(1 if esito == "win" else (0 if esito == "draw" else -1))
             andamento_obiettivi_t.append(obj)
             date_labels_t.append(pt.data_evento.strftime("%d/%m"))
 
-            # Arricchiamo con loghi, picks, bans, roster
             logo_rossa = pt.squadra_rossa.logo.url if pt.squadra_rossa.logo else None
             logo_blu = pt.squadra_blu.logo.url if pt.squadra_blu.logo else None
-
             picks_rossa = PickBanPartita.objects.filter(partita=pt, squadra=pt.squadra_rossa, tipo='pick').order_by('ordine')
             picks_blu = PickBanPartita.objects.filter(partita=pt, squadra=pt.squadra_blu, tipo='pick').order_by('ordine')
             bans_rossa = PickBanPartita.objects.filter(partita=pt, squadra=pt.squadra_rossa, tipo='ban').order_by('ordine')
             bans_blu = PickBanPartita.objects.filter(partita=pt, squadra=pt.squadra_blu, tipo='ban').order_by('ordine')
 
-            # Roster
             def build_roster(qs):
                 data_r = []
                 for st in qs:
@@ -253,28 +228,19 @@ def dettaglio_squadra(request, squadra_id):
 
             roster_rossa_raw = StatisticheGiocatorePartita.objects.filter(partita=pt, giocatore__squadra=pt.squadra_rossa)
             roster_blu_raw = StatisticheGiocatorePartita.objects.filter(partita=pt, giocatore__squadra=pt.squadra_blu)
-
             roster_rossa = build_roster(roster_rossa_raw)
             roster_blu = build_roster(roster_blu_raw)
 
-            # Esempio di stats team rosso
             kills_rossa = sum(st.kills for st in roster_rossa_raw)
             deaths_rossa = sum(st.deaths for st in roster_rossa_raw)
-            # ecc.
-
-            # Esempio di stats team blu
             kills_blu = sum(st.kills for st in roster_blu_raw)
             deaths_blu = sum(st.deaths for st in roster_blu_raw)
-            # ecc.
 
-            # MVP e anima
             mvp_nome = pt.mvp.nome if pt.mvp else None
             anima_drago = pt.anima_drago_tipo
             atakhan_taken = pt.atakhan_taken.nome if pt.atakhan_taken else None
+            durata_min = pt.durata_minuti or 1
 
-            durata_min = pt.durata_minuti or 1  # fallback a 1 se None
-
-            # Creiamo il dizionario
             match_dict = {
                 "id": pt.id,
                 "data_evento": pt.data_evento,
@@ -298,7 +264,6 @@ def dettaglio_squadra(request, squadra_id):
                 "fase_torneo": pt.get_fase_torneo_display() if pt.fase_torneo else None,
                 "numero_partita_serie": pt.numero_partita_nella_serie,
                 "note": [n.testo for n in pt.note.all().order_by("-data_creazione")] if hasattr(pt, "note") else [],
-
                 "draghi_rossa": pt.draghi_rossa,
                 "baroni_rossa": pt.baroni_rossa,
                 "torri_rossa": sum(st.torri_distrutte for st in roster_rossa_raw),
@@ -306,7 +271,6 @@ def dettaglio_squadra(request, squadra_id):
                 "danno_rossa": sum(st.danni_totali_campioni for st in roster_rossa_raw),
                 "visione_rossa": sum(st.punteggio_visione for st in roster_rossa_raw),
                 "gpm_rossa": round(sum((st.oro_totale or 0) for st in roster_rossa_raw) / durata_min, 1),
-
                 "draghi_blu": pt.draghi_blu,
                 "baroni_blu": pt.baroni_blu,
                 "torri_blu": sum(st.torri_distrutte for st in roster_blu_raw),
@@ -314,11 +278,10 @@ def dettaglio_squadra(request, squadra_id):
                 "danno_blu": sum(st.danni_totali_campioni for st in roster_blu_raw),
                 "visione_blu": sum(st.punteggio_visione for st in roster_blu_raw),
                 "gpm_blu": round(sum((st.oro_totale or 0) for st in roster_blu_raw) / durata_min, 1),
-
             }
 
-            # Statistiche aggregate per visualizzazione grafica
-            match_dict["stat_rossa"] = {
+            # Aggiungiamo le stats per la visione in maniera aggregata
+            match_dict["stat_rossa_obj"] = {
                 "danno": match_dict["danno_rossa"],
                 "gold": round(match_dict["gpm_rossa"] * durata_min),
                 "kills": kills_rossa,
@@ -328,9 +291,11 @@ def dettaglio_squadra(request, squadra_id):
                 "draghi": pt.draghi_rossa,
                 "anziani": pt.drago_anziano_rossa,
                 "baroni": pt.baroni_rossa,
+                "ward_placed": sum(st.wards_piazzate or 0 for st in roster_rossa_raw),
+                "ward_destroyed": sum(st.wards_distrutte or 0 for st in roster_rossa_raw),
+                "vision_score": sum(st.punteggio_visione or 0 for st in roster_rossa_raw),
             }
-
-            match_dict["stat_blu"] = {
+            match_dict["stat_blu_obj"] = {
                 "danno": match_dict["danno_blu"],
                 "gold": round(match_dict["gpm_blu"] * durata_min),
                 "kills": kills_blu,
@@ -340,18 +305,17 @@ def dettaglio_squadra(request, squadra_id):
                 "draghi": pt.draghi_blu,
                 "anziani": pt.drago_anziano_blu,
                 "baroni": pt.baroni_blu,
+                "ward_placed": sum(st.wards_piazzate or 0 for st in roster_blu_raw),
+                "ward_destroyed": sum(st.wards_distrutte or 0 for st in roster_blu_raw),
+                "vision_score": sum(st.punteggio_visione or 0 for st in roster_blu_raw),
             }
 
-            import pprint
-            pp = pprint.PrettyPrinter(indent=2)
-
-            print(f"\n--- [DEBUG] Match ID: {pt.id} ---")
-            pp.pprint(match_dict)
-            print("---" * 10)
+            # Convertiamo in JSON per il front-end
+            match_dict["stat_rossa"] = json.dumps(match_dict["stat_rossa_obj"])
+            match_dict["stat_blu"]   = json.dumps(match_dict["stat_blu_obj"])
 
             arr_partite_enriched.append(match_dict)
 
-        # Salviamo la lista arricchita
         dettagli_torneo_per_squadra[torneo.id] = {
             'partite': partite_t,
             'mvp': dict(mvp_t),
@@ -369,23 +333,18 @@ def dettaglio_squadra(request, squadra_id):
                 'partite': partite_t.count(),
                 'vittorie': partite_t.filter(vincitore=squadra).count(),
                 'pareggi': partite_t.filter(vincitore__isnull=True).count(),
-                'sconfitte': partite_t.count()
-                             - partite_t.filter(vincitore=squadra).count()
-                             - partite_t.filter(vincitore__isnull=True).count()
+                'sconfitte': partite_t.count() - partite_t.filter(vincitore=squadra).count() - partite_t.filter(vincitore__isnull=True).count()
             },
             'andamento_kda': andamento_kda_t,
             'andamento_vittorie': andamento_vittorie_t,
             'andamento_obiettivi': andamento_obiettivi_t,
             'date_labels': json.dumps(date_labels_t),
-            # La lista di partite "arricchite" di loghi, pick, ban ecc.
             'partite_dettaglio': arr_partite_enriched
         }
 
-    # Assegno i dettagli a ogni torneo
     for t in tornei_partecipati:
         t.dettagli = dettagli_torneo_per_squadra.get(t.id, {})
 
-    # Costruzione context
     context = {
         'squadra': squadra,
         'tornei_partecipati': tornei_partecipati,

@@ -655,100 +655,145 @@
 
                                   <!-- Statistiche Team - Confronto -->
                                   <div class="row text-center mb-4">
-
                                     <!-- STATS -->
                                     <div class="col-md-12">
                                       <div class="row bg-dark rounded text-light p-3 mb-4">
+                                        <div class="row mb-3">
+                                          <div class="col-md-5 text-end text-danger fw-bold">
+                                            <i class="fas fa-skull"></i> {{ match.stat_rossa_obj.kills }} / {{ match.stat_rossa_obj.deaths }} / {{ match.stat_rossa_obj.assists }}
+                                          </div>
+                                          <div class="col-md-2 text-center">
+                                            <span class="badge bg-dark">KDA</span>
+                                          </div>
+                                          <div class="col-md-5 text-start text-primary fw-bold">
+                                            <i class="fas fa-skull"></i> {{ match.stat_blu_obj.kills }} / {{ match.stat_blu_obj.deaths }} / {{ match.stat_blu_obj.assists }}
+                                          </div>
+                                        </div>
 
                                         <div class="row mb-3">
                                           <div class="col-md-5 text-end text-danger fw-bold">
-                                              <i class="fas fa-skull"></i> {{ match.stat_rossa.kills }} / {{ match.stat_rossa.deaths }} / {{ match.stat_rossa.assists }}
+                                            <i class="fas fa-fire"></i> {{ match.stat_rossa_obj.danno|intcomma }}
                                           </div>
                                           <div class="col-md-2 text-center">
-                                              <span class="badge bg-dark">KDA</span>
+                                            <span class="badge bg-dark">Damage</span>
                                           </div>
                                           <div class="col-md-5 text-start text-primary fw-bold">
-                                              <i class="fas fa-skull"></i> {{ match.stat_blu.kills }} / {{ match.stat_blu.deaths }} / {{ match.stat_blu.assists }}
+                                            <i class="fas fa-fire"></i> {{ match.stat_blu_obj.danno|intcomma }}
                                           </div>
-                                      </div>
+                                        </div>
 
-                                      <div class="row mb-3">
+                                        <div class="row mb-3">
                                           <div class="col-md-5 text-end text-danger fw-bold">
-                                              <i class="fas fa-fire"></i> {{ match.stat_rossa.danno|intcomma }}
+                                            <i class="fas fa-coins"></i> {{ match.stat_rossa_obj.gold|intcomma }}
                                           </div>
                                           <div class="col-md-2 text-center">
-                                              <span class="badge bg-dark">Damage</span>
+                                            <span class="badge bg-dark">Gold</span>
                                           </div>
                                           <div class="col-md-5 text-start text-primary fw-bold">
-                                              <i class="fas fa-fire"></i> {{ match.stat_blu.danno|intcomma }}
+                                            <i class="fas fa-coins"></i> {{ match.stat_blu_obj.gold|intcomma }}
                                           </div>
-                                      </div>
+                                        </div>
 
-                                      <div class="row mb-3">
+                                        <div class="row mb-3">
                                           <div class="col-md-5 text-end text-danger fw-bold">
-                                              <i class="fas fa-coins"></i> {{ match.stat_rossa.gold|intcomma }}
+                                            <i class="fas fa-tower"></i> {{ match.stat_rossa_obj.torri|intcomma }}
                                           </div>
                                           <div class="col-md-2 text-center">
-                                              <span class="badge bg-dark">Gold</span>
+                                            <span class="badge bg-dark">Towers</span>
                                           </div>
                                           <div class="col-md-5 text-start text-primary fw-bold">
-                                              <i class="fas fa-coins"></i> {{ match.stat_blu.gold|intcomma }}
+                                            <i class="fas fa-tower"></i> {{ match.stat_blu_obj.torri|intcomma }}
                                           </div>
-                                      </div>
+                                        </div>
 
-                                      <div class="row mb-3">
+                                        <div class="row mb-3">
                                           <div class="col-md-5 text-end text-danger fw-bold">
-                                              <i class="fas fa-tower"></i> {{ match.stat_rossa.torri|intcomma }}
+                                            <i class="fas fa-dragon"></i> {{ match.stat_rossa_obj.draghi|intcomma }}
                                           </div>
                                           <div class="col-md-2 text-center">
-                                              <span class="badge bg-dark">Towers</span>
+                                            <span class="badge bg-dark">Drakes</span>
                                           </div>
                                           <div class="col-md-5 text-start text-primary fw-bold">
-                                              <i class="fas fa-tower"></i> {{ match.stat_blu.torri|intcomma }}
+                                            <i class="fas fa-dragon"></i> {{ match.stat_blu_obj.draghi|intcomma }}
                                           </div>
-                                      </div>
+                                        </div>
 
-                                      <div class="row mb-3">
+                                        <div class="row mb-3">
                                           <div class="col-md-5 text-end text-danger fw-bold">
-                                              <i class="fas fa-dragon"></i> {{ match.stat_rossa.draghi|intcomma }}
+                                            <i class="fas fa-dragon"></i> {{ match.stat_rossa_obj.anziani|intcomma }}
                                           </div>
                                           <div class="col-md-2 text-center">
-                                              <span class="badge bg-dark">Drakes</span>
+                                            <span class="badge bg-dark">Elder Dragons</span>
                                           </div>
                                           <div class="col-md-5 text-start text-primary fw-bold">
-                                              <i class="fas fa-dragon"></i> {{ match.stat_blu.draghi|intcomma }}
+                                            <i class="fas fa-dragon"></i> {{ match.stat_blu_obj.anziani|intcomma }}
                                           </div>
-                                      </div>
+                                        </div>
 
-                                      <div class="row mb-3">
+                                        <div class="row mb-3">
                                           <div class="col-md-5 text-end text-danger fw-bold">
-                                              <i class="fas fa-dragon"></i> {{ match.stat_rossa.anziani|intcomma }}
+                                            <i class="fas fa-crown"></i> {{ match.stat_rossa_obj.baroni|intcomma }}
                                           </div>
                                           <div class="col-md-2 text-center">
-                                              <span class="badge bg-dark">Elder Dragons</span>
+                                            <span class="badge bg-dark">Barons</span>
                                           </div>
                                           <div class="col-md-5 text-start text-primary fw-bold">
-                                              <i class="fas fa-dragon"></i> {{ match.stat_blu.anziani|intcomma }}
+                                            <i class="fas fa-crown"></i> {{ match.stat_blu_obj.baroni|intcomma }}
                                           </div>
-                                      </div>
+                                        </div>
 
-                                      <div class="row mb-3">
-                                          <div class="col-md-5 text-end text-danger fw-bold">
-                                              <i class="fas fa-crown"></i> {{ match.stat_rossa.baroni|intcomma }}
-                                          </div>
-                                          <div class="col-md-2 text-center">
-                                              <span class="badge bg-dark">Barons</span>
-                                          </div>
-                                          <div class="col-md-5 text-start text-primary fw-bold">
-                                              <i class="fas fa-crown"></i> {{ match.stat_blu.baroni|intcomma }}
-                                          </div>
-                                      </div>
 
                                       </div>
 
                                     </div>
                                   </div>
                                   <hr>
+                                  <!-- PRIMA RIGA: KDA + Gold/Damage -->
+                                  <div class="row mt-4">
+                                    <!-- KDA -->
+                                    <div class="col-md-6 mb-4">
+                                      <canvas id="graficoKDA-{{ match.id }}"
+                                              data-rossa='{{ match.stat_rossa|safe }}'
+                                              data-blu='{{ match.stat_blu|safe }}'
+                                              data-nome-rossa="{{ match.squadra_rossa }}"
+                                              data-nome-blu="{{ match.squadra_blu }}">
+                                      </canvas>
+                                    </div>
+
+                                    <!-- Gold e Damage -->
+                                    <div class="col-md-6 mb-4">
+                                      <canvas id="graficoGoldDamage-{{ match.id }}"
+                                              data-rossa='{{ match.stat_rossa|safe }}'
+                                              data-blu='{{ match.stat_blu|safe }}'
+                                              data-nome-rossa="{{ match.squadra_rossa }}"
+                                              data-nome-blu="{{ match.squadra_blu }}">
+                                      </canvas>
+                                    </div>
+                                  </div>
+
+                                  <!-- SECONDA RIGA: Obiettivi + Visione -->
+                                  <div class="row mb-4">
+                                    <!-- Obiettivi -->
+                                    <div class="col-md-6 mb-4">
+                                      <canvas id="graficoObiettivi-{{ match.id }}"
+                                              data-rossa='{{ match.stat_rossa|safe }}'
+                                              data-blu='{{ match.stat_blu|safe }}'
+                                              data-nome-rossa="{{ match.squadra_rossa }}"
+                                              data-nome-blu="{{ match.squadra_blu }}">
+                                      </canvas>
+                                    </div>
+
+                                    <!-- Visione -->
+                                    <div class="col-md-6 mb-4">
+                                      <canvas  id="graficoVisione-{{ match.id }}"
+                                        data-rossa='{{ match.stat_rossa|safe }}'
+                                        data-blu='{{ match.stat_blu|safe }}'
+                                        data-nome-rossa="{{ match.squadra_rossa }}"
+                                        data-nome-blu="{{ match.squadra_blu }}">
+                                      </canvas>
+                                    </div>
+                                  </div>
+
 
 
                                 </div>
