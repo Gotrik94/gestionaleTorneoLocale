@@ -241,6 +241,108 @@ document.addEventListener("DOMContentLoaded", function () {
          });
   }
 
+    // PAGINAZIONE CLIENT-SIDE
+    const itemsPerPage = 6;
+    let currentPage = 1;
+
+    function mostraPagina(pagina) {
+        const tutteLeCard = document.querySelectorAll("#squadreContainer .col-md-4");
+        const cardCrea = document.querySelector("#creaSquadraCard")?.closest(".col-md-4");
+        const squadreCards = Array.from(tutteLeCard).filter(col => col !== cardCrea);
+
+        const isPrimaPagina = pagina === 1;
+        const itemsDaMostrare = isPrimaPagina ? itemsPerPage - 1 : itemsPerPage;
+        const start = (pagina - 1) * itemsPerPage;
+        const end = start + itemsDaMostrare;
+
+        squadreCards.forEach((card, i) => {
+            card.style.display = (i >= start && i < end) ? "flex" : "none";
+        });
+
+        // Card 'Crea Squadra' solo in prima pagina
+        if (cardCrea) {
+            cardCrea.style.display = isPrimaPagina ? "flex" : "none";
+        }
+
+        aggiornaPaginazione(squadreCards.length, pagina);
+    }
+
+
+    function aggiornaPaginazione(totale, paginaCorrente) {
+        const pagination = document.getElementById("pagination");
+        pagination.innerHTML = "";
+        const pageCount = Math.ceil(totale / itemsPerPage);
+
+        if (pageCount <= 1) return; // se c'è solo una pagina, non mostrare
+
+        for (let i = 1; i <= pageCount; i++) {
+            const li = document.createElement("li");
+            li.className = `page-item ${i === paginaCorrente ? "active" : ""}`;
+            li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+            li.addEventListener("click", function (e) {
+                e.preventDefault();
+                currentPage = i;
+                mostraPagina(currentPage);
+            });
+            pagination.appendChild(li);
+        }
+    }
+
+        window.addEventListener("load", () => {
+            console.log("🔁 Paginazione attivata");
+            mostraPagina(currentPage);
+        });
+
+        function aggiornaPaginazione(totale, paginaCorrente) {
+        const pagination = document.getElementById("pagination");
+        pagination.innerHTML = "";
+        const pageCount = Math.ceil(totale / itemsPerPage);
+
+        if (pageCount <= 1) return;
+
+        // Pulsante Precedente
+        const prevLi = document.createElement("li");
+        prevLi.className = `page-item ${paginaCorrente === 1 ? "disabled" : ""}`;
+        prevLi.innerHTML = `<a class="page-link" href="#">«</a>`;
+        prevLi.addEventListener("click", function (e) {
+            e.preventDefault();
+            if (currentPage > 1) {
+                currentPage--;
+                mostraPagina(currentPage);
+            }
+        });
+        pagination.appendChild(prevLi);
+
+        // Numeri di pagina
+        for (let i = 1; i <= pageCount; i++) {
+            const li = document.createElement("li");
+            li.className = `page-item ${i === paginaCorrente ? "active" : ""}`;
+            li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+            li.addEventListener("click", function (e) {
+                e.preventDefault();
+                currentPage = i;
+                mostraPagina(currentPage);
+            });
+            pagination.appendChild(li);
+        }
+
+        // Pulsante Successivo
+        const nextLi = document.createElement("li");
+        nextLi.className = `page-item ${paginaCorrente === pageCount ? "disabled" : ""}`;
+        nextLi.innerHTML = `<a class="page-link" href="#">»</a>`;
+        nextLi.addEventListener("click", function (e) {
+            e.preventDefault();
+            if (currentPage < pageCount) {
+                currentPage++;
+                mostraPagina(currentPage);
+            }
+        });
+        pagination.appendChild(nextLi);
+    }
+
+
+
+
 
 
 });
