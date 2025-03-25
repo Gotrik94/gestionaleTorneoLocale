@@ -47,7 +47,7 @@
                                 <span class="badge bg-secondary"><i class="bi bi-people"></i>&nbsp{{ torneo.squadre|length }}</span>
                             </td>
                             <td>
-                                <a href="/torneo/{{ torneo.id }}" class="btn btn-outline-warning btn-sm">👁 Dettagli</a>
+                                <a href="/tornei/dettaglio/{{ torneo.id }}" class="btn btn-outline-warning btn-sm">👁 Dettagli</a>
                                 <button class="btn btn-outline-danger btn-sm" onclick="apriModaleEliminazione({{ torneo.id }}, '{{ torneo.nome }}')">🗑 Elimina</button>
                             </td>
                             <td>
