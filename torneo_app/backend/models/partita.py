@@ -1,6 +1,8 @@
 from django.db import models
 
 from backend.models import Giocatore
+from backend.models.fase_torneo import FaseTorneo
+from backend.models.girone import Girone
 from backend.models.torneo import Torneo
 from backend.models.squadra import Squadra
 
@@ -64,10 +66,12 @@ class Partita(models.Model):
 
     # Dettagli sulla serie e fase del torneo
     modalita = models.CharField(max_length=3, choices=MODALITA_PARTITA, default='BO1')
-    fase_torneo = models.CharField(max_length=15, choices=FASI_TORNEO, default='Gruppi')
     serie_id = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name="serie_partite")
     numero_partita_nella_serie = models.IntegerField(default=1)
     conclusa = models.BooleanField(default=False)
+    fase = models.ForeignKey(FaseTorneo, on_delete=models.SET_NULL, null=True, blank=True, related_name="partite_fase")
+    girone = models.ForeignKey(Girone, on_delete=models.SET_NULL, null=True, blank=True, related_name="partite_girone")
+
 
     def __str__(self):
         return f"{self.id} {self.squadra_rossa.nome} vs {self.squadra_blu.nome} - {self.data_evento.strftime('%d-%m-%Y')}"

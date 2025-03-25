@@ -261,7 +261,7 @@ def dettaglio_squadra(request, squadra_id):
                 "anima": anima_drago,
                 "atakhan": atakhan_taken,
                 "modalita": pt.get_modalita_display() if pt.modalita else None,
-                "fase_torneo": pt.get_fase_torneo_display() if pt.fase_torneo else None,
+                "fase_torneo": pt.fase.nome if pt.fase else None,
                 "numero_partita_serie": pt.numero_partita_nella_serie,
                 "note": [n.testo for n in pt.note.all().order_by("-data_creazione")] if hasattr(pt, "note") else [],
                 "draghi_rossa": pt.draghi_rossa,

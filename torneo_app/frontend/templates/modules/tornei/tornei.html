@@ -5,6 +5,7 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'tornei/tornei.css' %}">
+<link rel="stylesheet" href="{% static 'tornei/stepper.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -95,44 +96,49 @@
 </div>
 
 <!-- Modale Creazione Nuovo Torneo -->
+<!-- Modale Creazione Torneo con Stepper -->
 <div class="modal fade" id="nuovoTorneoModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content bg-dark text-light">
             <div class="modal-header">
                 <h5 class="modal-title text-warning">Crea Nuovo Torneo</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form id="formNuovoTorneo">
-                    <div class="mb-3">
-                        <label class="form-label">Nome Torneo</label>
-                        <input type="text" id="nomeTorneo" class="form-control" placeholder="Es. Torneo Primavera 2025">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Data Inizio</label>
-                        <input type="date" id="dataInizio" class="form-control" placeholder="gg/mm/aaaa">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Data Fine</label>
-                        <input type="date" id="dataFine" class="form-control" placeholder="gg/mm/aaaa">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Fascia Oraria</label>
-                        <input type="text" id="fasciaOraria" class="form-control" placeholder="Es. 18:00 - 21:00">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Formato Torneo</label>
-                        <select id="formato" class="form-select" required>
-                            <option value="" disabled selected>Scegli...</option>
+                <div id="stepper">
+                    <!-- Step 1: Torneo -->
+                    <div class="step active" data-step="1">
+                        <h4>Dati Torneo</h4>
+                        <input type="text" id="nomeTorneo" class="form-control mb-2" placeholder="Nome Torneo">
+                        <input type="date" id="dataInizio" class="form-control mb-2">
+                        <input type="date" id="dataFine" class="form-control mb-2">
+                        <input type="text" id="fasciaOraria" class="form-control mb-2" placeholder="Fascia Oraria">
+                        <select id="formato" class="form-select mb-3">
                             <option value="DRAFT">Draft</option>
                             <option value="ARAM">ARAM</option>
                         </select>
                     </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
-                <button type="button" class="btn btn-warning" onclick="creaNuovoTorneo()">Crea Torneo</button>
+
+                    <!-- Step 2: Fasi -->
+                    <div class="step d-none" data-step="2">
+                        <h4>Fasi Torneo (opzionale)</h4>
+                        <button class="btn btn-warning mb-2" onclick="aggiungiFase()">➕ Aggiungi Fase</button>
+                        <div id="listaFasi"></div>
+                    </div>
+
+                    <!-- Step 3: Gironi -->
+                    <div class="step d-none" data-step="3">
+                        <h4>Gironi (opzionale)</h4>
+                        <select id="selectFaseGirone" class="form-select mb-2"></select>
+                        <button class="btn btn-warning mb-2" onclick="aggiungiGirone()">➕ Aggiungi Girone</button>
+                        <div id="listaGironi"></div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="prevStep()">Indietro</button>
+                    <button class="btn btn-warning" onclick="nextStep()">Avanti</button>
+                </div>
             </div>
         </div>
     </div>
@@ -143,6 +149,7 @@
 {% endblock %}
 {% block extra_js %}
 <script src="{% static 'tornei/tornei.js' %}"></script>
+<script src="{% static 'tornei/stepper.js' %}"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 {% endblock %}
 

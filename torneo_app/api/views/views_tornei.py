@@ -15,23 +15,21 @@ from backend.serializers.torneo import TorneoSerializer
 
 @api_view(['GET', 'POST'])
 def lista_tornei(request):
-    """
-    GET: Lista tutti i tornei
-    POST: Crea nuovo torneo (con validazione formato)
-    """
     if request.method == 'GET':
         tornei = Torneo.objects.all()
         serializer = TorneoSerializer(tornei, many=True)
         return Response(serializer.data)
 
     elif request.method == 'POST':
+        print("Dati ricevuti:", request.data)  # Controlla dati ricevuti dal frontend
         serializer = TorneoSerializer(data=request.data)
 
-        if serializer.is_valid():  # Qui viene chiamata automaticamente validate_formato()
-            serializer.save()
+        if serializer.is_valid():
+            torneo = serializer.save()
+            print("Torneo creato:", torneo.nome)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        # Se i dati sono invalidi (incluso formato errato)
+        print("Errore nella validazione:", serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

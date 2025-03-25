@@ -52,10 +52,48 @@ CREATE TABLE Campione (
     immagine VARCHAR(255) DEFAULT NULL
 );
 
+-- Tabella FaseTorneo
+CREATE TABLE FaseTorneo (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    torneo_id INTEGER NOT NULL,
+    nome VARCHAR(50) NOT NULL,
+    data_inizio DATE NOT NULL,
+    data_fine DATE NOT NULL,
+    FOREIGN KEY (torneo_id) REFERENCES Torneo(id) ON DELETE CASCADE
+);
+
+-- Tabella Girone
+CREATE TABLE Girone (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    fase_id INTEGER NOT NULL,
+    nome VARCHAR(50) NOT NULL,
+    FOREIGN KEY (fase_id) REFERENCES FaseTorneo(id) ON DELETE CASCADE
+);
+
+-- Tabella ClassificaTorneo
+CREATE TABLE ClassificaTorneo (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    torneo_id INTEGER NOT NULL,
+    fase_id INTEGER NOT NULL,
+    girone_id INTEGER,
+    squadra_id INTEGER NOT NULL,
+    punti INTEGER DEFAULT 0,
+    vittorie INTEGER DEFAULT 0,
+    pareggi INTEGER DEFAULT 0,
+    sconfitte INTEGER DEFAULT 0,
+    FOREIGN KEY (torneo_id) REFERENCES Torneo(id) ON DELETE CASCADE,
+    FOREIGN KEY (fase_id) REFERENCES FaseTorneo(id) ON DELETE CASCADE,
+    FOREIGN KEY (girone_id) REFERENCES Girone(id) ON DELETE CASCADE,
+    FOREIGN KEY (squadra_id) REFERENCES Squadra(id) ON DELETE CASCADE,
+    UNIQUE (torneo_id, fase_id, girone_id, squadra_id)
+);
+
 -- Tabella Partita
 CREATE TABLE Partita (
     id INT PRIMARY KEY AUTO_INCREMENT,      -- Identificativo univoco della partita
     torneo_id INT NOT NULL,                 -- Torneo in cui si gioca la partita
+	fase_id INTEGER,
+    girone_id INTEGER,
     squadra_rossa_id INT NOT NULL,          -- Squadra assegnata al lato rosso
     squadra_blu_id INT NOT NULL,            -- Squadra assegnata al lato blu
     vincitore_id INT,                       -- Squadra vincitrice (può essere NULL in caso di pareggio)
@@ -78,6 +116,8 @@ CREATE TABLE Partita (
     serie_id INT NULL,                      -- ID della serie a cui appartiene la partita (NULL se partita singola)
     numero_partita_nella_serie INT DEFAULT 1, -- Numero progressivo della partita nella serie
     FOREIGN KEY (torneo_id) REFERENCES Torneo(id) ON DELETE CASCADE,
+	FOREIGN KEY (fase_id) REFERENCES FaseTorneo(id) ON DELETE CASCADE,
+    FOREIGN KEY (girone_id) REFERENCES Girone(id) ON DELETE CASCADE,
     FOREIGN KEY (squadra_rossa_id) REFERENCES Squadra(id) ON DELETE CASCADE,
     FOREIGN KEY (squadra_blu_id) REFERENCES Squadra(id) ON DELETE CASCADE,
     FOREIGN KEY (vincitore_id) REFERENCES Squadra(id),
@@ -113,7 +153,7 @@ CREATE TABLE StatisticheGiocatorePartita (
     id INT PRIMARY KEY AUTO_INCREMENT,    -- Identificativo univoco della statistica
     partita_id INT NOT NULL,              -- Partita a cui si riferiscono le statistiche
     giocatore_id INT NOT NULL,            -- Giocatore a cui appartengono le statistiche
-    campione_usato VARCHAR(50) NOT NULL,  -- Campione giocato in questa partita
+    campione_usato INT NOT NULL,  -- Campione giocato in questa partita
     kills INT DEFAULT 0,                  -- Numero di uccisioni
     deaths INT DEFAULT 0,                 -- Numero di morti
     assists INT DEFAULT 0,                -- Numero di assist
@@ -136,3 +176,6 @@ CREATE TABLE StatisticheGiocatorePartita (
     FOREIGN KEY (giocatore_id) REFERENCES Giocatore(id) ON DELETE CASCADE,
     FOREIGN KEY (campione_usato) REFERENCES Campione(id) ON DELETE CASCADE
 );
+
+
+
