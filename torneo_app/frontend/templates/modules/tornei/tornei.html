@@ -118,21 +118,56 @@
                             <option value="ARAM">ARAM</option>
                         </select>
                     </div>
-
                     <!-- Step 2: Fasi -->
                     <div class="step d-none" data-step="2">
-                        <h4>Fasi Torneo (opzionale)</h4>
-                        <button class="btn btn-warning mb-2" onclick="aggiungiFase()">➕ Aggiungi Fase</button>
+                        <h4 class="text-warning mb-3">Fasi del Torneo</h4>
+
+                        <div class="card bg-secondary text-dark p-3 mb-3">
+                            <div class="row g-2 align-items-end">
+                                <div class="col-md-4">
+                                    <label for="inputNomeFase" class="form-label">Nome Fase</label>
+                                    <input type="text" id="inputNomeFase" class="form-control" placeholder="Es: Gruppi, Finali...">
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="inputDataInizioFase" class="form-label">Data Inizio</label>
+                                    <input type="date" id="inputDataInizioFase" class="form-control">
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="inputDataFineFase" class="form-label">Data Fine</label>
+                                    <input type="date" id="inputDataFineFase" class="form-control">
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-success w-100" onclick="aggiungiFaseDaForm()">➕ Aggiungi</button>
+                                </div>
+                            </div>
+                        </div>
+
                         <div id="listaFasi"></div>
                     </div>
 
                     <!-- Step 3: Gironi -->
                     <div class="step d-none" data-step="3">
-                        <h4>Gironi (opzionale)</h4>
-                        <select id="selectFaseGirone" class="form-select mb-2"></select>
-                        <button class="btn btn-warning mb-2" onclick="aggiungiGirone()">➕ Aggiungi Girone</button>
+                        <h4 class="text-warning mb-3">Gironi</h4>
+
+                        <div class="card bg-secondary text-dark p-3 mb-3">
+                            <div class="row g-2 align-items-end">
+                                <div class="col-md-6">
+                                    <label for="selectFaseGirone" class="form-label">Fase associata</label>
+                                    <select id="selectFaseGirone" class="form-select"></select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="inputNomeGirone" class="form-label">Nome Girone</label>
+                                    <input type="text" id="inputNomeGirone" class="form-control" placeholder="Es: Girone A">
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-success w-100" onclick="aggiungiGironeDaForm()">➕ Aggiungi</button>
+                                </div>
+                            </div>
+                        </div>
+
                         <div id="listaGironi"></div>
                     </div>
+
                 </div>
 
                 <div class="modal-footer">

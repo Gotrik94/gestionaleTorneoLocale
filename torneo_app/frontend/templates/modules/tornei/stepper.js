@@ -169,3 +169,43 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM completamente caricato - Inizializzazione step');
     showStep(currentStep);
 });
+
+function aggiungiFaseDaForm() {
+    const nome = document.getElementById('inputNomeFase').value;
+    const dataInizio = document.getElementById('inputDataInizioFase').value;
+    const dataFine = document.getElementById('inputDataFineFase').value;
+
+    if (!nome || !dataInizio || !dataFine) {
+        Swal.fire('Attenzione', 'Compila tutti i campi della fase', 'warning');
+        return;
+    }
+
+    torneoData.fasi.push({
+        nome: nome,
+        data_inizio: dataInizio,
+        data_fine: dataFine,
+        gironi: []
+    });
+
+    aggiornaListaFasi();
+
+    // Pulisci i campi
+    document.getElementById('inputNomeFase').value = '';
+    document.getElementById('inputDataInizioFase').value = '';
+    document.getElementById('inputDataFineFase').value = '';
+}
+
+function aggiungiGironeDaForm() {
+    const nome = document.getElementById('inputNomeGirone').value;
+    const faseIndex = document.getElementById('selectFaseGirone').value;
+
+    if (!nome || faseIndex === '') {
+        Swal.fire('Attenzione', 'Seleziona una fase e inserisci il nome del girone.', 'warning');
+        return;
+    }
+
+    torneoData.fasi[faseIndex].gironi.push({ nome });
+    aggiornaListaGironi(faseIndex);
+    document.getElementById('inputNomeGirone').value = '';
+}
+

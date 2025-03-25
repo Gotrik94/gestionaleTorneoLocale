@@ -22,3 +22,8 @@
     display: flex;
     justify-content: space-between;
 }
+
+input.form-control::placeholder {
+    color: #888;
+    font-style: italic;
+}
