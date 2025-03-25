@@ -346,6 +346,7 @@ def dettaglio_squadra(request, squadra_id):
         t.dettagli = dettagli_torneo_per_squadra.get(t.id, {})
 
     context = {
+        'active_page': 'squadre',
         'squadra': squadra,
         'tornei_partecipati': tornei_partecipati,
         'tornei_in_corso': tornei_in_corso,

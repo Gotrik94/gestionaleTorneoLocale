@@ -125,3 +125,62 @@ h2.text-warning {
 .modal-footer {
   border: none;
 }
+
+
+/* Aggiornamenti colori per la tabella */
+.table-dark {
+  background-color: #262626; /* leggermente più chiaro del bg principale */
+  color: #fff;
+}
+
+.table-dark th {
+  background-color: #333; /* intestazione tabella */
+  color: var(--primary-color); /* giallo definito */
+}
+
+.table-dark tbody tr:hover {
+  background-color: rgba(255, 204, 0, 0.1); /* effetto hover leggero */
+}
+
+.table-dark td {
+  border-top: 1px solid #333; /* linea divisoria tra righe */
+}
+
+/* Miglioramento leggibilità azioni */
+.btn-outline-danger {
+  border-color: var(--error-color);
+  color: var(--error-color);
+}
+.btn-outline-danger:hover {
+  background-color: var(--error-color);
+  color: #fff;
+}
+
+.badge {
+  font-size: 0.9rem;
+  padding: 5px 10px;
+}
+
+.badge.bg-success {
+  background-color: var(--success-color);
+}
+
+.badge.bg-danger {
+  background-color: var(--error-color);
+}
+
+.badge-info {
+    background-color: #007bff;
+    color: white;
+    padding: 6px 12px;
+    font-size: 14px;
+    border-radius: 20px;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.badge-info i {
+    font-size: 16px;
+}

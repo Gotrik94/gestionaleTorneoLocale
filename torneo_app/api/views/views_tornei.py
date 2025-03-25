@@ -8,6 +8,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
+from backend.models import Iscrizione
 from backend.models.torneo import Torneo
 from backend.serializers.torneo import TorneoSerializer
 
@@ -15,8 +16,8 @@ from backend.serializers.torneo import TorneoSerializer
 @api_view(['GET', 'POST'])
 def lista_tornei(request):
     """
-    GET  -> Lista di tutti i tornei
-    POST -> Crea un nuovo torneo
+    GET: Lista tutti i tornei
+    POST: Crea nuovo torneo (con validazione formato)
     """
     if request.method == 'GET':
         tornei = Torneo.objects.all()
@@ -25,9 +26,12 @@ def lista_tornei(request):
 
     elif request.method == 'POST':
         serializer = TorneoSerializer(data=request.data)
-        if serializer.is_valid():
+
+        if serializer.is_valid():  # Qui viene chiamata automaticamente validate_formato()
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        # Se i dati sono invalidi (incluso formato errato)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -86,10 +90,43 @@ def tornei_page(request):
 
     tornei = Torneo.objects.filter(is_active=True)
 
+    # Preparazione dati tornei con stato
+    tornei_con_stato = []  # inizializza una lista vuota
+    for torneo in tornei:
+
+        print(f"Analisi torneo: {torneo.nome}")
+        print(f"Data inizio torneo: {torneo.data_inizio}, Data fine torneo: {torneo.data_fine}")
+
+
+        if torneo.data_inizio <= oggi <= torneo.data_fine:
+            stato = "in_corso"
+        elif oggi < torneo.data_inizio:
+            stato = "programmato"
+        else:
+            stato = "concluso"
+
+        print(f"Stato assegnato: {stato}\n")
+
+        # Ottieni le squadre iscritte a questo torneo
+        iscrizioni = Iscrizione.objects.filter(torneo=torneo)
+        squadre = [iscrizione.squadra for iscrizione in iscrizioni]
+
+        tornei_con_stato.append({  # correggi questo
+            'id': torneo.id,
+            'nome': torneo.nome,
+            'data_inizio': torneo.data_inizio,
+            'data_fine': torneo.data_fine,
+            'squadre': squadre,
+            'stato': stato
+        })
+
+        print(f"Squadre: {squadre}\n")
+
     return render(request, 'modules/tornei/tornei.html', {
         'tornei': tornei,
         'tornei_totali': tornei_totali,
         'tornei_attivi': tornei_attivi,
+        'tornei_con_stato': tornei_con_stato,  # usa questa lista nel template
         'tornei_conclusi': tornei_conclusi,
         'tornei_totali_counter': tornei_totali_counter,
         'tornei_attivi_counter': tornei_attivi_counter,

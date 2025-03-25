@@ -14,7 +14,7 @@ def squadre_page(request):
         squadra.exp_max = squadra.livello * 1000  # Formula base, puoi modificarla
         squadra.exp_percentage = (squadra.exp / squadra.exp_max) * 100 if squadra.exp_max > 0 else 0
 
-    return render(request, 'modules/squadre/squadre.html', {'squadre': squadre})
+    return render(request, 'modules/squadre/squadre.html', {'squadre': squadre, 'active_page': 'squadre'})
 
 
 def crea_squadra(request):
