@@ -22,13 +22,25 @@ class TorneoSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        fasi_data = validated_data.pop('fasi', [])
-        torneo = Torneo.objects.create(**validated_data)
+        fasi_data = self.initial_data.get('fasi', [])
+        torneo = Torneo.objects.create(
+            nome=validated_data['nome'],
+            data_inizio=validated_data['data_inizio'],
+            data_fine=validated_data['data_fine'],
+            fascia_oraria=validated_data['fascia_oraria'],
+            formato=validated_data['formato'],
+            is_active=validated_data.get('is_active', True)
+        )
+        print(f"✅ Torneo '{torneo.nome}' creato con successo!")
 
-        for fase_data in fasi_data:
-            gironi_data = fase_data.pop('gironi', [])
-            fase = FaseTorneo.objects.create(torneo=torneo, **fase_data)
+        for fase_raw in fasi_data:
+            gironi_data = fase_raw.pop('gironi', [])
+            fase = FaseTorneo.objects.create(torneo=torneo, **fase_raw)  # ✅ deve stare dentro il ciclo!
+            print(f"🌀 Fase: {fase.nome} - Gironi ricevuti: {gironi_data}")
+
             for girone_data in gironi_data:
                 Girone.objects.create(fase=fase, **girone_data)
+                print(f"✅ Girone '{girone_data['nome']}' creato nella fase '{fase.nome}'")
 
         return torneo
+

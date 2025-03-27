@@ -43,6 +43,7 @@ function nextStep() {
         showStep(currentStep);
         updateSelectFasi();
     } else {
+        console.log('TorneoData completo prima dell\'invio:', JSON.stringify(torneoData, null, 2));
         submitTorneo(); // chiamata API finale
     }
 }
@@ -197,9 +198,9 @@ function aggiungiFaseDaForm() {
 
 function aggiungiGironeDaForm() {
     const nome = document.getElementById('inputNomeGirone').value;
-    const faseIndex = document.getElementById('selectFaseGirone').value;
+    const faseIndex = parseInt(document.getElementById('selectFaseGirone').value);
 
-    if (!nome || faseIndex === '') {
+    if (!nome || isNaN(faseIndex)) {
         Swal.fire('Attenzione', 'Seleziona una fase e inserisci il nome del girone.', 'warning');
         return;
     }
@@ -208,4 +209,5 @@ function aggiungiGironeDaForm() {
     aggiornaListaGironi(faseIndex);
     document.getElementById('inputNomeGirone').value = '';
 }
+
 
