@@ -1,13 +1,20 @@
 let currentStep = 1;
 const totalSteps = 3;
 const stepElements = document.querySelectorAll('.step');
-const torneoData = { fasi: [] };
+let torneoData = { fasi: [] };
 
-document.addEventListener('DOMContentLoaded', () => {
-    showStep(currentStep);
+// 🔁 Reset quando il modale si chiude
+const nuovoTorneoModal = document.getElementById('nuovoTorneoModal');
+nuovoTorneoModal.addEventListener('hidden.bs.modal', function () {
+    console.log('Modale chiuso. Eseguo reset...');
+    if (typeof window.resetTorneoForm === 'function') {
+        window.resetTorneoForm();
+    } else {
+        console.warn('Funzione resetTorneoForm non trovata');
+    }
 });
 
-// 🔹 Ottieni CSRF Token
+// 🔐 CSRF Token
 function getCSRFToken() {
     let csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]')?.value;
     if (!csrfToken) {
@@ -21,14 +28,13 @@ function getCSRFToken() {
     return csrfToken;
 }
 
+// 🔁 Mostra Step
 function showStep(step) {
-    // Nascondi tutti gli step
+    console.log(`Navigo allo step ${step}`);
     document.querySelectorAll('.step').forEach(el => {
         el.classList.add('d-none');
         el.classList.remove('active');
     });
-
-    // Mostra solo quello corrente
     const currentStepEl = document.querySelector(`.step[data-step='${step}']`);
     if (currentStepEl) {
         currentStepEl.classList.remove('d-none');
@@ -36,7 +42,7 @@ function showStep(step) {
     }
 }
 
-
+// ➡️ Avanti
 function nextStep() {
     if (currentStep < totalSteps) {
         currentStep++;
@@ -44,10 +50,11 @@ function nextStep() {
         updateSelectFasi();
     } else {
         console.log('TorneoData completo prima dell\'invio:', JSON.stringify(torneoData, null, 2));
-        submitTorneo(); // chiamata API finale
+        submitTorneo();
     }
 }
 
+// ⬅️ Indietro
 function prevStep() {
     if (currentStep > 1) {
         currentStep--;
@@ -55,14 +62,13 @@ function prevStep() {
     }
 }
 
-
-// Gestione Fasi
+// ➕ Fase
 function aggiungiFase() {
     const nomeFase = prompt("Nome della fase:");
     const dataInizio = prompt("Data inizio (yyyy-mm-dd):");
     const dataFine = prompt("Data fine (yyyy-mm-dd):");
 
-    if(nomeFase && dataInizio && dataFine) {
+    if (nomeFase && dataInizio && dataFine) {
         torneoData.fasi.push({ nome: nomeFase, data_inizio: dataInizio, data_fine: dataFine, gironi: [] });
         aggiornaListaFasi();
     }
@@ -88,12 +94,12 @@ function updateSelectFasi() {
     select.innerHTML = torneoData.fasi.map((fase, i) => `<option value="${i}">${fase.nome}</option>`).join('');
 }
 
-// Gestione Gironi
+// ➕ Gironi
 function aggiungiGirone() {
     const faseIndex = document.getElementById('selectFaseGirone').value;
     const nomeGirone = prompt("Nome del girone:");
 
-    if(nomeGirone) {
+    if (nomeGirone) {
         torneoData.fasi[faseIndex].gironi.push({ nome: nomeGirone });
         aggiornaListaGironi(faseIndex);
     }
@@ -113,21 +119,15 @@ function rimuoviGirone(faseIndex, gironeIndex) {
     aggiornaListaGironi(faseIndex);
 }
 
-// Submit Torneo finale
+// 📤 Submit Torneo
 function submitTorneo() {
-    console.log('Inizio submitTorneo - Recupero dati dal form');
-
     try {
-        // Recupero valori dal form
         torneoData.nome = document.getElementById('nomeTorneo').value;
         torneoData.data_inizio = document.getElementById('dataInizio').value;
         torneoData.data_fine = document.getElementById('dataFine').value;
         torneoData.fascia_oraria = document.getElementById('fasciaOraria').value;
         torneoData.formato = document.getElementById('formato').value;
 
-        console.log('Dati torneo preparati:', JSON.stringify(torneoData, null, 2));
-
-        console.log('Invio richiesta POST a /api/tornei/lista_tornei/');
         fetch('/api/tornei/lista_tornei/', {
             method: 'POST',
             headers: {
@@ -137,40 +137,47 @@ function submitTorneo() {
             body: JSON.stringify(torneoData)
         })
         .then(res => {
-            console.log('Ricevuta risposta dal server. Status:', res.status);
             if (!res.ok) {
-                console.error('Errore HTTP:', res.statusText);
                 return res.json().then(errData => {
-                    console.error('Dettagli errore:', errData);
                     throw new Error(errData.message || 'Errore durante la richiesta');
                 });
             }
             return res.json();
         })
         .then(data => {
-            console.log('Successo - Risposta dal server:', data);
             Swal.fire('Successo!', 'Torneo creato correttamente.', 'success');
-            setTimeout(() => {
-                console.log('Ricaricamento pagina...');
-                location.reload();
-            }, 1500);
+            setTimeout(() => location.reload(), 1500);
         })
         .catch(err => {
-            console.error('Errore durante il fetch:', err);
-            Swal.fire('Errore', err.message || 'Si è verificato un errore durante la creazione del torneo.', 'error');
+            Swal.fire('Errore', err.message, 'error');
         });
 
     } catch (error) {
-        console.error('Errore durante la preparazione dei dati:', error);
-        Swal.fire('Errore', 'Si è verificato un errore durante la preparazione dei dati del torneo.', 'error');
+        Swal.fire('Errore', 'Errore durante la preparazione dei dati del torneo.', 'error');
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM completamente caricato - Inizializzazione step');
+// 🧼 Reset Completo
+window.resetTorneoForm = function () {
+    console.log('RESET del form torneo in corso...');
+    document.getElementById('nomeTorneo').value = '';
+    document.getElementById('dataInizio').value = '';
+    document.getElementById('dataFine').value = '';
+    document.getElementById('fasciaOraria').value = '';
+    document.getElementById('formato').value = 'DRAFT';
+    document.getElementById('inputNomeFase').value = '';
+    document.getElementById('inputDataInizioFase').value = '';
+    document.getElementById('inputDataFineFase').value = '';
+    document.getElementById('inputNomeGirone').value = '';
+    document.getElementById('listaFasi').innerHTML = '';
+    document.getElementById('listaGironi').innerHTML = '';
+    torneoData = { fasi: [] };
+    currentStep = 1;
     showStep(currentStep);
-});
+    console.log('Form resettato completamente:', torneoData);
+};
 
+// ➕ Fase da form
 function aggiungiFaseDaForm() {
     const nome = document.getElementById('inputNomeFase').value;
     const dataInizio = document.getElementById('inputDataInizioFase').value;
@@ -181,21 +188,14 @@ function aggiungiFaseDaForm() {
         return;
     }
 
-    torneoData.fasi.push({
-        nome: nome,
-        data_inizio: dataInizio,
-        data_fine: dataFine,
-        gironi: []
-    });
-
+    torneoData.fasi.push({ nome, data_inizio: dataInizio, data_fine: dataFine, gironi: [] });
     aggiornaListaFasi();
-
-    // Pulisci i campi
     document.getElementById('inputNomeFase').value = '';
     document.getElementById('inputDataInizioFase').value = '';
     document.getElementById('inputDataFineFase').value = '';
 }
 
+// ➕ Girone da form
 function aggiungiGironeDaForm() {
     const nome = document.getElementById('inputNomeGirone').value;
     const faseIndex = parseInt(document.getElementById('selectFaseGirone').value);
@@ -210,4 +210,19 @@ function aggiungiGironeDaForm() {
     document.getElementById('inputNomeGirone').value = '';
 }
 
+// DOM Ready
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM caricato. Mostro primo step...');
+    showStep(currentStep);
 
+    const nuovoTorneoModal = document.getElementById('nuovoTorneoModal');
+    nuovoTorneoModal.addEventListener('hidden.bs.modal', function () {
+        console.log('➡️ Modale CHIUSO - resetTorneoForm chiamato');
+        if (typeof window.resetTorneoForm === 'function') {
+            window.resetTorneoForm();
+            console.log("✅ resetTorneoForm eseguito");
+        } else {
+            console.warn('❌ resetTorneoForm NON trovata');
+        }
+    });
+});
