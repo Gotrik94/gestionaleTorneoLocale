@@ -27,3 +27,6 @@ input.form-control::placeholder {
     color: #888;
     font-style: italic;
 }
+.modal-header .btn-close {
+    filter: brightness(0) saturate(100%) invert(84%) sepia(62%) saturate(746%) hue-rotate(4deg) brightness(105%) contrast(101%);
+}
