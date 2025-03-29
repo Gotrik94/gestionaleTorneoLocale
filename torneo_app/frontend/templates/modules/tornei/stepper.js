@@ -35,12 +35,27 @@ function showStep(step) {
         el.classList.add('d-none');
         el.classList.remove('active');
     });
+
     const currentStepEl = document.querySelector(`.step[data-step='${step}']`);
     if (currentStepEl) {
         currentStepEl.classList.remove('d-none');
         currentStepEl.classList.add('active');
     }
+
+    // 🔁 Cambia comportamento del bottone Indietro
+    const btnIndietro = document.getElementById('btnIndietro');
+    if (step === 1) {
+        btnIndietro.textContent = 'Chiudi';
+        btnIndietro.onclick = () => {
+            const modal = bootstrap.Modal.getInstance(document.getElementById('nuovoTorneoModal'));
+            modal.hide(); // chiude il modale
+        };
+    } else {
+        btnIndietro.textContent = 'Indietro';
+        btnIndietro.onclick = prevStep;
+    }
 }
+
 
 // ➡️ Avanti
 function nextStep() {
