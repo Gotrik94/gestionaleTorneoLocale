@@ -30,3 +30,11 @@ input.form-control::placeholder {
 .modal-header .btn-close {
     filter: brightness(0) saturate(100%) invert(84%) sepia(62%) saturate(746%) hue-rotate(4deg) brightness(105%) contrast(101%);
 }
+
+/* 🔥 Fix visivo forte per input con Bootstrap */
+input.form-control.input-error,
+select.form-select.input-error {
+  border: 2px solid #e74c3c;
+  color: #fff;
+}
+

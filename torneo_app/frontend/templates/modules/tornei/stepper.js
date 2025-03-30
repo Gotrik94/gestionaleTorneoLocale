@@ -59,15 +59,61 @@ function showStep(step) {
 
 // ➡️ Avanti
 function nextStep() {
+    if (currentStep === 1) {
+        // 🔄 Ripulisco eventuali errori visivi
+        const fieldIds = ['nomeTorneo', 'dataInizio', 'dataFine', 'formato'];
+        const inputs = fieldIds.map(id => document.getElementById(id));
+        inputs.forEach(input => input.classList.remove('input-error'));
+
+        // 🔍 Raccolgo valori
+        const [nome, inizio, fine, formato] = inputs;
+
+        let valid = true;
+
+        // ❌ Check se vuoti
+        inputs.forEach(input => {
+            if (!input.value.trim()) {
+                input.classList.add('input-error');
+                valid = false;
+            }
+        });
+
+        // 🛑 Se ci sono campi vuoti → blocca subito
+        if (!valid) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Campi obbligatori',
+                text: 'Compila tutti i campi prima di procedere.'
+            });
+            return;
+        }
+
+        // 📆 Check date inizio > fine
+        const dataInizio = new Date(inizio.value);
+        const dataFine = new Date(fine.value);
+        if (dataInizio > dataFine) {
+            inizio.classList.add('input-error');
+            fine.classList.add('input-error');
+            Swal.fire({
+                icon: 'error',
+                title: 'Date non valide',
+                text: 'La data di fine deve essere uguale o successiva alla data di inizio.'
+            });
+            return;
+        }
+    }
+
+    // ✅ Passo allo step successivo
     if (currentStep < totalSteps) {
         currentStep++;
         showStep(currentStep);
         updateSelectFasi();
     } else {
-        console.log('TorneoData completo prima dell\'invio:', JSON.stringify(torneoData, null, 2));
-        submitTorneo();
+        submitTorneo(); // submit finale
     }
 }
+
+
 
 // ⬅️ Indietro
 function prevStep() {
@@ -173,8 +219,15 @@ function submitTorneo() {
 }
 
 // 🧼 Reset Completo
+// 🧼 Reset Completo
 window.resetTorneoForm = function () {
     console.log('RESET del form torneo in corso...');
+
+    // 🔁 Rimuovi visivamente errori
+    const allInputs = ['nomeTorneo', 'dataInizio', 'dataFine', 'formato'];
+    allInputs.forEach(id => document.getElementById(id).classList.remove('input-error'));
+
+    // ⏹ Reset valori
     document.getElementById('nomeTorneo').value = '';
     document.getElementById('dataInizio').value = '';
     document.getElementById('dataFine').value = '';
@@ -186,11 +239,15 @@ window.resetTorneoForm = function () {
     document.getElementById('inputNomeGirone').value = '';
     document.getElementById('listaFasi').innerHTML = '';
     document.getElementById('listaGironi').innerHTML = '';
+
+    // ⏹ Reset dati JS e step
     torneoData = { fasi: [] };
     currentStep = 1;
     showStep(currentStep);
+
     console.log('Form resettato completamente:', torneoData);
 };
+
 
 // ➕ Fase da form
 function aggiungiFaseDaForm() {
