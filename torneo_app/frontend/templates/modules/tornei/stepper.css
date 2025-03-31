@@ -80,7 +80,7 @@ input[type="date"] {
 
 /* 📏 Riduci larghezza del modale */
 #nuovoTorneoModal .modal-dialog {
-  max-width: 600px;  /* Puoi abbassare ancora tipo 500px o 480px */
+  max-width: 600px;
   margin: 1.75rem auto;
 }
 
@@ -94,4 +94,17 @@ input[type="date"] {
   #nuovoTorneoModal .modal-dialog {
     max-width: 600px;
   }
+}
+
+/* ✅ FIX aggiuntivo per allineamento bottoni e input nei blocchi Fasi e Gironi */
+.card.bg-secondary .row.g-2.align-items-end > [class^="col-"] {
+  margin-bottom: 0 !important;
+}
+
+.card.bg-secondary button.btn-success {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
 }
