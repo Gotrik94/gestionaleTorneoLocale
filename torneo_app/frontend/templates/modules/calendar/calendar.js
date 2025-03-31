@@ -39,23 +39,42 @@ const inizializzaCalendario = () => {
               })
           ])
           .then(([torneiData, partitaData]) => {
-            // Aggiungi proprietà 'color' e 'textColor' per i tornei (giallo)
-            const torneiEvents = torneiData.map(ev => ({
-              ...ev,
-              color: "#f1c40f",    // Giallo
-              textColor: "#000"    // Testo nero
-            }));
 
-            // Aggiungi proprietà 'color' e 'textColor' per le partite (blu)
-            const partiteEvents = partitaData.map(ev => ({
-              ...ev,
-              color: "#3498db",    // Blu
-              textColor: "#fff"    // Testo bianco
-            }));
 
-            // Unisci i due array in uno solo
-            const combinedEvents = [...torneiEvents, ...partiteEvents];
-            successCallback(combinedEvents);
+              // 🔧 Estrai tornei e fasi separatamente
+              const tornei = torneiData.tornei || [];
+              const fasi = torneiData.fasi || [];
+
+              const getEventColors = (tipo) => {
+                switch (tipo) {
+                  case "torneo": return { color: "#f1c40f", textColor: "#000" };
+                  case "fase": return { color: "#e67e22", textColor: "#fff" };
+                  case "partita": return { color: "#3498db", textColor: "#fff" };
+                  default: return { color: "#6c757d", textColor: "#fff" };
+                }
+              };
+
+
+                const eventiTornei = tornei.map(ev => ({
+                  ...ev,
+                  ...getEventColors(ev.tipo)
+                }));
+
+                const eventiFasi = fasi.map(ev => ({
+                  ...ev,
+                  ...getEventColors(ev.tipo)
+                }));
+
+                const eventiPartite = partitaData.map(ev => ({
+                  ...ev,
+                  tipo: "partita",
+                  ...getEventColors("partita")
+                }));
+
+                const allEvents = [...eventiTornei, ...eventiFasi, ...eventiPartite];
+
+
+            successCallback(allEvents);
           })
           .catch(error => failureCallback(error));
         },

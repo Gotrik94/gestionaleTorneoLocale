@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from backend.models import Iscrizione
+from backend.models.fase_torneo import FaseTorneo
 from backend.models.torneo import Torneo
 from backend.serializers.torneo import TorneoSerializer
 
@@ -55,18 +56,41 @@ def dettaglio_torneo(request, torneo_id):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+
+
 def calendar_schedule_tornei(request):
     tornei = Torneo.objects.filter(is_active=True)
-    eventi = [
+    fasi = FaseTorneo.objects.filter(torneo__in=tornei)
+
+    eventi_tornei = [
         {
             "title": torneo.nome,
-            "start": torneo.data_inizio.isoformat() if torneo.data_inizio else None,
-            "end": torneo.data_fine.isoformat() if torneo.data_fine else None,
-            "description": f"Formato: {torneo.formato}"
+            "start": torneo.data_inizio.isoformat(),
+            "end": torneo.data_fine.isoformat(),
+            "description": f"Formato: {torneo.formato}",
+            "tipo": "torneo"
         }
         for torneo in tornei
     ]
-    return JsonResponse(eventi, safe=False)
+
+    eventi_fasi = [
+        {
+            "title": fase.nome,
+            "start": fase.data_inizio.isoformat(),
+            "end": (fase.data_fine + timedelta(days=1)).isoformat(),
+            "description": f"Fase del torneo: {fase.torneo.nome}",
+            "tipo": "fase"
+        }
+        for fase in fasi
+    ]
+
+    return JsonResponse({
+        "tornei": eventi_tornei,
+        "fasi": eventi_fasi
+    }, safe=False)
+
+
+
 
 
 def tornei_page(request):
