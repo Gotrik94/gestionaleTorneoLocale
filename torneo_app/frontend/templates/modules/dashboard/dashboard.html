@@ -50,38 +50,40 @@
                         <div id="torneoCollapse{{ torneo.id }}" class="collapse mt-2">
                             {% if torneo.squadre %}
                                 {% for squadra in torneo.squadre %}
-                                <div class="list-group-item border-warning p-3 rounded-3 shadow-sm bg-dark text-light mb-2">
-                                    <h5 class="fw-bold text-warning">{{ squadra.nome }}</h5>
-                                    <table class="table table-dark table-striped text-center">
-                                        <thead>
-                                            <tr>
-                                                <th>Username</th>
-                                                <th>K</th>
-                                                <th>D</th>
-                                                <th>A</th>
-                                                <th>KDA</th>
-                                                <th>Azioni</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for giocatore in squadra.giocatori %}
-                                            <tr>
-                                                <td>{{ giocatore.giocatore__nome }}</td>
-                                                <td>{{ giocatore.totale_k|default:"0" }}</td>
-                                                <td>{{ giocatore.totale_d|default:"0" }}</td>
-                                                <td>{{ giocatore.totale_a|default:"0" }}</td>
-                                                <td>{{ giocatore.kda|default:"0" }}</td>
-                                                <td>
-                                                    <a href="{}" class="text-warning"
-                                                       data-bs-toggle="tooltip" data-bs-placement="top" title="Dettagli Giocatore">
-                                                        <i class="bi bi-person-vcard-fill"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
+                                <div class="border border-warning rounded-3 shadow-sm bg-dark text-light mb-4 p-3">
+                                    <h5 class="fw-bold text-warning text-center squadra-title" style="font-size: 1.2rem;">{{ squadra.nome }}</h5>
+                                    <div class="table-responsive">
+                                        <table class="table table-dark table-striped text-center align-middle mb-0">
+                                            <thead class="border-bottom border-warning">
+                                                <tr>
+                                                    <th class="table-col-username">Username</th>
+                                                    <th class="table-col-k">K</th>
+                                                    <th class="table-col-d">D</th>
+                                                    <th class="table-col-a">A</th>
+                                                    <th class="table-col-kda">KDA</th>
+                                                    <th class="table-col-azioni">Azioni</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for giocatore in squadra.giocatori %}
+                                                <tr>
+                                                    <td class="table-col-username">{{ giocatore.giocatore__nome }}</td>
+                                                    <td class="table-col-k">{{ giocatore.totale_k|default:"0" }}</td>
+                                                    <td class="table-col-d">{{ giocatore.totale_d|default:"0" }}</td>
+                                                    <td class="table-col-a">{{ giocatore.totale_a|default:"0" }}</td>
+                                                    <td class="table-col-kda">{{ giocatore.kda|default:"0" }}</td>
+                                                    <td class="table-col-azioni">
+                                                        <a href="{}" class="text-warning" data-bs-toggle="tooltip" title="Dettagli Giocatore">
+                                                            <i class="bi bi-person-vcard-fill"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
+
                                 {% endfor %}
                             {% else %}
                                 <p class="text-center text-light">Nessuna squadra registrata</p>
