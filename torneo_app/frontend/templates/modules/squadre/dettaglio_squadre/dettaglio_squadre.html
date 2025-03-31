@@ -414,23 +414,25 @@
                                    data-bs-target="#matchCollapse{{ match.id }}"
                                    style="cursor:pointer;">
 
-                                <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center text-center w-100">
                                   <!-- Colonna sinistra: squadra rossa -->
-                                  <div class="d-flex align-items-center gap-2">
+                                  <div class="d-flex align-items-center gap-2 justify-content-start" style="width: 33%;">
                                     {% if match.logo_rossa %}
                                       <img src="{{ match.logo_rossa }}" alt="logo rossa" style="width:50px;height:50px;object-fit:cover;">
                                     {% endif %}
-                                    <strong class="text-light">{{ match.squadra_rossa }}</strong>
+                                    <strong class="text-light text-truncate">{{ match.squadra_rossa }}</strong>
                                   </div>
 
                                   <!-- Centro: data e durata -->
-                                  <div class="text-light small">
-                                    {{ match.data_evento|date:"d/m/Y" }} - {{ match.durata|default:"--" }} min
+                                  <div class="d-flex justify-content-center align-items-center" style="width: 34%;">
+                                    <span class="text-light small fw-bold">
+                                      {{ match.data_evento|date:"d/m/Y" }} - {{ match.durata|default:"--" }} min
+                                    </span>
                                   </div>
 
                                   <!-- Colonna destra: squadra blu -->
-                                  <div class="d-flex align-items-center gap-2">
-                                    <strong class="text-light">{{ match.squadra_blu }}</strong>
+                                  <div class="d-flex align-items-center gap-2 justify-content-end" style="width: 33%;">
+                                    <strong class="text-light text-truncate">{{ match.squadra_blu }}</strong>
                                     {% if match.logo_blu %}
                                       <img src="{{ match.logo_blu }}" alt="logo blu" style="width:50px;height:50px;object-fit:cover;">
                                     {% endif %}
@@ -1077,28 +1079,32 @@
                                    data-bs-target="#matchCollapseConclusi{{ match.id }}"
                                    style="cursor:pointer;">
 
-                                <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center text-center w-100">
                                   <!-- Colonna sinistra: squadra rossa -->
-                                  <div class="d-flex align-items-center gap-2">
+                                  <div class="d-flex align-items-center gap-2 justify-content-start" style="width: 33%;">
                                     {% if match.logo_rossa %}
                                       <img src="{{ match.logo_rossa }}" alt="logo rossa" style="width:50px;height:50px;object-fit:cover;">
                                     {% endif %}
-                                    <strong class="text-light">{{ match.squadra_rossa }}</strong>
+                                    <strong class="text-light text-truncate">{{ match.squadra_rossa }}</strong>
                                   </div>
 
                                   <!-- Centro: data e durata -->
-                                  <div class="text-light small">
-                                    {{ match.data_evento|date:"d/m/Y" }} - {{ match.durata|default:"--" }} min
+                                  <div class="d-flex justify-content-center align-items-center" style="width: 34%;">
+                                    <span class="text-light small fw-bold">
+                                      {{ match.data_evento|date:"d/m/Y" }} - {{ match.durata|default:"--" }} min
+                                    </span>
                                   </div>
 
                                   <!-- Colonna destra: squadra blu -->
-                                  <div class="d-flex align-items-center gap-2">
-                                    <strong class="text-light">{{ match.squadra_blu }}</strong>
+                                  <div class="d-flex align-items-center gap-2 justify-content-end" style="width: 33%;">
+                                    <strong class="text-light text-truncate">{{ match.squadra_blu }}</strong>
                                     {% if match.logo_blu %}
                                       <img src="{{ match.logo_blu }}" alt="logo blu" style="width:50px;height:50px;object-fit:cover;">
                                     {% endif %}
                                   </div>
                                 </div>
+
+
                               </div>
 
                               <!-- Collassabile dettagli match -->
