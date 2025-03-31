@@ -6,6 +6,8 @@
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'tornei/tornei.css' %}">
 <link rel="stylesheet" href="{% static 'tornei/stepper.css' %}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 {% endblock %}
 
 {% block content %}
@@ -50,6 +52,7 @@
                             </td>
                             <td>
                                 <a href="/tornei/dettaglio/{{ torneo.id }}" class="btn btn-outline-warning btn-sm">👁 Dettagli</a>
+                                <button class="btn btn-outline-info btn-sm" onclick="modificaTorneo({{ torneo.id }})">✏️ Modifica</button>
                                 <button class="btn btn-outline-danger btn-sm" onclick="apriModaleEliminazione({{ torneo.id }}, '{{ torneo.nome }}')">🗑 Elimina</button>
                             </td>
                             <td>
@@ -109,17 +112,38 @@
                 <div id="stepper">
                     <!-- Step 1: Torneo -->
                     <div class="step active" data-step="1">
+
                         <h4>Dati Torneo</h4>
-                        <input type="text" id="nomeTorneo" class="form-control mb-2" placeholder="Nome Torneo" required>
-                        <input type="text" id="dataInizio" class="form-control mb-2" placeholder="Data Inizio"
-                               onfocus="(this.type='date')" onblur="if(!this.value)this.type='text'">
-                        <input type="text" id="dataFine" class="form-control mb-2" placeholder="Data Fine"
-                               onfocus="(this.type='date')" onblur="if(!this.value)this.type='text'">
-                        <input type="text" id="fasciaOraria" class="form-control mb-2" placeholder="Fascia Oraria">
-                        <select id="formato" class="form-select mb-3" required>
+                        <div class="form-group">
+                          <label for="nomeTorneo">Nome Torneo</label>
+                          <input type="text" id="nomeTorneo" class="form-control" placeholder="Nome Torneo">
+                        </div>
+
+                        <div class="form-group">
+                          <label for="dataInizio">Data Inizio</label>
+                          <input type="date" id="dataInizio" class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                          <label for="dataFine">Data Fine</label>
+                          <input type="date" id="dataFine" class="form-control">
+                        </div>
+
+
+                        <div class="form-group">
+                          <label for="fasciaOraria">Fascia Oraria</label>
+                          <input type="text" id="fasciaOraria" class="form-control" placeholder="18:00 - 1:00">
+                        </div>
+
+                        <div class="form-group">
+                          <label for="formato">Formato</label>
+                          <select id="formato" class="form-select">
                             <option value="DRAFT">Draft</option>
                             <option value="ARAM">ARAM</option>
-                        </select>
+                          </select>
+                        </div>
+
+
                     </div>
                     <!-- Step 2: Fasi -->
                     <div class="step d-none" data-step="2">
@@ -156,7 +180,7 @@
                             <div class="row g-2 align-items-end">
                                 <div class="col-md-6">
                                     <label for="selectFaseGirone" class="form-label">Fase associata</label>
-                                    <select id="selectFaseGirone" class="form-select"></select>
+                                    <select id="selectFaseGirone" class="form-select" onchange="aggiornaListaGironi(this.value)"></select>
                                 </div>
                                 <div class="col-md-4">
                                     <label for="inputNomeGirone" class="form-label">Nome Girone</label>
@@ -189,5 +213,7 @@
 <script src="{% static 'tornei/tornei.js' %}"></script>
 <script src="{% static 'tornei/stepper.js' %}"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/it.js"></script>
 {% endblock %}
 

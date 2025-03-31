@@ -27,8 +27,6 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log("Crea nuovo torneo chiamato!");
 
         const nome = document.getElementById('nomeTorneo').value;
-        const inizio = document.getElementById('dataInizio').value;
-        const fine = document.getElementById('dataFine').value;
         const fasciaOraria = document.getElementById('fasciaOraria').value;
         const formato = document.getElementById('formato').value;
 
@@ -178,3 +176,112 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 });
+window.updateTorneo = function (torneoId) {
+    console.log("📤 Aggiornamento torneo ID:", torneoId);
+
+    const dataInizio = document.getElementById('dataInizio').value;
+    const dataFine = document.getElementById('dataFine').value;
+
+    // 🔁 Associa ID fase solo se esiste, altrimenti lascia fare al backend
+    const fasiConGironiAggiornati = (torneoData.fasi || []).map((fase, index) => {
+        const faseId = fase.id || index; // fallback per il frontend (non usato nel PUT)
+        return {
+            ...fase,
+            id: fase.id, // solo se già esistente
+            gironi: (fase.gironi || []).map(girone => ({
+                ...girone,
+                ...(fase.id ? { fase: fase.id } : {}) // solo se id esiste
+            }))
+        };
+    });
+
+    // 📦 Crea il payload
+    const updatedTorneoData = {
+        ...torneoData,
+        nome: document.getElementById('nomeTorneo').value,
+        data_inizio: dataInizio,
+        data_fine: dataFine,
+        fascia_oraria: document.getElementById('fasciaOraria').value,
+        formato: document.getElementById('formato').value,
+        fasi: fasiConGironiAggiornati
+    };
+
+    console.log("📤 Payload in uscita:", JSON.stringify(updatedTorneoData, null, 2));
+
+    fetch(`/api/tornei/dettaglio_torneo/${torneoId}/`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCSRFToken()
+        },
+        body: JSON.stringify(updatedTorneoData)
+    })
+    .then(res => {
+        if (!res.ok) {
+            return res.json().then(err => {
+                console.error("❌ Errore da backend:", err);
+                Swal.fire('Errore!', 'Errore dal server: ' + JSON.stringify(err), 'error');
+                throw new Error("Errore PUT");
+            });
+        }
+        return res.json();
+    })
+    .then(data => {
+        console.log("✅ Torneo aggiornato con successo!", data);
+        Swal.fire('Modifica riuscita!', 'Il torneo è stato aggiornato.', 'success');
+        setTimeout(() => location.reload(), 1500);
+    })
+    .catch(error => {
+        console.error("🔥 Errore durante l'aggiornamento:", error);
+        Swal.fire('Errore!', 'C\'è stato un errore nel salvataggio del torneo.', 'error');
+    });
+};
+
+
+
+window.modificaTorneo = function (torneoId) {
+    fetch(`/api/tornei/dettaglio_torneo/${torneoId}/`)
+        .then(res => res.json())
+        .then(data => {
+            console.log("Dati torneo da modificare:", data);
+
+            // STEP 1
+            document.getElementById('nomeTorneo').value = data.nome;
+            document.getElementById('dataInizio').value = data.data_inizio;
+            document.getElementById('dataFine').value = data.data_fine;
+            document.getElementById('fasciaOraria').value = data.fascia_oraria;
+            document.getElementById('formato').value = data.formato;
+
+            // Salva tutto in torneoData
+            torneoData = {
+                ...data,
+                fasi: data.fasi.map(fase => ({
+                    ...fase,
+                    gironi: fase.gironi || []
+                }))
+            };
+
+            // STEP 2
+            aggiornaListaFasi();
+
+            // STEP 3
+            updateSelectFasi();
+
+            // Se ci sono fasi e gironi, carica quelli del primo
+            if (torneoData.fasi.length > 0) {
+                aggiornaListaGironi(0); // <-- CARICA I GIRONI DELLA PRIMA FASE
+            }
+
+            // Mostra primo step
+            currentStep = 1;
+            showStep(currentStep);
+
+            // Apri modale
+            const modal = new bootstrap.Modal(document.getElementById('nuovoTorneoModal'));
+            modal.show();
+
+            // Modalità modifica attiva
+            window.modalMode = 'edit';
+            window.editTorneoId = torneoId;
+        });
+};

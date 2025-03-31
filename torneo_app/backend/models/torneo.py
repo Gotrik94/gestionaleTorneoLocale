@@ -10,7 +10,7 @@ class Torneo(models.Model):
     nome = models.CharField(max_length=100)  # Nome del torneo
     data_inizio = models.DateField()  # Data di inizio
     data_fine = models.DateField()  # Data di fine
-    fascia_oraria = models.CharField(max_length=50)  # Fascia oraria es. "18:00 - 22:00"
+    fascia_oraria = models.CharField(max_length=255, blank=True, null=True)  # Fascia oraria es. "18:00 - 22:00"
     formato = models.CharField(max_length=10, choices=FORMATI_TORNEO, default='DRAFT')  # ENUM: 'DRAFT', 'ARAM'
     is_active = models.BooleanField(default=True)  # Stato del torneo (attivo/archiviato)
 

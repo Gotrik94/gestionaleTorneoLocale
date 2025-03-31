@@ -1,7 +1,7 @@
 let currentStep = 1;
 const totalSteps = 3;
 const stepElements = document.querySelectorAll('.step');
-let torneoData = { fasi: [] };
+
 
 // 🔁 Reset quando il modale si chiude
 const nuovoTorneoModal = document.getElementById('nuovoTorneoModal');
@@ -103,15 +103,30 @@ function nextStep() {
         }
     }
 
-    // ✅ Passo allo step successivo
+    // ✅ Step successivo o salvataggio finale
     if (currentStep < totalSteps) {
         currentStep++;
         showStep(currentStep);
         updateSelectFasi();
     } else {
-        submitTorneo(); // submit finale
+
+        console.log("📤 Payload in uscita:", JSON.stringify(window.torneoData, null, 2));
+
+
+        // 🔁 Salvataggio: crea o modifica
+        if (window.modalMode === 'edit') {
+            if (typeof updateTorneo === 'function' || typeof window.updateTorneo === 'function') {
+                (window.updateTorneo || updateTorneo)(window.editTorneoId);
+            } else {
+                console.error("❌ Funzione updateTorneo non definita!");
+                Swal.fire('Errore interno', 'Funzione updateTorneo mancante.', 'error');
+            }
+        } else {
+            submitTorneo(); // submit finale
+        }
     }
 }
+
 
 
 
@@ -169,11 +184,19 @@ function aggiungiGirone() {
 function aggiornaListaGironi(faseIndex) {
     const listaGironi = document.getElementById('listaGironi');
     listaGironi.innerHTML = '';
-    torneoData.fasi[faseIndex].gironi.forEach((girone, i) => {
-        listaGironi.innerHTML += `<div class="girone-item">${girone.nome}
-        <button class="btn btn-sm btn-danger" onclick="rimuoviGirone(${faseIndex},${i})">❌</button></div>`;
-    });
+
+    const fase = torneoData.fasi[faseIndex];
+    if (fase && fase.gironi && fase.gironi.length > 0) {
+        fase.gironi.forEach((girone, i) => {
+            listaGironi.innerHTML += `
+                <div class="girone-item">
+                    ${girone.nome}
+                    <button class="btn btn-sm btn-danger" onclick="rimuoviGirone(${faseIndex}, ${i})">❌</button>
+                </div>`;
+        });
+    }
 }
+
 
 function rimuoviGirone(faseIndex, gironeIndex) {
     torneoData.fasi[faseIndex].gironi.splice(gironeIndex, 1);
@@ -181,47 +204,77 @@ function rimuoviGirone(faseIndex, gironeIndex) {
 }
 
 // 📤 Submit Torneo
-function submitTorneo() {
-    try {
-        torneoData.nome = document.getElementById('nomeTorneo').value;
-        torneoData.data_inizio = document.getElementById('dataInizio').value;
-        torneoData.data_fine = document.getElementById('dataFine').value;
-        torneoData.fascia_oraria = document.getElementById('fasciaOraria').value;
-        torneoData.formato = document.getElementById('formato').value;
+window.submitTorneo = function () {
 
-        fetch('/api/tornei/lista_tornei/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCSRFToken()
-            },
-            body: JSON.stringify(torneoData)
-        })
-        .then(res => {
-            if (!res.ok) {
-                return res.json().then(errData => {
-                    throw new Error(errData.message || 'Errore durante la richiesta');
-                });
-            }
-            return res.json();
-        })
-        .then(data => {
-            Swal.fire('Successo!', 'Torneo creato correttamente.', 'success');
-            setTimeout(() => location.reload(), 1500);
-        })
-        .catch(err => {
-            Swal.fire('Errore', err.message, 'error');
-        });
+    const nome = document.getElementById('nomeTorneo').value;
+    const dataInizio = document.getElementById('dataInizio').value;
+    const dataFine = document.getElementById('dataFine').value;
 
-    } catch (error) {
-        Swal.fire('Errore', 'Errore durante la preparazione dei dati del torneo.', 'error');
+    if (!dataInizio || !dataFine) {
+        Swal.fire('Attenzione', 'Inserisci sia la data di inizio che di fine.', 'warning');
+        return;
     }
-}
+
+    const fascia = document.getElementById('fasciaOraria').value;
+    const formato = document.getElementById('formato').value;
+
+    // 🔁 Inietto l'ID della fase in ogni girone
+    const fasiConFaseId = (window.torneoData?.fasi || []).map(fase => ({
+        ...fase,
+        gironi: (fase.gironi || []).map(girone => ({
+            ...girone,
+            fase: fase.id
+        }))
+    }));
+
+    const data = {
+        nome,
+        data_inizio: dataInizio,
+        data_fine: dataFine,
+        fascia_oraria: fascia,
+        formato,
+        fasi: fasiConFaseId
+    };
+
+    console.log("📦 Payload creato:", data);
+
+    fetch('/api/tornei/lista_tornei/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCSRFToken()
+        },
+        body: JSON.stringify(data)
+    })
+    .then(res => {
+        if (!res.ok) {
+            return res.json().then(err => {
+                console.error("❌ Errore da backend:", err);
+                Swal.fire('Errore!', 'Errore dal server: ' + JSON.stringify(err), 'error');
+                throw new Error("Errore POST");
+            });
+        }
+        return res.json();
+    })
+    .then(data => {
+        console.log("✅ Torneo creato!", data);
+        Swal.fire('Successo!', 'Torneo creato correttamente.', 'success');
+        setTimeout(() => location.reload(), 1500);
+    })
+    .catch(err => {
+        console.error('🔥 Errore nella creazione:', err);
+        Swal.fire('Errore!', 'Errore durante la creazione.', 'error');
+    });
+};
+
 
 // 🧼 Reset Completo
 // 🧼 Reset Completo
 window.resetTorneoForm = function () {
     console.log('RESET del form torneo in corso...');
+
+    window.modalMode = 'create';
+    window.editTorneoId = null;
 
     // 🔁 Rimuovi visivamente errori
     const allInputs = ['nomeTorneo', 'dataInizio', 'dataFine', 'formato'];
@@ -291,7 +344,6 @@ document.addEventListener('DOMContentLoaded', () => {
     nuovoTorneoModal.addEventListener('hidden.bs.modal', function () {
         console.log('➡️ Modale CHIUSO - resetTorneoForm chiamato');
         if (typeof window.resetTorneoForm === 'function') {
-            window.resetTorneoForm();
             console.log("✅ resetTorneoForm eseguito");
         } else {
             console.warn('❌ resetTorneoForm NON trovata');

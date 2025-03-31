@@ -184,3 +184,40 @@ h2.text-warning {
 .badge-info i {
     font-size: 16px;
 }
+
+.flatpickr-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.flatpickr-wrapper input {
+  width: 100%;
+  padding-right: 35px;
+  height: 38px;
+  border-radius: 6px;
+}
+
+.calendar-icon {
+  position: absolute;
+  right: 10px;
+  color: #bbb;
+  font-size: 16px;
+  pointer-events: none;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  display: block;
+  color: #fff;
+  margin-bottom: 6px;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+

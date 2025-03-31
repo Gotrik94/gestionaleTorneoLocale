@@ -38,3 +38,20 @@ select.form-select.input-error {
   color: #fff;
 }
 
+.form-group {
+  width: 100%;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  display: block;
+}
+
+.flatpickr-wrapper {
+  width: 100%;
+}
+
+.flatpickr-wrapper input {
+  width: 100%;
+}

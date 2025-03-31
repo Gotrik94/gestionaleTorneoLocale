@@ -32,14 +32,8 @@ def lista_tornei(request):
         print("Errore nella validazione:", serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
 @api_view(['GET', 'PUT', 'DELETE'])
 def dettaglio_torneo(request, torneo_id):
-    """
-    GET    -> Dettaglio di un torneo
-    PUT    -> Aggiorna un torneo
-    DELETE -> Elimina un torneo
-    """
     try:
         torneo = Torneo.objects.get(pk=torneo_id)
     except Torneo.DoesNotExist:

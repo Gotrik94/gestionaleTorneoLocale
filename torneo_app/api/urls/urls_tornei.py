@@ -7,4 +7,5 @@ urlpatterns = [
     path('lista_tornei/', lista_tornei, name='lista_tornei'),
     path("calendar_schedule_tornei", calendar_schedule_tornei, name="calendar_schedule_tornei"),
     path('elimina/<int:torneo_id>/', elimina_torneo, name='elimina_torneo'),
+    path('dettaglio_torneo/<int:torneo_id>/', dettaglio_torneo, name='dettaglio_torneo'),
 ]
