@@ -1,43 +1,56 @@
+/* STEP VISUALI */
 .step {
-    display: none;
-    opacity: 0;
-    transition: opacity 0.4s ease-in-out;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.4s ease-in-out;
 }
 
 .step.active {
-    display: block;
-    opacity: 1;
+  display: block;
+  opacity: 1;
 }
 
+/* FOOTER MODALE */
 .modal-footer {
-    display: flex;
-    justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
 }
 
-.fase-item, .girone-item {
-    background-color: #333;
-    border-radius: 5px;
-    padding: 10px;
-    margin-bottom: 5px;
-    display: flex;
-    justify-content: space-between;
+/* BOX FASI / GIRONI */
+.fase-item,
+.girone-item {
+  background-color: #333;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 5px;
+  display: flex;
+  justify-content: space-between;
 }
 
+/* PLACEHOLDER STYLE */
 input.form-control::placeholder {
-    color: #888;
-    font-style: italic;
-}
-.modal-header .btn-close {
-    filter: brightness(0) saturate(100%) invert(84%) sepia(62%) saturate(746%) hue-rotate(4deg) brightness(105%) contrast(101%);
+  color: #888;
+  font-style: italic;
 }
 
-/* 🔥 Fix visivo forte per input con Bootstrap */
+/* CHIUSURA MODALE - X ICON */
+.modal-header .btn-close {
+  filter: brightness(0) saturate(100%) invert(84%) sepia(62%) saturate(746%) hue-rotate(4deg) brightness(105%) contrast(101%);
+}
+
+/* 🧯 INPUT ERROR STYLE SU SFONDO SCURO */
 input.form-control.input-error,
 select.form-select.input-error {
   border: 2px solid #e74c3c;
   color: #fff;
+  background-color: #1e1e1e;
 }
 
+input.form-control.input-error::placeholder {
+  color: #ffbfbf;
+}
+
+/* FORM LAYOUT RESPONSIVE */
 .form-group {
   width: 100%;
 }
@@ -48,10 +61,37 @@ select.form-select.input-error {
   display: block;
 }
 
+/* FLATPICKR OVERRIDE */
 .flatpickr-wrapper {
   width: 100%;
 }
 
 .flatpickr-wrapper input {
   width: 100%;
+  background-color: #fff; /* Se mantieni Flatpickr attivo */
+  color: #000;
+}
+
+/* OPZIONALE: FORZA INPUT DATE PER DARK MODE (se usi type="date") */
+input[type="date"] {
+  background-color: #fff;
+  color: #000;
+}
+
+/* 📏 Riduci larghezza del modale */
+#nuovoTorneoModal .modal-dialog {
+  max-width: 600px;  /* Puoi abbassare ancora tipo 500px o 480px */
+  margin: 1.75rem auto;
+}
+
+@media (min-width: 768px) {
+  #nuovoTorneoModal .modal-dialog {
+    max-width: 550px;
+  }
+}
+
+@media (min-width: 992px) {
+  #nuovoTorneoModal .modal-dialog {
+    max-width: 600px;
+  }
 }
