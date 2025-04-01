@@ -176,7 +176,8 @@
                     <div class="step d-none" data-step="3">
                         <h4 class="text-warning mb-3">Gironi</h4>
 
-                        <div class="card bg-secondary text-dark p-3 mb-3">
+                        <!-- Wrapper dei campi input girone -->
+                        <div id="faseGironiWrapper" class="card bg-secondary text-dark p-3 mb-3">
                             <div class="row g-2 align-items-end">
                                 <div class="col-md-6">
                                     <label for="selectFaseGirone" class="form-label">Fase associata</label>
@@ -190,6 +191,11 @@
                                     <button class="btn btn-success w-100" onclick="aggiungiGironeDaForm()">➕</button>
                                 </div>
                             </div>
+                        </div>
+
+                        <!-- ⚠️ Messaggio se non ci sono fasi -->
+                        <div id="noFasiMessage" class="alert alert-warning text-center d-none">
+                            ⚠️ Nessuna fase disponibile. Torna allo step precedente e aggiungi almeno una fase per creare i gironi.
                         </div>
 
                         <div id="listaGironi"></div>

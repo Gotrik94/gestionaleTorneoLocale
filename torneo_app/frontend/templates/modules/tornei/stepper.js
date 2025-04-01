@@ -40,7 +40,6 @@ function getCSRFToken() {
     return csrfToken;
 }
 
-// 🔁 Mostra Step
 function showStep(step) {
     console.log(`Navigo allo step ${step}`);
 
@@ -75,12 +74,27 @@ function showStep(step) {
         setTimeout(() => {
             updateSelectFasi();
 
-            const faseSelect = document.getElementById("selectFaseGirone");
-            const index = parseInt(faseSelect?.value || 0);
-            aggiornaListaGironi(index);
-        }, 0); // wait for DOM rendering
+            const wrapperFaseGironi = document.getElementById("faseGironiWrapper");
+            const noFasiMessage = document.getElementById("noFasiMessage");
+            const btnAvanti = document.getElementById("btnAvanti");
+
+            if (torneoData.fasi.length === 0) {
+                wrapperFaseGironi?.classList.add("d-none");
+                noFasiMessage?.classList.remove("d-none");
+                btnAvanti.disabled = true;
+            } else {
+                wrapperFaseGironi?.classList.remove("d-none");
+                noFasiMessage?.classList.add("d-none");
+                btnAvanti.disabled = false;
+
+                const faseSelect = document.getElementById("selectFaseGirone");
+                const index = parseInt(faseSelect?.value || 0);
+                aggiornaListaGironi(index);
+            }
+        }, 0);
     }
 }
+
 
 
 
