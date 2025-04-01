@@ -71,7 +71,7 @@ class Partita(models.Model):
     conclusa = models.BooleanField(default=False)
     fase = models.ForeignKey(FaseTorneo, on_delete=models.SET_NULL, null=True, blank=True, related_name="partite_fase")
     girone = models.ForeignKey(Girone, on_delete=models.SET_NULL, null=True, blank=True, related_name="partite_girone")
-
+    round_num = models.IntegerField(default=1)
 
     def __str__(self):
         return f"{self.id} {self.squadra_rossa.nome} vs {self.squadra_blu.nome} - {self.data_evento.strftime('%d-%m-%Y')}"
