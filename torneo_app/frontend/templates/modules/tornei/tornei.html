@@ -155,15 +155,29 @@
                                     <label for="inputNomeFase" class="form-label">Nome Fase</label>
                                     <input type="text" id="inputNomeFase" class="form-control" placeholder="Es: Gruppi, Finali...">
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-4">
+                                  <label for="selectTipologiaFase" class="form-label">Tipologia</label>
+                                  <select id="selectTipologiaFase" class="form-select">
+                                    <option value="GRUPPI">GRUPPI</option>
+                                    <option value="ELIMINAZIONE_DIRETTA">ELIMINAZIONE DIRETTA</option>
+                                    <option value="DOPPIA_ELIMINAZIONE">DOPPIA ELIMINAZIONE</option>
+                                    <option value="ROUND_ROBIN">ROUND ROBIN</option>
+                                    <option value="KING_OF_THE_HILL">KING OF THE HILL</option>
+                                    <option value="CAMPIONATO">CAMPIONATO</option>
+                                    <option value="ALTRO">ALTRO</option>
+                                  </select>
+                                </div>
+                                <div class="col-md-2">
                                     <label for="inputDataInizioFase" class="form-label">Data Inizio</label>
                                     <input type="date" id="inputDataInizioFase" class="form-control">
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <label for="inputDataFineFase" class="form-label">Data Fine</label>
                                     <input type="date" id="inputDataFineFase" class="form-control">
                                 </div>
-                                <div class="col-md-2">
+                            </div>
+                            <div class="row g-2 align-items-end mt-1">
+                                <div class="col-md-12">
                                     <button class="btn btn-success w-100" onclick="aggiungiFaseDaForm()">➕</button>
                                 </div>
                             </div>

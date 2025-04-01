@@ -52,15 +52,25 @@ CREATE TABLE Campione (
     immagine VARCHAR(255) DEFAULT NULL
 );
 
--- Tabella FaseTorneo
+-- Tabella FaseTorneo aggiornata con campo TIPOLOGIA ENUM-style
 CREATE TABLE FaseTorneo (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
     torneo_id INTEGER NOT NULL,
     nome VARCHAR(50) NOT NULL,
+    tipologia ENUM(
+        'GRUPPI',
+        'ELIMINAZIONE_DIRETTA',
+        'DOPPIA_ELIMINAZIONE',
+        'ROUND_ROBIN',
+        'KING_OF_THE_HILL',
+        'CAMPIONATO',
+        'ALTRO'
+    ) NOT NULL DEFAULT 'ALTRO',
     data_inizio DATE NOT NULL,
     data_fine DATE NOT NULL,
     FOREIGN KEY (torneo_id) REFERENCES Torneo(id) ON DELETE CASCADE
 );
+
 
 -- Tabella Girone
 CREATE TABLE Girone (

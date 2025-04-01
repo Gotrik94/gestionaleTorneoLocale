@@ -197,20 +197,43 @@ function aggiornaListaFasi() {
 
     torneoData.fasi.forEach((fase, i) => {
         listaFasi.innerHTML += `
-            <div class="fase-item d-flex justify-content-between align-items-center mb-2 p-2 bg-secondary text-light rounded">
-                <div class="flex-grow-1">
-                    <input type="text" value="${fase.nome}" class="form-control form-control-sm mb-1"
-                           onchange="torneoData.fasi[${i}].nome = this.value">
-
-                    <div class="d-flex gap-2">
-                        <input type="date" class="form-control form-control-sm"
-                               value="${fase.data_inizio}" onchange="torneoData.fasi[${i}].data_inizio = this.value">
-                        <input type="date" class="form-control form-control-sm"
-                               value="${fase.data_fine}" onchange="torneoData.fasi[${i}].data_fine = this.value">
-                    </div>
+            <div class="fase-item d-flex justify-content-between align-items-start mb-3 p-2 bg-secondary text-light rounded">
+              <div class="flex-grow-1">
+                <!-- Riga 1: Nome Fase + Tipologia -->
+                <div class="row g-2 mb-2">
+                  <div class="col-md-6">
+                    <input type="text" value="${fase.nome}" class="form-control form-control-sm"
+                           onchange="torneoData.fasi[${i}].nome = this.value" placeholder="Nome Fase">
+                  </div>
+                  <div class="col-md-6">
+                    <select class="form-select form-select-sm"
+                            onchange="torneoData.fasi[${i}].tipologia = this.value">
+                      <option value="GRUPPI" ${fase.tipologia === 'GRUPPI' ? 'selected' : ''}>GRUPPI</option>
+                      <option value="ELIMINAZIONE_DIRETTA" ${fase.tipologia === 'ELIMINAZIONE_DIRETTA' ? 'selected' : ''}>ELIMINAZIONE DIRETTA</option>
+                      <option value="DOPPIA_ELIMINAZIONE" ${fase.tipologia === 'DOPPIA_ELIMINAZIONE' ? 'selected' : ''}>DOPPIA ELIMINAZIONE</option>
+                      <option value="ROUND_ROBIN" ${fase.tipologia === 'ROUND_ROBIN' ? 'selected' : ''}>ROUND ROBIN</option>
+                      <option value="KING_OF_THE_HILL" ${fase.tipologia === 'KING_OF_THE_HILL' ? 'selected' : ''}>KING OF THE HILL</option>
+                      <option value="CAMPIONATO" ${fase.tipologia === 'CAMPIONATO' ? 'selected' : ''}>CAMPIONATO</option>
+                      <option value="ALTRO" ${fase.tipologia === 'ALTRO' ? 'selected' : ''}>ALTRO</option>
+                    </select>
+                  </div>
                 </div>
 
-                <button class="btn btn-sm btn-danger ms-2" onclick="rimuoviFase(${i})">❌</button>
+                <!-- Riga 2: Date -->
+                <div class="row g-2">
+                  <div class="col-md-6">
+                    <input type="date" class="form-control form-control-sm"
+                           value="${fase.data_inizio}" onchange="torneoData.fasi[${i}].data_inizio = this.value">
+                  </div>
+                  <div class="col-md-6">
+                    <input type="date" class="form-control form-control-sm"
+                           value="${fase.data_fine}" onchange="torneoData.fasi[${i}].data_fine = this.value">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bottone rimozione -->
+              <button class="btn btn-sm btn-danger ms-2 mt-1" onclick="rimuoviFase(${i})">❌</button>
             </div>
         `;
     });
@@ -389,17 +412,27 @@ function aggiungiFaseDaForm() {
     const nome = document.getElementById('inputNomeFase').value;
     const dataInizio = document.getElementById('inputDataInizioFase').value;
     const dataFine = document.getElementById('inputDataFineFase').value;
+    const tipologia = document.getElementById('selectTipologiaFase').value;
 
-    if (!nome || !dataInizio || !dataFine) {
+    if (!nome || !dataInizio || !dataFine || !tipologia) {
         Swal.fire('Attenzione', 'Compila tutti i campi della fase', 'warning');
         return;
     }
 
-    torneoData.fasi.push({ nome, data_inizio: dataInizio, data_fine: dataFine, gironi: [] });
+        torneoData.fasi.push({
+            nome,
+            data_inizio: dataInizio,
+            data_fine: dataFine,
+            tipologia,           // ✅ la mettiamo qui
+            gironi: []
+        });
+
     aggiornaListaFasi();
+
     document.getElementById('inputNomeFase').value = '';
     document.getElementById('inputDataInizioFase').value = '';
     document.getElementById('inputDataFineFase').value = '';
+    document.getElementById('selectTipologiaFase').value = 'GRUPPI';
 }
 
 // ➕ Girone da form
