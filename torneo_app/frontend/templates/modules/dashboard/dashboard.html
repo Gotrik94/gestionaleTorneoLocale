@@ -1,0 +1,157 @@
+{% extends "modules/base/base.html" %}
+{% load static %}
+
+{% block title %}Dashboard - Torneo Manager{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'home/home.css' %}">
+<link rel="stylesheet" href="{% static 'dashboard/dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'calendar/calendar.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- Contenuto principale -->
+<div class="main-content flex-grow-1">
+        <div class="container-fluid p-4">
+            <div class="row">
+                <!-- Colonna di sinistra per i tornei -->
+                <div class="col-md-6">
+                    <h2 class="mt-4 text-warning text-center">Tornei Attivi</h2>
+                    <ul class="list-group ">
+                    <!-- Lista tornei -->
+                    {% for torneo in tornei %}
+                    <li class="list-group-item bg-dark text-light border-warning rounded-3 p-3 ">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="text-warning fw-bold">{{ torneo.nome }}</h5>
+                                <p class="mb-0">📅 {{ torneo.data_inizio }} - {{ torneo.data_fine }}</p>
+                                <p class="mb-0">🎮 Formato: {{ torneo.formato }}</p>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <span class="badge bg-warning text-dark fs-6 px-3 py-2 rounded-pill me-2">
+                                    <i class="bi bi-people"></i> {{ torneo.num_squadre }}
+                                </span>
+                                <button class="btn btn-warning btn-sm toggle-btn rounded-circle d-flex align-items-center justify-content-center me-2"
+                                    style="width: 30px; height: 30px;"
+                                    data-bs-toggle="collapse" data-bs-target="#torneoCollapse{{ torneo.id }}"
+                                    title="Espandi">
+                                    +
+                                </button>
+                                <a href="{}"
+                                   class="btn btn-warning btn-sm rounded-circle d-flex align-items-center justify-content-center me-2"
+                                   data-bs-toggle="tooltip" data-bs-placement="top" title="Dettagli">
+                                    <i class="bi bi-search"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- ✅ Collapse per squadre -->
+                        <div id="torneoCollapse{{ torneo.id }}" class="collapse mt-2">
+                            {% if torneo.squadre %}
+                                {% for squadra in torneo.squadre %}
+                                <div class="border border-warning rounded-3 shadow-sm bg-dark text-light mb-4 p-3">
+                                    <h5 class="fw-bold text-warning text-center squadra-title" style="font-size: 1.2rem;">{{ squadra.nome }}</h5>
+                                    <div class="table-responsive">
+                                        <table class="table table-dark table-striped text-center align-middle mb-0">
+                                            <thead class="border-bottom border-warning">
+                                                <tr>
+                                                    <th class="table-col-username">Username</th>
+                                                    <th class="table-col-k">K</th>
+                                                    <th class="table-col-d">D</th>
+                                                    <th class="table-col-a">A</th>
+                                                    <th class="table-col-kda">KDA</th>
+                                                    <th class="table-col-azioni">Azioni</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for giocatore in squadra.giocatori %}
+                                                <tr>
+                                                    <td class="table-col-username">{{ giocatore.giocatore__nome }}</td>
+                                                    <td class="table-col-k">{{ giocatore.totale_k|default:"0" }}</td>
+                                                    <td class="table-col-d">{{ giocatore.totale_d|default:"0" }}</td>
+                                                    <td class="table-col-a">{{ giocatore.totale_a|default:"0" }}</td>
+                                                    <td class="table-col-kda">{{ giocatore.kda|default:"0" }}</td>
+                                                    <td class="table-col-azioni">
+                                                        <a href="{}" class="text-warning" data-bs-toggle="tooltip" title="Dettagli Giocatore">
+                                                            <i class="bi bi-person-vcard-fill"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                {% endfor %}
+                            {% else %}
+                                <p class="text-center text-light">Nessuna squadra registrata</p>
+                            {% endif %}
+                        </div>
+
+                    </li>
+                    {% endfor %}
+
+                    </ul>
+                </div>
+
+                <!-- Colonna di destra per il calendario -->
+                <div class="col-md-6">
+                    <div class="container-fluid mt-4">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card bg-dark text-light p-3">
+                                    {% include 'modules/calendar/calendar.html' %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container-fluid mt-4">
+                <div class="row">
+                    <!-- 📊 Statistiche Torneo -->
+                    <div class="col-md-6">
+                        <div class="card bg-dark text-light p-3">
+                            <h4 class="text-warning text-center">Riepilogo Tornei</h4>
+                            <ul style="width: 100%; height: 250px;" class="list-group list-group-flush">
+                                <li class="list-group-item bg-dark text-light">Totale Tornei: <span class="fw-bold text-warning">{{ riepilogo_tornei.totale_tornei }}</span></li>
+                                <li class="list-group-item bg-dark text-light">Squadra con più vittorie: <span class="fw-bold text-warning">{{ riepilogo_tornei.squadra_piu_vittorie }}</span></li>
+                                <li class="list-group-item bg-dark text-light">MVP più votato: <span class="fw-bold text-warning">{{  riepilogo_tornei.mvp_piu_votato }}</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- 📈 Grafico delle Prestazioni -->
+                    <div class="col-md-6">
+                        <div class="card bg-dark text-light p-3">
+                            <h4 class="text-warning text-center">% Vincita Side</h4>
+                            <div style="width: 100%; height: 250px;">
+                                <canvas id="gaugeChart" width="300" height="300"
+                                        data-blu="{{ percentuale_blu }}"
+                                        data-rosso="{{ percentuale_rossa }}">
+                                </canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block extra_js %}
+<!-- JS CHart -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
+<script src="{% static 'calendar/calendar.js' %}" defer></script>
+
+<script src="{% static 'home/home.js' %}"></script>
+<script src="{% static 'dashboard/dashboard.js' %}" defer></script>
+{% endblock %}
+
+</div>

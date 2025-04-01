@@ -1,0 +1,34 @@
+/* 🔸 Layout Titolo Squadra */
+.squadra-title {
+    height: 40px;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 🔸 Card contenitore squadra (padding interno) */
+#torneoCollapse .border {
+    padding: 1rem 1.5rem;
+}
+
+/* 🔸 Spazio sotto il titolo */
+#torneoCollapse .border .text-center {
+    margin-bottom: 1rem;
+}
+
+/* 🔸 Tabella: stile celle */
+.table th,
+.table td {
+    vertical-align: middle;
+    white-space: nowrap; /* evita che il contenuto rompa il layout */
+}
+
+/* 🔸 Colonne fisse per allineamento perfetto */
+.table-col-username { width: 30%; }
+.table-col-k,
+.table-col-d,
+.table-col-a { width: 10%; }
+.table-col-kda { width: 15%; }
+.table-col-azioni { width: 15%; }

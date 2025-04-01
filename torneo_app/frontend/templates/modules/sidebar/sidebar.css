@@ -1,0 +1,127 @@
+.main-content {
+    margin-left: 50px;
+    transition: margin-left 0.3s ease-in-out;
+}
+
+/* ====== Stili isolati per la Sidebar ====== */
+#sidebar-wrapper .sidebar {
+    width: 60px;
+    height: 100vh;
+    background-color: #222;
+    padding-top: 15px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    display: absolute;
+    flex-direction: column;
+    align-items: center;
+    transition: width 0.3s ease-in-out;
+    overflow: hidden;
+    z-index: 1000;
+}
+
+#sidebar-wrapper .sidebar.expanded {
+    width: 200px;
+    align-items: flex-start;
+    padding-left: 15px;
+}
+
+/* Bottone Toggle */
+#sidebar-wrapper .sidebar-toggle {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: color .3s ease-in-out, transform 0.3s ease-in-out;
+    padding: 15px;
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+/* Allinea il pulsante perfettamente quando la sidebar è espansa */
+#sidebar-wrapper .sidebar.expanded .sidebar-toggle {
+    justify-content: flex   /* Sposta il pulsante a sinistra */
+    padding-left: 15px;  /* Distanza dal bordo sinistro */
+    transform: rotate(180deg);
+}
+
+#sidebar-wrapper .sidebar-toggle:hover {
+    color: #ffc107;
+}
+
+/* Stile delle voci di menu */
+#sidebar-wrapper .nav-link {
+    color: white;
+    font-size: 22px;
+    text-align: center;
+    padding: 15px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    position: relative;
+    transition: color 0.3s ease-in-out;
+}
+
+#sidebar-wrapper .nav-link i {
+    font-size: 24px;
+    margin-right: 0;
+    transition: margin-right 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+/* Quando la sidebar è espansa, mostra il testo e sposta l'icona */
+#sidebar-wrapper .sidebar.expanded .nav-link i {
+    margin-right: 10px;
+}
+
+#sidebar-wrapper .nav-text {
+    display: none;
+    transition: opacity 0.3s ease-in-out;
+}
+
+#sidebar-wrapper .sidebar.expanded .nav-text {
+    display: inline;
+    opacity: 1;
+}
+
+/* Sottolineatura su icona e testo */
+#sidebar-wrapper .nav-link::after {
+    content: "";
+    display: block;
+    width: 0;
+    height: 3px;
+    background-color: #ffc107;
+    transition: width 0.3s ease-in-out;
+    position: absolute;
+    bottom: 5px;
+    left: 10%;
+    transform: translateX(-10%);
+}
+
+/* Effetto sottolineatura sia su icona che su testo */
+#sidebar-wrapper .nav-link:hover,
+#sidebar-wrapper .nav-link:hover i,
+#sidebar-wrapper .nav-link.active,
+#sidebar-wrapper .nav-link.active i {
+    color: #ffc107;
+}
+
+#sidebar-wrapper .nav-link:hover::after,
+#sidebar-wrapper .nav-link.active::after {
+    width: 80%;
+}
+
+/* ====== Wrapper per evitare sovrapposizioni ====== */
+#content-container {
+    margin-left: 80px;
+    transition: margin-left 0.3s ease-in-out;
+}
+
+#content-container.sidebar-expanded {
+    margin-left: 220px;
+}

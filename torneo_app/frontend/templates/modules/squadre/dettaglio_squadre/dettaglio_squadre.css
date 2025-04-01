@@ -1,0 +1,91 @@
+.flex-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.flex-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.champion-img {
+    width: 30px;
+    height: 30px;
+    object-fit: cover;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.champion-img:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.card-body {
+    padding: 10px;
+    font-size: 14px;
+}
+.card-img-top {
+    height: 120px !important; /* Ridotta da 200px a 120px */
+    object-fit: contain;
+    padding: 8px;
+}
+
+.row-cols-1 .col {
+    flex: 0 0 auto;
+    width: auto;
+}
+
+.row-cols-1 {
+    display: flex;
+    justify-content: center;
+    gap: 10px; /* Riduci il gap tra le card */
+}
+
+.g-4 {
+    gap: 8px !important;
+}
+    /* Stile per il tema scuro */
+    .accordion-dark .accordion-item {
+      background-color: #333;
+      border-color: #444;
+    }
+    .accordion-dark .accordion-button {
+      background-color: #444;
+      color: #fff;
+    }
+    .accordion-dark .accordion-button:not(.collapsed) {
+      background-color: #555;
+      color: #fff;
+    }
+    .accordion-dark .accordion-body {
+      background-color: #333;
+      color: #fff;
+    }
+
+    /* Cambia il colore della freccia in bianco */
+    .accordion-dark .accordion-button::after {
+      filter: brightness(0) invert(1); /* Trasforma la freccia in bianco */
+    }
+
+
+.match-vittoria {
+  background: linear-gradient(to right, #222 10%, #2c2 40%, #2c2 60%, #222 90%);
+  cursor: pointer;
+}
+.match-pareggio {
+  background: linear-gradient(to right, #222 10%, #ffeb3b 40%, #ffeb3b 60%, #222 90%);
+  cursor: pointer;
+}
+.match-sconfitta {
+  background: linear-gradient(to right, #222 10%, #f44 40%, #f44 60%, #222 90%);
+  cursor: pointer;
+}
+
+.match-vittoria:hover,
+.match-pareggio:hover,
+.match-sconfitta:hover {
+  filter: brightness(1.1);
+}

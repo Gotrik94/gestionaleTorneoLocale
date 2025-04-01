@@ -1,0 +1,239 @@
+{% extends "modules/base/base.html" %}
+{% load static %}
+
+{% block title %}Gestione Tornei - Torneo Manager{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'tornei/tornei.css' %}">
+<link rel="stylesheet" href="{% static 'tornei/stepper.css' %}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+<h2 class="text-warning mb-4">Gestione Tornei</h2>
+
+<div class="row">
+    <!-- Menu di sinistra -->
+    <div class="col-md-3">
+        <div class="filters-box p-3 bg-dark rounded">
+            <h4>Ricerca</h4>
+            <input type="text" id="searchTorneo" class="form-control mb-3" placeholder="🔍 Cerca torneo per nome...">
+            <h4>Filtri</h4>
+            <button class="btn btn-outline-warning w-100 mb-2" onclick="applyFilter('tutti', event)">Tutti</button>
+            <button class="btn btn-outline-success w-100 mb-2" onclick="applyFilter('attivi', event)">In Corso</button>
+            <button class="btn btn-outline-info w-100 mb-2" onclick="applyFilter('programmati', event)">Programmati</button>
+            <button class="btn btn-outline-danger w-100 mb-2" onclick="applyFilter('conclusi', event)">Conclusi</button>
+            <button class="btn btn-warning w-100" onclick="openCreateTournamentModal()" tabindex="-1" aria-hidden="true">+ Crea Nuovo Torneo</button>
+
+        </div>
+    </div>
+
+    <!-- Sezione principale: lista tornei -->
+    <div class="col-md-9">
+        <div class="table-responsive">
+            <table class="table table-dark table-hover text-center">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Periodo</th>
+                        <th>Squadre</th>
+                        <th>Azioni</th>
+                        <th>Stato</th>
+                    </tr>
+                </thead>
+                    <tbody id="torneiList">
+                        {% for torneo in tornei_con_stato  %}
+                        <tr class="torneo-card totali {{ torneo.stato }}">
+                            <td class="text-warning">{{ torneo.nome }}</td>
+                            <td>📅 {{ torneo.data_inizio|date:"d/m/Y" }} - {{ torneo.data_fine|date:"d/m/Y" }}</td>
+                            <td>
+                                <span class="badge bg-secondary"><i class="bi bi-people"></i>&nbsp{{ torneo.squadre|length }}</span>
+                            </td>
+                            <td>
+                                <a href="/tornei/dettaglio/{{ torneo.id }}" class="btn btn-outline-warning btn-sm">👁 Dettagli</a>
+                                <button class="btn btn-outline-info btn-sm" onclick="modificaTorneo({{ torneo.id }})">✏️ Modifica</button>
+                                <button class="btn btn-outline-danger btn-sm" onclick="apriModaleEliminazione({{ torneo.id }}, '{{ torneo.nome }}')">🗑 Elimina</button>
+                            </td>
+                            <td>
+                                {% if torneo.stato == 'in_corso' %}
+                                    <span class="badge bg-success">In Corso</span>
+                                {% elif torneo.stato == 'programmato' %}
+                                    <span class="badge bg-info">Programmato</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Concluso</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="5" class="text-muted">Nessun torneo disponibile.</td></tr>
+                        {% endfor %}
+                    </tbody>
+            </table>
+            <nav aria-label="Paginazione Tornei">
+                <ul class="pagination justify-content-center" id="pagination"></ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<!-- Modale Eliminazione -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-light">
+            <div class="modal-header">
+                <h5 class="modal-title text-warning">Conferma Eliminazione</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                Sei sicuro di voler eliminare il torneo <strong id="torneoNomeDelete"></strong>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                <button id="confirmDeleteBtn" class="btn btn-danger">
+                    <span id="deleteBtnText">Elimina</span>
+                    <span id="deleteBtnLoader" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modale Creazione Nuovo Torneo -->
+<!-- Modale Creazione Torneo con Stepper -->
+<div class="modal fade" id="nuovoTorneoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark text-light">
+            <div class="modal-header">
+                <h5 class="modal-title text-warning">Gestione Torneo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="stepper">
+                    <!-- Step 1: Torneo -->
+                    <div class="step active" data-step="1">
+
+                        <h4>Dati Torneo</h4>
+                        <div class="form-group">
+                          <label for="nomeTorneo">Nome Torneo</label>
+                          <input type="text" id="nomeTorneo" class="form-control" placeholder="Nome Torneo">
+                        </div>
+
+                        <div class="form-group">
+                          <label for="dataInizio">Data Inizio</label>
+                          <input type="date" id="dataInizio" class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                          <label for="dataFine">Data Fine</label>
+                          <input type="date" id="dataFine" class="form-control">
+                        </div>
+
+
+                        <div class="form-group">
+                          <label for="fasciaOraria">Fascia Oraria</label>
+                          <input type="text" id="fasciaOraria" class="form-control" placeholder="18:00 - 1:00">
+                        </div>
+
+                        <div class="form-group">
+                          <label for="formato">Formato</label>
+                          <select id="formato" class="form-select">
+                            <option value="DRAFT">Draft</option>
+                            <option value="ARAM">ARAM</option>
+                          </select>
+                        </div>
+
+
+                    </div>
+                    <!-- Step 2: Fasi -->
+                    <div class="step d-none" data-step="2">
+                        <h4 class="text-warning mb-3">Fasi del Torneo</h4>
+
+                        <div class="card bg-secondary text-dark p-3 mb-3">
+                            <div class="row g-2 align-items-end">
+                                <div class="col-md-4">
+                                    <label for="inputNomeFase" class="form-label">Nome Fase</label>
+                                    <input type="text" id="inputNomeFase" class="form-control" placeholder="Es: Gruppi, Finali...">
+                                </div>
+                                <div class="col-md-4">
+                                  <label for="selectTipologiaFase" class="form-label">Tipologia</label>
+                                  <select id="selectTipologiaFase" class="form-select">
+                                    <option value="GRUPPI">GRUPPI</option>
+                                    <option value="ELIMINAZIONE_DIRETTA">ELIMINAZIONE DIRETTA</option>
+                                    <option value="DOPPIA_ELIMINAZIONE">DOPPIA ELIMINAZIONE</option>
+                                    <option value="ROUND_ROBIN">ROUND ROBIN</option>
+                                    <option value="KING_OF_THE_HILL">KING OF THE HILL</option>
+                                    <option value="CAMPIONATO">CAMPIONATO</option>
+                                    <option value="ALTRO">ALTRO</option>
+                                  </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="inputDataInizioFase" class="form-label">Data Inizio</label>
+                                    <input type="date" id="inputDataInizioFase" class="form-control">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="inputDataFineFase" class="form-label">Data Fine</label>
+                                    <input type="date" id="inputDataFineFase" class="form-control">
+                                </div>
+                            </div>
+                            <div class="row g-2 align-items-end mt-1">
+                                <div class="col-md-12">
+                                    <button class="btn btn-success w-100" onclick="aggiungiFaseDaForm()">➕</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="listaFasi"></div>
+                    </div>
+
+                    <!-- Step 3: Gironi -->
+                    <div class="step d-none" data-step="3">
+                        <h4 class="text-warning mb-3">Gironi</h4>
+
+                        <!-- Wrapper dei campi input girone -->
+                        <div id="faseGironiWrapper" class="card bg-secondary text-dark p-3 mb-3">
+                            <div class="row g-2 align-items-end">
+                                <div class="col-md-6">
+                                    <label for="selectFaseGirone" class="form-label">Fase associata</label>
+                                    <select id="selectFaseGirone" class="form-select" onchange="aggiornaListaGironi(this.value)"></select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="inputNomeGirone" class="form-label">Nome Girone</label>
+                                    <input type="text" id="inputNomeGirone" class="form-control" placeholder="Es: Girone A">
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-success w-100" onclick="aggiungiGironeDaForm()">➕</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ⚠️ Messaggio se non ci sono fasi -->
+                        <div id="noFasiMessage" class="alert alert-warning text-center d-none">
+                            ⚠️ Nessuna fase disponibile. Torna allo step precedente e aggiungi almeno una fase per creare i gironi.
+                        </div>
+
+                        <div id="listaGironi"></div>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" id="btnIndietro" onclick="prevStep()">Indietro</button>
+                    <button class="btn btn-warning" onclick="nextStep()">Avanti</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}
+{% block extra_js %}
+<script src="{% static 'tornei/tornei.js' %}"></script>
+<script src="{% static 'tornei/stepper.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/it.js"></script>
+{% endblock %}
+

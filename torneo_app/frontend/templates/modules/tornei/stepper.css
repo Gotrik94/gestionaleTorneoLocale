@@ -1,0 +1,128 @@
+/* STEP VISUALI */
+.step {
+  display: none;
+  opacity: 0;
+  transition: opacity 0.4s ease-in-out;
+}
+
+.step.active {
+  display: block;
+  opacity: 1;
+}
+
+/* MODALE PIÙ GRANDE E REATTIVO */
+#nuovoTorneoModal .modal-dialog {
+  max-width: 800px;
+  margin: 2rem auto;
+}
+
+@media (min-width: 992px) {
+  #nuovoTorneoModal .modal-dialog {
+    max-width: 840px;
+  }
+}
+
+/* FOOTER MODALE */
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* STEP INTERNI PIÙ LEGGIBILI */
+#nuovoTorneoModal .step {
+  font-size: 1rem;
+}
+
+#nuovoTorneoModal .form-label {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #fff;
+}
+
+#nuovoTorneoModal input.form-control,
+#nuovoTorneoModal select.form-select {
+  height: 44px;
+  font-size: 1rem;
+}
+
+/* BOX FASI / GIRONI */
+.fase-item,
+.girone-item {
+  background-color: #333;
+  border-radius: 6px;
+  padding: 12px 15px;
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* CARD STEP 2 PIÙ SPAZIOSA */
+#nuovoTorneoModal .step[data-step="2"] .card.bg-secondary {
+  padding: 30px;
+  border-radius: 12px;
+}
+
+/* PLACEHOLDER STYLE */
+input.form-control::placeholder {
+  color: #aaa;
+  font-style: italic;
+}
+
+/* CHIUSURA MODALE - X ICON CUSTOM */
+.modal-header .btn-close {
+  filter: brightness(0) saturate(100%) invert(84%) sepia(62%) saturate(746%) hue-rotate(4deg) brightness(105%) contrast(101%);
+}
+
+/* ERROR STYLE (SU SCURO) */
+input.form-control.input-error,
+select.form-select.input-error {
+  border: 2px solid #e74c3c;
+  background-color: #1e1e1e;
+  color: #fff;
+}
+
+input.form-control.input-error::placeholder {
+  color: #ffbfbf;
+}
+
+/* FORM LAYOUT RESPONSIVO */
+.form-group {
+  width: 100%;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  display: block;
+}
+
+/* FLATPICKR */
+.flatpickr-wrapper {
+  width: 100%;
+}
+
+.flatpickr-wrapper input {
+  width: 100%;
+  background-color: #fff;
+  color: #000;
+}
+
+/* DATE INPUT DARK FIX */
+input[type="date"] {
+  background-color: #fff;
+  color: #000;
+}
+
+/* INPUT FASI/GIRONI - ALLINEAMENTO */
+.card.bg-secondary .row.g-2.align-items-end > [class^="col-"] {
+  margin-bottom: 0 !important;
+}
+
+/* BOTTONE ➕ STRETTO E STILOSO */
+.card.bg-secondary button.btn-success {
+  padding: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  white-space: nowrap;
+}

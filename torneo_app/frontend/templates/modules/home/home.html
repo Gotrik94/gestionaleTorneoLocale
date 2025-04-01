@@ -1,0 +1,71 @@
+{% extends "modules/base/base.html" %}
+{% load static %}
+
+{% block title %}Home - Torneo Manager{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'home/home.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <!-- Titolo -->
+        <div class="text-center">
+            <h1 class="title">Benvenuto nel <span class="highlight">Torneo Manager</span>!</h1>
+            <p>Gestisci squadre, partite e tornei!</p>
+        </div>
+
+        <!-- Statistiche Generali -->
+        <div class="row text-center stats-container">
+            <div class="col-md-4 stat-card">
+                <h3>{{ tornei_attivi }}</h3>
+                <p>Tornei Attivi</p>
+            </div>
+            <div class="col-md-4 stat-card">
+                <h3>{{ totale_squadre }}</h3>
+                <p>Squadre Iscritte</p>
+            </div>
+            <div class="col-md-4 stat-card">
+                <h3>{{ totale_partite }}</h3>
+                <p>Partite Giocate</p>
+            </div>
+        </div>
+
+        <!-- Pulsanti Navigazione -->
+        <div class="nav-buttons text-center mt-4">
+            <a href="{% url 'tornei_page' %}" class="btn {% if request.resolver_match.url_name == 'tornei_page' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                <i class="bi bi-trophy"></i> Tornei
+            </a>
+            <a href="{% url 'squadre_page' %}" class="btn {% if request.resolver_match.url_name == 'squadre_page' %}btn-success{% else %}btn-outline-success{% endif %}">
+                <i class="bi bi-people"></i> Squadre
+            </a>
+            <a {% if 'eventi' in request.resolver_match.namespaces %} href="{% url 'eventi' %}" {% else %} href="#" {% endif %} class="btn btn-warning">
+                <i class="bi bi-calendar-event"></i> Eventi
+            </a>
+        </div>
+
+        <!-- Sezione Ultimi Tornei -->
+        <div class="latest-tournaments mt-5">
+            <h2 class="text-center"><i class="bi bi-award"></i> Ultimi Tornei</h2>
+            <div class="row">
+                {% for torneo in tornei_con_squadre %}
+                <div class="col-md-6">
+                    <div class="tournament-panel">
+                        <h3>{{ torneo.nome }}</h3>
+                        <p><strong>Inizio:</strong> {{ torneo.data_inizio|date:"d/m/Y"}}</p>
+                        <p><strong>Squadre:</strong>
+                            <span class="badge badge-info"><i class="bi bi-people"></i> {{ torneo.num_squadre }}</span>
+                        </p>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-center text-muted">Nessun torneo recente.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'home/home.js' %}"></script>
+{% endblock %}
