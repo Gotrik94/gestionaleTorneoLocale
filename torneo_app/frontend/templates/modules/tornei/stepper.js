@@ -180,11 +180,28 @@ function aggiungiFase() {
 function aggiornaListaFasi() {
     const listaFasi = document.getElementById('listaFasi');
     listaFasi.innerHTML = '';
+
     torneoData.fasi.forEach((fase, i) => {
-        listaFasi.innerHTML += `<div class="fase-item">${fase.nome} (${fase.data_inizio} - ${fase.data_fine})
-        <button class="btn btn-sm btn-danger" onclick="rimuoviFase(${i})">❌</button></div>`;
+        listaFasi.innerHTML += `
+            <div class="fase-item d-flex justify-content-between align-items-center mb-2 p-2 bg-secondary text-light rounded">
+                <div class="flex-grow-1">
+                    <input type="text" value="${fase.nome}" class="form-control form-control-sm mb-1"
+                           onchange="torneoData.fasi[${i}].nome = this.value">
+
+                    <div class="d-flex gap-2">
+                        <input type="date" class="form-control form-control-sm"
+                               value="${fase.data_inizio}" onchange="torneoData.fasi[${i}].data_inizio = this.value">
+                        <input type="date" class="form-control form-control-sm"
+                               value="${fase.data_fine}" onchange="torneoData.fasi[${i}].data_fine = this.value">
+                    </div>
+                </div>
+
+                <button class="btn btn-sm btn-danger ms-2" onclick="rimuoviFase(${i})">❌</button>
+            </div>
+        `;
     });
 }
+
 
 function rimuoviFase(index) {
     const faseEliminata = torneoData.fasi.splice(index, 1)[0];
