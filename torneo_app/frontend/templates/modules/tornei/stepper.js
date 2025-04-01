@@ -2,6 +2,18 @@ let currentStep = 1;
 const totalSteps = 3;
 const stepElements = document.querySelectorAll('.step');
 
+// ✅ Dichiara torneoData globale se non esiste
+if (typeof window.torneoData === "undefined") {
+    window.torneoData = {
+        nome: '',
+        data_inizio: '',
+        data_fine: '',
+        fascia_oraria: '',
+        formato: '',
+        fasi: []
+    };
+}
+
 
 // 🔁 Reset quando il modale si chiude
 const nuovoTorneoModal = document.getElementById('nuovoTorneoModal');
@@ -31,11 +43,14 @@ function getCSRFToken() {
 // 🔁 Mostra Step
 function showStep(step) {
     console.log(`Navigo allo step ${step}`);
+
+    // 🔁 Nasconde tutti gli step
     document.querySelectorAll('.step').forEach(el => {
         el.classList.add('d-none');
         el.classList.remove('active');
     });
 
+    // ✅ Mostra solo lo step attuale
     const currentStepEl = document.querySelector(`.step[data-step='${step}']`);
     if (currentStepEl) {
         currentStepEl.classList.remove('d-none');
@@ -54,7 +69,19 @@ function showStep(step) {
         btnIndietro.textContent = 'Indietro';
         btnIndietro.onclick = prevStep;
     }
+
+    // ✅ STEP 3: aggiorna la select e la lista dei gironi
+    if (step === 3) {
+        setTimeout(() => {
+            updateSelectFasi();
+
+            const faseSelect = document.getElementById("selectFaseGirone");
+            const index = parseInt(faseSelect?.value || 0);
+            aggiornaListaGironi(index);
+        }, 0); // wait for DOM rendering
+    }
 }
+
 
 
 // ➡️ Avanti
@@ -160,15 +187,25 @@ function aggiornaListaFasi() {
 }
 
 function rimuoviFase(index) {
-    torneoData.fasi.splice(index, 1);
+    const faseEliminata = torneoData.fasi.splice(index, 1)[0];
+    console.log("🗑️ Fase rimossa:", faseEliminata.nome);
+    console.log("🗑️ Gironi associati rimossi:", faseEliminata.gironi || []);
     aggiornaListaFasi();
     updateSelectFasi();
 }
 
 function updateSelectFasi() {
     const select = document.getElementById('selectFaseGirone');
-    select.innerHTML = torneoData.fasi.map((fase, i) => `<option value="${i}">${fase.nome}</option>`).join('');
+    if (!select) return;
+
+    select.innerHTML = torneoData.fasi.map((fase, i) =>
+        `<option value="${i}">${fase.nome}</option>`
+    ).join('');
+
+    console.log(`🔁 Select gironi aggiornata con ${torneoData.fasi.length} fasi.`);
 }
+
+
 
 // ➕ Gironi
 function aggiungiGirone() {
@@ -186,16 +223,30 @@ function aggiornaListaGironi(faseIndex) {
     listaGironi.innerHTML = '';
 
     const fase = torneoData.fasi[faseIndex];
-    if (fase && fase.gironi && fase.gironi.length > 0) {
+
+    console.log("🔄 Aggiorno lista gironi per fase index:", faseIndex);
+    if (!fase) {
+        console.warn("⚠️ Nessuna fase trovata all'indice:", faseIndex);
+        return;
+    }
+
+    console.log("📛 Fase selezionata:", fase.nome);
+    console.log("📦 Gironi in questa fase:", fase.gironi);
+
+    if (fase.gironi && fase.gironi.length > 0) {
         fase.gironi.forEach((girone, i) => {
+            console.log(`➡️ Girone ${i}: ${girone.nome}`);
             listaGironi.innerHTML += `
-                <div class="girone-item">
-                    ${girone.nome}
+                <div class="girone-item d-flex justify-content-between align-items-center">
+                    <span>${girone.nome}</span>
                     <button class="btn btn-sm btn-danger" onclick="rimuoviGirone(${faseIndex}, ${i})">❌</button>
                 </div>`;
         });
+    } else {
+        console.log("ℹ️ Nessun girone nella fase attuale.");
     }
 }
+
 
 
 function rimuoviGirone(faseIndex, gironeIndex) {

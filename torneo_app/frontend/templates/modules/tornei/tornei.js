@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-
     // 🔹 Ottieni CSRF Token
     function getCSRFToken() {
         let csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]')?.value;
