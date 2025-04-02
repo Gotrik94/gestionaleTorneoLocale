@@ -51,12 +51,40 @@
   box-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
 }
 
-#bracket-1,
-[id^="bracket-"] {
-  transform: scale(1.3); /* Zoom */
-  transform-origin: top left;
-  min-width: 800px;      /* Per forzare larghezza utile */
+#bracket-1, [id^="bracket-"] {
+  width: 100%;
   min-height: 500px;
+  padding: 20px;
+  background-color: #1e1e1e;
+  border-radius: 10px;
+  transform: scale(1.2);
+  transform-origin: top left;
 }
+.alert-warning {
+  background-color: rgba(255, 193, 7, 0.2) !important; /* giallo trasparente */
+  border-color: #ffc107 !important;
+  color: white !important; /* Forza il testo bianco */
+}
+
+.alert-warning strong {
+  color: white !important; /* Anche il testo in grassetto */
+}
+
+.alert-warning p {
+  color: white !important;
+}
+
+.bracket-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 10px 20px;
+}
+
+.bracket-actions button {
+  min-width: 140px;
+}
+
+
 
 

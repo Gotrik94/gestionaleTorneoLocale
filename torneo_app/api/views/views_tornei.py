@@ -55,9 +55,6 @@ def dettaglio_torneo(request, torneo_id):
         torneo.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-
-
-
 def calendar_schedule_tornei(request):
     tornei = Torneo.objects.filter(is_active=True)
     fasi = FaseTorneo.objects.filter(torneo__in=tornei)
@@ -88,10 +85,6 @@ def calendar_schedule_tornei(request):
         "tornei": eventi_tornei,
         "fasi": eventi_fasi
     }, safe=False)
-
-
-
-
 
 def tornei_page(request):
     oggi = date.today()
@@ -149,7 +142,6 @@ def tornei_page(request):
         'tornei_conclusi_counter': tornei_conclusi_counter,
         'active_page': 'tornei'
     })
-
 
 def elimina_torneo(request, torneo_id):
     if request.method == "DELETE":

@@ -74,4 +74,4 @@ class Partita(models.Model):
     round_num = models.IntegerField(default=1)
 
     def __str__(self):
-        return f"{self.id} {self.squadra_rossa.nome} vs {self.squadra_blu.nome} - {self.data_evento.strftime('%d-%m-%Y')}"
+        return f"{self.id} | {self.torneo.nome} | {self.squadra_rossa.nome} vs {self.squadra_blu.nome} - {self.data_evento.strftime('%d-%m-%Y')}"
