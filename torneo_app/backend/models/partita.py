@@ -37,8 +37,9 @@ class Partita(models.Model):
 
     id = models.AutoField(primary_key=True)  # ID auto-incrementale
     torneo = models.ForeignKey(Torneo, on_delete=models.CASCADE, related_name="partite")  # Relazione con Torneo
-    squadra_rossa = models.ForeignKey(Squadra, on_delete=models.CASCADE, related_name="partite_rosse")
-    squadra_blu = models.ForeignKey(Squadra, on_delete=models.CASCADE, related_name="partite_blu")
+    squadra_rossa = models.ForeignKey(Squadra, null=True, blank=True, related_name='partite_rosse',on_delete=models.SET_NULL)
+    squadra_blu = models.ForeignKey(Squadra, null=True, blank=True, related_name='partite_blu',on_delete=models.SET_NULL)
+
     vincitore = models.ForeignKey(Squadra, on_delete=models.SET_NULL, null=True, blank=True,
                                   related_name="partite_vinte")
     mvp = models.ForeignKey(Giocatore, on_delete=models.SET_NULL, related_name="mvp", null=True, blank=True)
@@ -74,4 +75,8 @@ class Partita(models.Model):
     round_num = models.IntegerField(default=1)
 
     def __str__(self):
-        return f"{self.id} | {self.torneo.nome} | {self.squadra_rossa.nome} vs {self.squadra_blu.nome} - {self.data_evento.strftime('%d-%m-%Y')}"
+        nome_rossa = self.squadra_rossa.nome if self.squadra_rossa else "BYE"
+        nome_blu = self.squadra_blu.nome if self.squadra_blu else "BYE"
+        data_str = self.data_evento.strftime('%d-%m-%Y') if self.data_evento else "Data N/D"
+        return f"{self.id} | {self.torneo.nome} | {nome_rossa} vs {nome_blu} - {data_str}"
+

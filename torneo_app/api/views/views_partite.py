@@ -57,7 +57,10 @@ def calendar_schedule_partita(request):
     events = []
 
     for partita in partite:
-        # Costruisci il titolo con il nome del torneo e le squadre, separate da un newline
+        # Ignora partite dove almeno una squadra è None (tipicamente BYE)
+        if not partita.squadra_rossa or not partita.squadra_blu:
+            continue
+
         title = f"{partita.torneo.nome}\n{partita.squadra_rossa.nome} vs {partita.squadra_blu.nome}"
         events.append({
             'title': title,

@@ -85,6 +85,18 @@
   min-width: 140px;
 }
 
+.draggable-squadra {
+  cursor: grab;
+  user-select: none;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+.draggable-squadra:hover {
+  background-color: #f0ad4e;
+  color: black;
+}
+
+
 
 
 

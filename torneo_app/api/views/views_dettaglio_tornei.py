@@ -1,10 +1,13 @@
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
+from django.utils import timezone
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from backend.models import Partita, Iscrizione, Torneo, Squadra
 from backend.models.fase_torneo import FaseTorneo
 from backend.serializers import PartitaSerializer
+import json
 
 
 # 🎨 Renderizza pagina HTML dettaglio torneo
@@ -88,28 +91,42 @@ def aggiorna_risultato_partita(request, partita_id):
 def salva_bracket(request, fase_id):
     try:
         fase = FaseTorneo.objects.get(id=fase_id)
-        torneo = fase.torneo
 
-        Partita.objects.filter(fase=fase).delete()
+        if Partita.objects.filter(fase=fase).exists():
+            return JsonResponse({'errore': 'Bracket già generato per questa fase'}, status=400)
 
-        bracket = request.data['bracket']
-        nuove_partite = []
+        data = request.data
+        bracket = data.get('bracket', {})
+        teams = bracket.get('teams', [])
+        results = bracket.get('results', [[]])[0]
 
-        for squadra_rossa_nome, squadra_blu_nome in bracket['teams']:
-            squadra_rossa = Squadra.objects.get(nome=squadra_rossa_nome)
-            squadra_blu = Squadra.objects.get(nome=squadra_blu_nome)
+        for i, match in enumerate(teams):
+            t1 = match[0]
+            t2 = match[1]
+            score = results[i] if i < len(results) else [0, 0]
 
-            partita = Partita.objects.create(
-                fase=fase, torneo=torneo,
-                squadra_rossa=squadra_rossa,
-                squadra_blu=squadra_blu,
-                data_evento=fase.data_inizio
+            squadra1 = Squadra.objects.filter(id=t1.get('id')).first() if t1 else None
+            squadra2 = Squadra.objects.filter(id=t2.get('id')).first() if t2 else None
+
+            if not squadra1 and not squadra2:
+                continue
+
+            Partita.objects.create(
+                fase=fase,
+                torneo=fase.torneo,  # ✅ aggiunto questo
+                squadra_rossa=squadra1,
+                squadra_blu=squadra2,
+                round_num=1,
+                vincitore=None,
+                data_evento=timezone.localtime(timezone.now()).date(),  # ✅ corretto
+                modalita="BO1",
+                numero_partita_nella_serie=1,
             )
-            nuove_partite.append(partita)
 
-        return Response(PartitaSerializer(nuove_partite, many=True).data, status=201)
+        return JsonResponse({'ok': True})
+
     except Exception as e:
-        print(f"[ERRORE] {str(e)}")
-        return Response({"errore": str(e)}, status=400)
+        return JsonResponse({'errore': str(e)}, status=400)
+
 
 
