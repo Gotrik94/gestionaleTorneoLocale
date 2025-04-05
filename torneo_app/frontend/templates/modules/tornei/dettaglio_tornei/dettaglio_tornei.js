@@ -12,16 +12,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // 🔁 Converte le partite salvate dal backend in formato bracket
-  function getBracketFromPartite(fase) {
-    return {
-      teams: fase.partite.map(p => [
-        { name: getNomeSquadraById(fase.squadre, p.squadra_rossa), id: p.squadra_rossa },
-        { name: getNomeSquadraById(fase.squadre, p.squadra_blu), id: p.squadra_blu }
-      ]),
-      results: [fase.partite.map(p => [0, 0])], // Puoi usare anche punteggi se ce li hai
-      partiteIds: fase.partite.map(p => p.id)
-    };
-  }
+    function getBracketFromPartite(fase) {
+      return {
+        teams: fase.partite.map(p => [
+          p.squadra_rossa
+            ? { name: getNomeSquadraById(fase.squadre, p.squadra_rossa), id: p.squadra_rossa }
+            : { name: 'BYE', id: null },
+          p.squadra_blu
+            ? { name: getNomeSquadraById(fase.squadre, p.squadra_blu), id: p.squadra_blu }
+            : { name: 'BYE', id: null }
+        ]),
+        results: [fase.partite.map(p => [0, 0])], // usa i punteggi reali se vuoi
+        partiteIds: fase.partite.map(p => p.id)
+      };
+    }
+
 
   // 🔍 Recupera nome della squadra dato l'id
   function getNomeSquadraById(squadre, id) {
