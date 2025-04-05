@@ -24,7 +24,10 @@ def dettaglio_squadra(request, squadra_id):
     tornei_conclusi = [t for t in tornei_partecipati if t.data_fine and t.data_fine < oggi]
 
     giocatori = Giocatore.objects.filter(squadra=squadra)
-    partite = Partita.objects.filter(Q(squadra_rossa=squadra) | Q(squadra_blu=squadra))
+    partite = Partita.objects.filter(
+        Q(squadra_rossa=squadra) | Q(squadra_blu=squadra),
+        conclusa=True  # ✅ Solo partite concluse
+    )
 
     # 2) Statistiche globali della squadra
     vittorie = partite.filter(vincitore=squadra).count()
@@ -120,7 +123,7 @@ def dettaglio_squadra(request, squadra_id):
     dettagli_torneo_per_squadra = {}
     for torneo in tornei_partecipati:
         partite_t = (Partita.objects
-                     .filter(torneo=torneo)
+                     .filter(torneo=torneo, conclusa=True)
                      .filter(Q(squadra_rossa=squadra) | Q(squadra_blu=squadra))
                      .order_by('numero_partita_nella_serie', 'data_evento'))
         stats_t = StatisticheGiocatorePartita.objects.filter(partita__in=partite_t, giocatore__squadra=squadra)

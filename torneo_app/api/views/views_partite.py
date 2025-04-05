@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -64,7 +66,8 @@ def calendar_schedule_partita(request):
         title = f"{partita.torneo.nome}\n{partita.squadra_rossa.nome} vs {partita.squadra_blu.nome}"
         events.append({
             'title': title,
-            'start': partita.data_evento.isoformat()
+            'start': partita.data_evento.isoformat(),
+            'end': (partita.data_evento + timedelta(hours=1)).isoformat()
         })
 
     return JsonResponse(events, safe=False)

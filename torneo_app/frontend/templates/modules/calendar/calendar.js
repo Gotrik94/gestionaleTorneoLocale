@@ -82,19 +82,30 @@ const inizializzaCalendario = () => {
         // TOOLTIP al passaggio del mouse
         eventMouseEnter: function(info) {
             const formatDate = (date) => {
+                if (!date) return '';
                 const d = new Date(date);
                 return d.toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' });
             };
+
+            const startDate = formatDate(info.event.start);
+            const endDate = formatDate(info.event.end);
+
+            const dateText = (endDate && endDate !== startDate)
+                ? `${startDate} - ${endDate}`
+                : startDate;
+
             const tooltip = new bootstrap.Tooltip(info.el, {
-                title: `${info.event.title}<br>${formatDate(info.event.start)} - ${formatDate(info.event.end)}`,
+                title: `${info.event.title.replace(/\n/g, "<br>")}<br><small>${dateText}</small>`,
                 html: true,
                 placement: "top",
                 trigger: "hover",
                 container: "body"
             });
+
             tooltip.show();
-            info.el.tooltipInstance = tooltip; // Salviamo l'istanza per la rimozione successiva
+            info.el.tooltipInstance = tooltip;
         },
+
 
         eventMouseLeave: function(info) {
             if (info.el.tooltipInstance) {

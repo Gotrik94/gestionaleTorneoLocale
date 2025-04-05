@@ -33,7 +33,7 @@ def api_dettaglio_torneo(request, torneo_id):
             # Correzione obbligatoria (usa correttamente la relazione inversa "iscrizione"):
             squadre_iscritte = Squadra.objects.filter(iscrizione__torneo=torneo).distinct()
 
-            partite = Partita.objects.filter(fase=fase).order_by('data_evento')
+            partite = Partita.objects.all_with_bye().filter(fase=fase).order_by('data_evento')
             dati_partite = PartitaSerializer(partite, many=True).data
 
             dati_fasi.append({
@@ -121,6 +121,7 @@ def salva_bracket(request, fase_id):
                 data_evento=timezone.localtime(timezone.now()).date(),  # ✅ corretto
                 modalita="BO1",
                 numero_partita_nella_serie=1,
+                conclusa=False,
             )
 
         return JsonResponse({'ok': True})

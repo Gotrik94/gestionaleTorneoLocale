@@ -7,6 +7,20 @@ from backend.models.torneo import Torneo
 from backend.models.squadra import Squadra
 
 
+class PartitaQuerySet(models.QuerySet):
+    def without_bye(self):
+        return self.exclude(squadra_rossa__isnull=True).exclude(squadra_blu__isnull=True)
+
+# 🔧 Manager custom che esclude partite con BYE
+class PartitaManager(models.Manager):
+    def get_queryset(self):
+        # Di default esclude i BYE
+        return PartitaQuerySet(self.model, using=self._db).without_bye()
+
+    def all_with_bye(self):
+        # Accesso a tutte le partite incluse le BYE
+        return super().get_queryset()
+
 class Partita(models.Model):
     MODALITA_PARTITA = [
         ('BO1', 'Best of 1'),
@@ -73,6 +87,10 @@ class Partita(models.Model):
     fase = models.ForeignKey(FaseTorneo, on_delete=models.SET_NULL, null=True, blank=True, related_name="partite_fase")
     girone = models.ForeignKey(Girone, on_delete=models.SET_NULL, null=True, blank=True, related_name="partite_girone")
     round_num = models.IntegerField(default=1)
+
+    # ⚙️ Manager personalizzati
+    objects = PartitaManager()        # default = esclude BYE
+    all_objects = models.Manager()    # include tutto (per bracket, debug ecc.)
 
     def __str__(self):
         nome_rossa = self.squadra_rossa.nome if self.squadra_rossa else "BYE"
