@@ -104,8 +104,8 @@ CREATE TABLE Partita (
     torneo_id INT NOT NULL,                 -- Torneo in cui si gioca la partita
 	fase_id INTEGER,
     girone_id INTEGER,
-    squadra_rossa_id INT NOT NULL,          -- Squadra assegnata al lato rosso
-    squadra_blu_id INT NOT NULL,            -- Squadra assegnata al lato blu
+    squadra_rossa_id INT,          -- Squadra assegnata al lato rosso
+    squadra_blu_id INT,            -- Squadra assegnata al lato blu
     vincitore_id INT,                       -- Squadra vincitrice (può essere NULL in caso di pareggio)
     data_evento DATE NOT NULL,              -- Data della partita
     durata_minuti INT DEFAULT NULL,         -- Durata della partita in minuti
@@ -125,6 +125,8 @@ CREATE TABLE Partita (
     fase_torneo ENUM('Gruppi', 'Quarti', 'Semifinale', 'Finale') DEFAULT 'Gruppi', -- Fase del torneo
     serie_id INT NULL,                      -- ID della serie a cui appartiene la partita (NULL se partita singola)
     numero_partita_nella_serie INT DEFAULT 1, -- Numero progressivo della partita nella serie
+    round_num INT DEFAULT 1,
+    bracket_confermato BOOLEAN DEFAULT FALSE,	
     FOREIGN KEY (torneo_id) REFERENCES Torneo(id) ON DELETE CASCADE,
 	FOREIGN KEY (fase_id) REFERENCES FaseTorneo(id) ON DELETE CASCADE,
     FOREIGN KEY (girone_id) REFERENCES Girone(id) ON DELETE CASCADE,
