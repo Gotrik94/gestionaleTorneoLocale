@@ -24,6 +24,7 @@ class FaseTorneo(models.Model):
         choices=TIPOLOGIE,
         default='ALTRO'
     )
+    bracket_confermato = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.nome} - {self.torneo.nome} : ({self.tipologia})"

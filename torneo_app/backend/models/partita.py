@@ -87,7 +87,6 @@ class Partita(models.Model):
     fase = models.ForeignKey(FaseTorneo, on_delete=models.SET_NULL, null=True, blank=True, related_name="partite_fase")
     girone = models.ForeignKey(Girone, on_delete=models.SET_NULL, null=True, blank=True, related_name="partite_girone")
     round_num = models.IntegerField(default=1)
-    bracket_confermato = models.BooleanField(default=False)
 
     # ⚙️ Manager personalizzati
     objects = PartitaManager()        # default = esclude BYE

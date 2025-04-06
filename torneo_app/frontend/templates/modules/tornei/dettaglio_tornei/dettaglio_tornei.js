@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let currentBracketData = null;
   let faseAttuale = null;
+  let isBracketConfermato = false;
+
 
 
     // 🔁 Converte le partite salvate dal backend in formato bracket
@@ -90,13 +92,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (index === 0 && !faseNonIniziata) {
           faseAttuale = fase;
 
-          if (fase.partite?.length) {
-            currentBracketData = getBracketFromPartite(fase);
-            console.log("🔁 Bracket da partite:", currentBracketData);
-          } else {
-            currentBracketData = generaBracketPlaceholder(fase.squadre);
-            console.log("🔲 Bracket placeholder generato:", currentBracketData);
-          }
+        if (fase.partite?.length) {
+          currentBracketData = getBracketFromPartite(fase);
+          isBracketConfermato = true; // 👈 Aggiungi questa riga
+          console.log("🔁 Bracket da partite:", currentBracketData);
+        } else {
+          currentBracketData = generaBracketPlaceholder(fase.squadre);
+          isBracketConfermato = false; // 👈 opzionale, per chiarezza
+          console.log("🔲 Bracket placeholder generato:", currentBracketData);
+        }
+
 
           renderBracket(currentBracketData, fase.id);
           renderSquadreDisponibili(fase.squadre);
@@ -160,76 +165,73 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 🖼️ Render Bracket
     function renderBracket(data, faseId) {
-      const bracketContainer = $(`#bracket-${faseId}`);
-      bracketContainer.empty().bracket({
-        init: {
-          teams: data.teams.map(match => [match[0].name || '', match[1].name || '']),
-          results: data.results
-        },
-        disableToolbar: true,
-        disableTeamEdit: true,
-        save: data.partiteIds?.length > 0
-          ? (matchData, roundIdx, matchIdx) => {
-              const partitaId = data.partiteIds[matchIdx];
-              if (!partitaId) return;
-              fetch(`/api/dettaglio/partita/${partitaId}/aggiorna/`, {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'X-CSRFToken': getCookie('csrftoken')
-                },
-                body: JSON.stringify({
-                  punteggio_rossa: matchData.score[0],
-                  punteggio_blu: matchData.score[1]
-                })
-              })
-                .then(res => res.json())
-                .then(res => console.log("✅ Risultato aggiornato:", res))
-                .catch(err => console.error("❌ Errore aggiornamento:", err));
-            }
-          : () => console.log("💾 Bracket placeholder, nessun salvataggio")
-      });
+    const bracketContainer = $(`#bracket-${faseId}`);
+    bracketContainer.empty().bracket({
+    init: {
+      teams: data.teams.map(match => [
+        isBracketConfermato
+          ? (match[0]?.name || 'BYE')
+          : (match[0]?.name || ''),
+        isBracketConfermato
+          ? (match[1]?.name || 'BYE')
+          : (match[1]?.name || '')
+      ]),
+      results: data.results
+    },
+    disableToolbar: true,
+    disableTeamEdit: true,
+    save: !isBracketConfermato && data.partiteIds?.length > 0
+      ? (matchData, roundIdx, matchIdx) => {
+        const partitaId = data.partiteIds[matchIdx];
+        if (!partitaId) return;
+        fetch(`/api/dettaglio/partita/${partitaId}/aggiorna/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+          },
+          body: JSON.stringify({
+            punteggio_rossa: matchData.score[0],
+            punteggio_blu: matchData.score[1]
+          })
+        })
+          .then(res => res.json())
+          .then(res => console.log("✅ Risultato aggiornato:", res))
+          .catch(err => console.error("❌ Errore aggiornamento:", err));
+      }
+      : () => {}
+    });
 
-      // ⬇️ Rendi i blocchi droppabili e aggiorna il currentBracketData
-      setTimeout(() => {
-        document.querySelectorAll(`#bracket-${faseId} .team`).forEach(teamEl => {
-          teamEl.addEventListener('dragover', e => {
-            e.preventDefault(); // 🔓 Permette il drop
-          });
+    // Drag and drop solo se il bracket è modificabile
+    if (!isBracketConfermato) {
+    setTimeout(() => {
+      document.querySelectorAll(`#bracket-${faseId} .team`).forEach(teamEl => {
+        teamEl.addEventListener('dragover', e => e.preventDefault());
 
-          teamEl.addEventListener('drop', e => {
-            e.preventDefault();
+        teamEl.addEventListener('drop', e => {
+          e.preventDefault();
+          const dataDrop = JSON.parse(e.dataTransfer.getData("application/json"));
+          teamEl.textContent = dataDrop.nome;
+          teamEl.dataset.id = dataDrop.id;
 
-            const dataDrop = JSON.parse(e.dataTransfer.getData("application/json"));
-            console.log("🧲 Squadra droppata:", dataDrop);
-
-            // 1. Aggiorna visivamente il blocco
-            teamEl.textContent = dataDrop.nome;
-            teamEl.dataset.id = dataDrop.id;
-            teamEl.dataset.nome = dataDrop.nome;
-            teamEl.style.backgroundColor = "#4CAF50";
-
-            // 2. Sincronizza con currentBracketData
-            const allMatchEls = [...document.querySelectorAll(`#bracket-${faseId} .match`)];
-
-            allMatchEls.forEach((matchEl, matchIdx) => {
-              const teamNodes = matchEl.querySelectorAll('.team');
-              teamNodes.forEach((node, teamIdx) => {
-                if (node === teamEl) {
-                  console.log(`📦 Aggiorno currentBracketData. Match: ${matchIdx}, Slot: ${teamIdx}`);
-                  currentBracketData.teams[matchIdx][teamIdx] = {
-                    name: dataDrop.nome,
-                    id: parseInt(dataDrop.id)
-                  };
-                }
-              });
+          const allMatchEls = [...document.querySelectorAll(`#bracket-${faseId} .match`)];
+          allMatchEls.forEach((matchEl, matchIdx) => {
+            const teamNodes = matchEl.querySelectorAll('.team');
+            teamNodes.forEach((node, teamIdx) => {
+              if (node === teamEl) {
+                currentBracketData.teams[matchIdx][teamIdx] = {
+                  name: dataDrop.nome,
+                  id: parseInt(dataDrop.id)
+                };
+              }
             });
-
-            console.log("🧠 currentBracketData aggiornato:", currentBracketData);
           });
         });
-      }, 100); // Tempo per assicurarsi che il DOM dei match sia pronto
+      });
+    }, 100);
     }
+    }
+
 
 
 
@@ -244,22 +246,15 @@ document.addEventListener('DOMContentLoaded', () => {
       // 💾 Salvataggio bracket
     async function salvaBracket(faseId) {
       try {
-        // 🧼 Pulizia: rimuovi squadre con ID null o non validi
         const cleanedBracket = {
           ...currentBracketData,
           teams: currentBracketData.teams.map(match => match.map(team => {
-            if (!team?.id || isNaN(team.id)) {
-              return null;  // segna come slot vuoto
-            }
+            if (!team?.id || isNaN(team.id)) return null;
             return { id: team.id, name: team.name };
           })),
           results: currentBracketData.results
         };
-
-        // 🔁 Rimuovi i match completamente vuoti
         cleanedBracket.teams = cleanedBracket.teams.filter(pair => pair && (pair[0] || pair[1]));
-
-        console.log("💾 Bracket da inviare:", cleanedBracket);
 
         const response = await fetch(`/api/dettaglio/fase/${faseId}/salva_bracket/`, {
           method: 'POST',
@@ -273,10 +268,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const result = await response.json();
         if (!response.ok) throw result;
 
-        console.log("✅ Bracket salvato:", result);
-        await loadTorneoData();
+        Swal.fire({
+          title: "✅ Bracket confermato!",
+          text: "Le modifiche sono state salvate e il bracket è ora bloccato.",
+          icon: "success"
+        });
+
+        isBracketConfermato = true;
+        document.querySelectorAll('.btn-salvabracket, .btn-resetbracket')
+          .forEach(btn => btn.style.display = "none");
+
+        renderBracket(currentBracketData, faseId);
+
       } catch (err) {
         console.error("❌ Errore salvataggio bracket:", err);
+        Swal.fire("Errore", "Non è stato possibile salvare il bracket", "error");
       }
     }
 
@@ -325,6 +331,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) return parts.pop().split(';').shift();
   }
+
+  function nascondiBottoniBracket() {
+  document.querySelectorAll('.btn-salvabracket, .btn-resetbracket, #btn-generabracket').forEach(btn => {
+    btn.style.display = 'none';
+  });
+}
+
+
 
   // 🚀 Avvia caricamento dati
   loadTorneoData();

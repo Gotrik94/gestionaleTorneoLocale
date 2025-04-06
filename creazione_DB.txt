@@ -68,6 +68,7 @@ CREATE TABLE FaseTorneo (
     ) NOT NULL DEFAULT 'ALTRO',
     data_inizio DATE NOT NULL,
     data_fine DATE NOT NULL,
+    bracket_confermato BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (torneo_id) REFERENCES Torneo(id) ON DELETE CASCADE
 );
 
@@ -125,8 +126,7 @@ CREATE TABLE Partita (
     fase_torneo ENUM('Gruppi', 'Quarti', 'Semifinale', 'Finale') DEFAULT 'Gruppi', -- Fase del torneo
     serie_id INT NULL,                      -- ID della serie a cui appartiene la partita (NULL se partita singola)
     numero_partita_nella_serie INT DEFAULT 1, -- Numero progressivo della partita nella serie
-    round_num INT DEFAULT 1,
-    bracket_confermato BOOLEAN DEFAULT FALSE,	
+    round_num INT DEFAULT 1,	
     FOREIGN KEY (torneo_id) REFERENCES Torneo(id) ON DELETE CASCADE,
 	FOREIGN KEY (fase_id) REFERENCES FaseTorneo(id) ON DELETE CASCADE,
     FOREIGN KEY (girone_id) REFERENCES Girone(id) ON DELETE CASCADE,
