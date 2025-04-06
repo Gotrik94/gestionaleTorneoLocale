@@ -68,11 +68,17 @@ document.addEventListener('DOMContentLoaded', () => {
           content.className = `tab-pane fade ${index === 0 ? 'show active' : ''}`;
           content.id = `fase-${fase.id}`;
 
+          const formattedDate = new Date(fase.data_inizio).toLocaleDateString('it-IT', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        }).replace(/\//g, '-');
+
           if (faseNonIniziata) {
             content.innerHTML = `
               <div class="alert alert-warning text-dark p-4 shadow">
                 <h5 class="mb-2"><span class="text-white">⏳ Fase non ancora iniziata</span></h5>
-                <p>La fase <strong>${fase.nome}</strong> inizierà il <strong>${fase.data_inizio}</strong>.</p>
+                <p>La fase <strong>${fase.nome}</strong> inizierà il <strong>${formattedDate}</strong>.</p>
               </div>`;
           } else {
             content.innerHTML = `
