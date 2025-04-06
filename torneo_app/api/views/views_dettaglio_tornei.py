@@ -42,6 +42,7 @@ def api_dettaglio_torneo(request, torneo_id):
                 "tipologia": fase.tipologia,
                 "data_inizio": fase.data_inizio,
                 "data_fine": fase.data_fine,
+                "bracket_confermato": fase.bracket_confermato,  # Aggiungi questa linea
                 "squadre": [{"id": s.id, "nome": s.nome, "logo": s.logo.url if s.logo else ""} for s in
                             squadre_iscritte],
                 "partite": dati_partite
@@ -91,9 +92,12 @@ def aggiorna_risultato_partita(request, partita_id):
 def salva_bracket(request, fase_id):
     try:
         fase = FaseTorneo.objects.get(id=fase_id)
+        fase.bracket_confermato = True
 
         if Partita.objects.filter(fase=fase).exists():
             return JsonResponse({'errore': 'Bracket già generato per questa fase'}, status=400)
+
+        fase.save()  # Aggiungi questa linea per salvare il cambiamento
 
         data = request.data
         bracket = data.get('bracket', {})

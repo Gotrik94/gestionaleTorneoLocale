@@ -37,83 +37,84 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 
-  // 📦 Carica dati del torneo e genera contenuti
-  async function loadTorneoData() {
-    try {
-      const response = await fetch(`/api/dettaglio/${torneoId}/dettaglio/`);
-      if (!response.ok) throw new Error("Errore caricamento dati");
+    // 📦 Carica dati del torneo e genera contenuti
+    async function loadTorneoData() {
+      try {
+        const response = await fetch(`/api/dettaglio/${torneoId}/dettaglio/`);
+        if (!response.ok) throw new Error("Errore caricamento dati");
 
-      const data = await response.json();
-      console.log("✅ Dati torneo:", data);
+        const data = await response.json();
+        console.log("✅ Dati torneo:", data);
 
-      tabFasi.innerHTML = '';
-      contenutoFasi.innerHTML = '';
+        tabFasi.innerHTML = '';
+        contenutoFasi.innerHTML = '';
 
-      data.fasi.forEach((fase, index) => {
-        const oggi = new Date();
-        const dataInizioFase = new Date(fase.data_inizio);
-        const faseNonIniziata = dataInizioFase > oggi;
+        data.fasi.forEach((fase, index) => {
+          const oggi = new Date();
+          const dataInizioFase = new Date(fase.data_inizio);
+          const faseNonIniziata = dataInizioFase > oggi;
 
-        // 🧱 Crea Tab
-        const tab = document.createElement('li');
-        tab.classList.add('nav-item');
-        tab.innerHTML = `
-          <button class="nav-link ${index === 0 ? 'active' : ''}" data-bs-toggle="tab" data-bs-target="#fase-${fase.id}">
-            ${fase.nome}
-          </button>`;
-        tabFasi.appendChild(tab);
+          // 🧱 Crea Tab
+          const tab = document.createElement('li');
+          tab.classList.add('nav-item');
+          tab.innerHTML = `
+            <button class="nav-link ${index === 0 ? 'active' : ''}" data-bs-toggle="tab" data-bs-target="#fase-${fase.id}">
+              ${fase.nome}
+            </button>`;
+          tabFasi.appendChild(tab);
 
-        // 🧱 Crea Contenuto della fase
-        const content = document.createElement('div');
-        content.className = `tab-pane fade ${index === 0 ? 'show active' : ''}`;
-        content.id = `fase-${fase.id}`;
+          // 🧱 Crea Contenuto della fase
+          const content = document.createElement('div');
+          content.className = `tab-pane fade ${index === 0 ? 'show active' : ''}`;
+          content.id = `fase-${fase.id}`;
 
-        if (faseNonIniziata) {
-          content.innerHTML = `
-            <div class="alert alert-warning text-dark p-4 shadow">
-              <h5 class="mb-2"><span class="text-white">⏳ Fase non ancora iniziata</span></h5>
-              <p>La fase <strong>${fase.nome}</strong> inizierà il <strong>${fase.data_inizio}</strong>.</p>
-            </div>`;
-        } else {
-          content.innerHTML = `
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <h5 class="text-warning">Bracket: ${fase.nome}</h5>
-              <div class="bracket-actions">
-                <button class="btn btn-danger btn-sm btn-resetbracket"><i class="fa fa-trash"></i> Reset Bracket</button>
-                <button class="btn btn-success btn-sm btn-salvabracket"><i class="fa fa-save"></i> Salva Bracket</button>
+          if (faseNonIniziata) {
+            content.innerHTML = `
+              <div class="alert alert-warning text-dark p-4 shadow">
+                <h5 class="mb-2"><span class="text-white">⏳ Fase non ancora iniziata</span></h5>
+                <p>La fase <strong>${fase.nome}</strong> inizierà il <strong>${fase.data_inizio}</strong>.</p>
+              </div>`;
+          } else {
+            content.innerHTML = `
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="text-warning">Bracket: ${fase.nome}</h5>
+                <div class="bracket-actions">
+                  <button class="btn btn-danger btn-sm btn-resetbracket"><i class="fa fa-trash"></i> Reset Bracket</button>
+                  <button class="btn btn-success btn-sm btn-salvabracket"><i class="fa fa-save"></i> Salva Bracket</button>
+                </div>
               </div>
-            </div>
-            <div class="bracket-wrapper"><div id="bracket-${fase.id}"></div></div>`;
-        }
+              <div class="bracket-wrapper"><div id="bracket-${fase.id}"></div></div>`;
+          }
 
-        contenutoFasi.appendChild(content);
+          contenutoFasi.appendChild(content);
 
-        // ⚡ Solo per la prima fase attiva
-        if (index === 0 && !faseNonIniziata) {
-          faseAttuale = fase;
+          // ⚡ Solo per la prima fase attiva
+          if (index === 0 && !faseNonIniziata) {
+            faseAttuale = fase;
 
-        if (fase.partite?.length) {
-          currentBracketData = getBracketFromPartite(fase);
-          isBracketConfermato = true; // 👈 Aggiungi questa riga
-          console.log("🔁 Bracket da partite:", currentBracketData);
-        } else {
-          currentBracketData = generaBracketPlaceholder(fase.squadre);
-          isBracketConfermato = false; // 👈 opzionale, per chiarezza
-          console.log("🔲 Bracket placeholder generato:", currentBracketData);
-        }
+            // Usa bracket_confermato invece di controllare fase.partite?.length
+            if (fase.bracket_confermato) {
+              currentBracketData = getBracketFromPartite(fase);
+              isBracketConfermato = true;
+              nascondiBottoniBracket();
+              console.log("🔒 Bracket confermato trovato:", currentBracketData);
+            } else {
+              currentBracketData = generaBracketPlaceholder(fase.squadre);
+              isBracketConfermato = false;
+              console.log("🔲 Bracket placeholder generato:", currentBracketData);
+            }
 
+            renderBracket(currentBracketData, fase.id);
+            renderSquadreDisponibili(fase.squadre);
+          }
+        });
 
-          renderBracket(currentBracketData, fase.id);
-          renderSquadreDisponibili(fase.squadre);
-        }
-      });
-
-      bindBracketButtons();
-    } catch (err) {
-      console.error("❌ Errore caricamento dati:", err);
+        bindBracketButtons();
+      } catch (err) {
+        console.error("❌ Errore caricamento dati:", err);
+      }
     }
-  }
-
+    
   // 🔁 Collegamento dei bottoni per salvare e resettare
   function bindBracketButtons() {
     document.querySelectorAll('.btn-salvabracket').forEach(btn => {
@@ -243,7 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log("🔃 Bracket resettato");
   }
 
-      // 💾 Salvataggio bracket
+    // 💾 Salvataggio bracket
     async function salvaBracket(faseId) {
       try {
         const cleanedBracket = {
@@ -275,8 +276,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         isBracketConfermato = true;
-        document.querySelectorAll('.btn-salvabracket, .btn-resetbracket')
-          .forEach(btn => btn.style.display = "none");
+
+        // Aggiungi questa chiamata per nascondere i bottoni dopo il salvataggio
+        nascondiBottoniBracket();
 
         renderBracket(currentBracketData, faseId);
 
@@ -285,7 +287,6 @@ document.addEventListener('DOMContentLoaded', () => {
         Swal.fire("Errore", "Non è stato possibile salvare il bracket", "error");
       }
     }
-
   // 🧱 Bracket vuoto con BYE
   function generaBracketPlaceholder(squadre) {
     const valid = squadre.filter(s => s.id);
@@ -332,11 +333,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (parts.length === 2) return parts.pop().split(';').shift();
   }
 
-  function nascondiBottoniBracket() {
-  document.querySelectorAll('.btn-salvabracket, .btn-resetbracket, #btn-generabracket').forEach(btn => {
-    btn.style.display = 'none';
-  });
-}
+    // Assicurati che questa funzione sia corretta
+    function nascondiBottoniBracket() {
+      document.querySelectorAll('.btn-salvabracket, .btn-resetbracket, #btn-generabracket').forEach(btn => {
+        btn.style.display = 'none';
+      });
+      console.log("🔒 Bottoni bracket nascosti (bracket confermato)");
+    }
 
 
 
