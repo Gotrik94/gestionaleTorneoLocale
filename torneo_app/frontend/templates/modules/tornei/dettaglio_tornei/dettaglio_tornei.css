@@ -1,29 +1,65 @@
-/* Bracket layout */
-#bracket {
-  width: 100%;
+/* ------------------------------------
+   dettaglio_tornei.css
+   ------------------------------------
+   - Elimina transform: scale()
+   - Aggiunge margini extra tra match
+   - Mantiene stili di base e highlight
+*/
+
+/* -- Wrapper del bracket: gestisce lo scroll orizzontale e un max-width per centrare -- */
+.bracket-wrapper {
   overflow-x: auto;
-  background-color: #1e1e1e;
-  padding: 1rem;
+  margin: 0 auto;               /* Tenta di centrare orizzontalmente il contenitore */
+  max-width: 1300px;           /* Limite di larghezza se lo desideri */
+  background-color: #1b1b1b;
   border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
 }
 
-/* Migliora lettura */
-.tournament-bracket__round-title {
-  color: #f0ad4e;
-  font-weight: 600;
+/* -- Contenitore del bracket vero e proprio (nessuna scala) -- */
+#bracket-1,
+[id^="bracket-"] {
+  min-width: 800px;          /* Larghezza minima */
+  min-height: 500px;         /* Altezza minima */
+  background-color: #1e1e1e;
+  border-radius: 10px;
+  padding: 20px;             /* Spazio interno attorno al bracket */
 }
 
-/* Tab nav */
+/* -- Tab nav migliorata -- */
+.nav-tabs {
+  margin-bottom: 20px;
+  border-bottom: 1px solid #444;
+}
+
+.nav-tabs .nav-item {
+  margin-right: 5px;
+}
+
 .nav-tabs .nav-link {
   color: #ccc;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: 500;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  transition: all 0.2s ease;
 }
+
 .nav-tabs .nav-link.active {
   color: #fff;
   background-color: #333;
   border-color: #444 #444 #222;
+  font-weight: bold;
 }
 
-/* Pulsanti */
+.nav-tabs .nav-link:hover:not(.active) {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: transparent;
+}
+
+/* -- Pulsanti generici -- */
 .btn-outline-warning {
   border-color: #f0ad4e;
   color: #f0ad4e;
@@ -32,71 +68,156 @@
   background-color: #f0ad4e;
   color: #000;
 }
-#bracket-1, [id^="bracket-"] {
-  width: 100%;
-  min-height: 500px;       /* aumenta l’altezza minima */
-  padding: 20px;
-  background-color: #1e1e1e;
-  border-radius: 10px;
-  transform: scale(1.2);   /* ZOOM visivo */
-  transform-origin: top left;
-}
 
-/* optional: contenitore con scroll se necessario */
-.bracket-wrapper {
-  overflow-x: auto;
-  padding: 1rem;
-  background-color: #1b1b1b;
-  border-radius: 10px;
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
-}
-
-#bracket-1, [id^="bracket-"] {
-  width: 100%;
-  min-height: 500px;
-  padding: 20px;
-  background-color: #1e1e1e;
-  border-radius: 10px;
-  transform: scale(1.2);
-  transform-origin: top left;
-}
+/* -- Messaggi di alert e card -- */
 .alert-warning {
-  background-color: rgba(255, 193, 7, 0.2) !important; /* giallo trasparente */
+  background-color: rgba(255, 193, 7, 0.2) !important;
   border-color: #ffc107 !important;
-  color: white !important; /* Forza il testo bianco */
+  color: #fff !important;
 }
-
 .alert-warning strong {
-  color: white !important; /* Anche il testo in grassetto */
+  color: #fff !important;
 }
-
 .alert-warning p {
-  color: white !important;
+  color: #fff !important;
+}
+.card.bg-dark {
+  background-color: #1b1b1b !important;
 }
 
-.bracket-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  padding: 10px 20px;
+/* -- Testo e intestazioni -- */
+.text-warning {
+  color: #ffc107 !important;
+}
+.text-light {
+  color: #f8f9fa !important;
 }
 
-.bracket-actions button {
-  min-width: 140px;
+/* =========================================
+   jQuery Bracket custom styles
+   ========================================= */
+
+/* Base bracket container */
+.jQBracket {
+  font-family: 'Roboto', sans-serif;
+  margin: 0 auto;
 }
 
-.draggable-squadra {
-  cursor: grab;
-  user-select: none;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-}
-.draggable-squadra:hover {
-  background-color: #f0ad4e;
-  color: black;
+/* Margine extra tra i match (verticale) */
+.jQBracket .round .match {
+  margin: 25px 0 !important;  /* Aumenta l’aria verticale tra match */
 }
 
+/* Round spacing (già gestito da param roundMargin, ma se vuoi forzare CSS) */
+/* .jQBracket .round { margin-right: 40px !important; } */
 
+/* Nomi delle squadre */
+.jQBracket .team {
+  color: #e0e0e0 !important;
+  background-color: #272727 !important;
+  padding: 8px 12px !important;
+  border-radius: 4px !important;
+  min-width: 150px !important;
+  max-width: none !important;
+  font-size: 15px !important;
+  font-weight: 500 !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  margin: 2px 0 !important;
+  height: auto !important;
+  line-height: 1.4 !important;
+}
 
+/* Evidenziazione squadra vincente */
+.jQBracket .team.highlight {
+  background-color: rgba(255, 193, 7, 0.3) !important;
+  color: #fff !important;
+  font-weight: bold !important;
+  box-shadow: 0 0 8px rgba(255, 193, 7, 0.5);
+}
 
+/* Punteggi */
+.jQBracket .score {
+  min-width: 40px !important;
+  height: 30px !important;
+  padding: 5px 8px !important;
+  font-size: 16px !important;
+  font-weight: bold !important;
+  text-align: center !important;
+  border-radius: 4px !important;
+  margin: 0 5px !important;
+  background-color: #333 !important;
+  color: #e0e0e0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
 
+/* Risultati in sola lettura (se usi .results-readonly) */
+.results-readonly .score {
+  padding: 5px 10px !important;
+  border-radius: 4px !important;
+}
+
+/* Vincitore */
+.results-readonly .score.win {
+  background-color: rgba(40, 167, 69, 0.4) !important;
+  color: #7dffb3 !important;
+  font-weight: bold !important;
+  box-shadow: 0 0 8px rgba(40, 167, 69, 0.5) !important;
+}
+
+/* Perdente */
+.results-readonly .score.loss {
+  background-color: rgba(220, 53, 69, 0.3) !important;
+  color: #ff9999 !important;
+}
+
+/* Pareggio */
+.results-readonly .score.tied {
+  background-color: rgba(255, 193, 7, 0.4) !important;
+  color: #ffe066 !important;
+  box-shadow: 0 0 8px rgba(255, 193, 7, 0.4) !important;
+}
+
+/* Nessun risultato */
+.results-readonly .score.no-results,
+.results-readonly .score:empty,
+.jQBracket .score:contains("--") {
+  background-color: rgba(108, 117, 125, 0.3) !important;
+  color: #adb5bd !important;
+  font-style: italic !important;
+}
+
+/* Stile placeholder BYE */
+.jQBracket .team:contains("BYE") {
+  color: #6c757d !important;
+  font-style: italic !important;
+  opacity: 0.7 !important;
+  background-color: rgba(108, 117, 125, 0.1) !important;
+}
+.jQBracket .team:empty {
+  color: #6c757d !important;
+  font-style: italic !important;
+  background-color: rgba(108, 117, 125, 0.1) !important;
+}
+
+/* Connettori */
+.jQBracket .connector {
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  border-width: 2px !important;
+}
+.jQBracket .connector.highlight,
+.jQBracket .connector.highlightWinner {
+  border-color: #ffc107 !important;
+  border-width: 3px !important;
+}
+
+/* Round label (es: "Semifinale", "Finale" ecc.) */
+.jQBracket .round .space .label {
+  color: #ffc107 !important;
+  font-weight: bold !important;
+  font-size: 16px !important;
+  margin-bottom: 15px !important;
+  text-transform: uppercase;
+}

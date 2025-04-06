@@ -68,3 +68,33 @@ DATABASES = {
 
 # Imposta il tipo di chiave primaria predefinita per i modelli
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        # Log di Django
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',     # se vuoi vedere i 'INFO' e superiori
+        },
+        # Log del tuo file views_dettaglio_tornei
+        'views_dettaglio_tornei': {
+            'handlers': ['console'],
+            'level': 'DEBUG',    # se vuoi anche i debug
+            'propagate': False,
+        },
+        # Se stai usando `logger = logging.getLogger(__name__)`
+        # e __name__ = 'api.views.views_dettaglio_tornei' allora devi mettere quella string
+        'api.views.views_dettaglio_tornei': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    }
+}
