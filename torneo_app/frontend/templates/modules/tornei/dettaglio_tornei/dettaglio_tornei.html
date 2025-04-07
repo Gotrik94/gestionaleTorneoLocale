@@ -19,35 +19,26 @@
     </div>
   </div>
 
-  <div class="row">
-  <div class="row">
-    <!-- Pannello squadre disponibili -->
-    <div class="col-md-3">
-      <div class="card bg-dark text-light shadow-sm mb-3">
-        <div class="card-header text-warning">Squadre disponibili</div>
-        <div class="card-body" id="squadre-disponibili">
-          <!-- Squadre in JS -->
-        </div>
-      </div>
+  <!-- Struttura principale: il contenuto delle fasi è gestito via JS -->
+  <div class="card bg-dark border-light rounded shadow-sm mt-4">
+    <div class="card-header border-bottom border-secondary">
+      <ul class="nav nav-tabs card-header-tabs" id="tab-fasi"></ul>
     </div>
-    <div class="col-md-9">
-      <div class="card bg-dark border-light rounded shadow-sm mt-4">
-        <div class="card-header border-bottom border-secondary">
-          <ul class="nav nav-tabs card-header-tabs" id="tab-fasi"></ul>
-        </div>
 
-        <div class="card-body tab-content mt-3" id="contenuto-fasi"></div>
+    <!-- Qui verranno generate via JS le schede per ogni fase.
+         Ogni scheda avrà una riga con due colonne:
+         - Sinistra: il pannello "Squadre disponibili" per quella fase.
+         - Destra: il wrapper del bracket. -->
+    <div class="card-body tab-content mt-3" id="contenuto-fasi"></div>
 
-        <div class="card-footer text-end">
-          <button id="btn-generabracket" class="btn btn-outline-warning">
-            <i class="bi bi-shuffle"></i> Genera Bracket Automatico
-          </button>
-        </div>
-      </div>
+    <div class="card-footer text-end">
+      <button id="btn-generabracket" class="btn btn-outline-warning">
+        <i class="bi bi-shuffle"></i> Genera Bracket Automatico
+      </button>
     </div>
   </div>
-</div>
 
+</div>
 {% endblock content %}
 
 {% block extra_js %}
