@@ -5,3 +5,4 @@ from .views_partite import *
 from .views_home import *
 from .views_dashboard import *
 from .views_utils import *
+from .views_classifica_torneo import *

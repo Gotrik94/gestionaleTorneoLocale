@@ -4,6 +4,8 @@ from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+
+from backend.models.classifica_torneo import ClassificaTorneo
 from backend.models.partita import Partita
 from backend.serializers.partita import PartitaSerializer
 
@@ -71,3 +73,47 @@ def calendar_schedule_partita(request):
         })
 
     return JsonResponse(events, safe=False)
+
+@api_view(['POST'])
+def salva_partita_aggiorna_classifica(request):
+    """
+    Crea o aggiorna una partita e aggiorna automaticamente la classifica.
+    """
+    serializer = PartitaSerializer(data=request.data)
+    if serializer.is_valid():
+        partita = serializer.save()
+
+        # Logica aggiornamento classifica se la partita è conclusa
+        if partita.conclusa:
+            def aggiorna_punti(squadra, punti):
+                if squadra is None:
+                    return
+                classifica, _ = ClassificaTorneo.objects.get_or_create(
+                    torneo=partita.torneo,
+                    fase=partita.fase,
+                    girone=partita.girone,
+                    squadra=squadra,
+                    defaults={'punti': 0}
+                )
+                classifica.punti += punti
+                classifica.save()
+
+            # Calcolo punti
+            if partita.punteggio_rossa > partita.punteggio_blu:
+                aggiorna_punti(partita.squadra_rossa, 3)
+            elif partita.punteggio_blu > partita.punteggio_rossa:
+                aggiorna_punti(partita.squadra_blu, 3)
+            elif partita.punteggio_rossa == partita.punteggio_blu:
+                aggiorna_punti(partita.squadra_rossa, 1)
+                aggiorna_punti(partita.squadra_blu, 1)
+
+        return Response({
+            "success": True,
+            "message": "Partita salvata con successo",
+            "partita_id": partita.id
+        }, status=status.HTTP_201_CREATED)
+    else:
+        return Response({
+            "success": False,
+            "errors": serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)

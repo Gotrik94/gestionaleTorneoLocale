@@ -6,4 +6,5 @@ urlpatterns = [
     path('squadre/', include('api.urls.urls_squadre')),
     path('dettaglio/', include('api.urls.urls_dettaglio_squadre')),
     path('dettaglio/', include('api.urls.urls_dettaglio_tornei')),
+    path('classifica/', include('api.urls.urls_classifica_torneo')),
 ]

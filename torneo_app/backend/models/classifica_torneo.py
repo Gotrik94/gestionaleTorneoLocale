@@ -11,9 +11,6 @@ class ClassificaTorneo(models.Model):
     girone = models.ForeignKey(Girone, on_delete=models.CASCADE, null=True, blank=True, related_name="classifica_girone")
     squadra = models.ForeignKey(Squadra, on_delete=models.CASCADE)
     punti = models.IntegerField(default=0)
-    vittorie = models.IntegerField(default=0)
-    pareggi = models.IntegerField(default=0)
-    sconfitte = models.IntegerField(default=0)
 
     class Meta:
         unique_together = ('torneo', 'fase', 'girone', 'squadra')
