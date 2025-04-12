@@ -1,5 +1,6 @@
 {% extends "modules/base/base.html" %}
 {% load static %}
+
 {% block title %}Dettaglio {{ torneo.nome }}{% endblock %}
 
 {% block extra_css %}
@@ -9,8 +10,8 @@
 {% endblock %}
 
 {% block content %}
-<div class="container text-light py-4" id="torneo-container" data-torneo-id="{{ torneo.id }}">
-
+<div class="container-fluid py-4">
+  <!-- Info generali torneo -->
   <div class="row mb-4">
     <div class="col-12">
       <h1 class="text-warning">{{ torneo.nome }}</h1>
@@ -19,31 +20,15 @@
     </div>
   </div>
 
-  <!-- Struttura principale: il contenuto delle fasi è gestito via JS -->
-  <div class="card bg-dark border-light rounded shadow-sm mt-4">
-    <div class="card-header border-bottom border-secondary">
-      <ul class="nav nav-tabs card-header-tabs" id="tab-fasi"></ul>
-    </div>
-
-    <!-- Qui verranno generate via JS le schede per ogni fase.
-         Ogni scheda avrà una riga con due colonne:
-         - Sinistra: il pannello "Squadre disponibili" per quella fase.
-         - Destra: il wrapper del bracket. -->
-    <div class="card-body tab-content mt-3" id="contenuto-fasi"></div>
-
-    <div class="card-footer text-end">
-      <button id="btn-generabracket" class="btn btn-outline-warning">
-        <i class="bi bi-shuffle"></i> Genera Bracket Automatico
-      </button>
-    </div>
-  </div>
-
+  <!-- Include il modulo loader -->
+  {% include "modules/tornei/dettaglio_tornei/dettaglio_tornei_loader.html" %}
 </div>
-{% endblock content %}
+{% endblock %}
 
 {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery-bracket@0.11.1/dist/jquery.bracket.min.js"></script>
-<script src="{% static 'tornei/dettaglio_tornei/dettaglio_tornei.js' %}"></script>
+<script src="{% static 'tornei/dettaglio_tornei/bracket_utils.js' %}"></script>
+<script src="{% static 'tornei/dettaglio_tornei/dettaglio_tornei_loader.js' %}"></script>
 {% endblock %}
