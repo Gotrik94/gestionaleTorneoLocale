@@ -112,40 +112,55 @@ window.addEventListener("DOMContentLoaded", async () => {
 
     // Eventi globali
     document.querySelectorAll(".btn-generabracket").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const faseId = btn.dataset.faseId;
-        const fase = data.fasi.find(f => f.id == faseId);
-        if (!fase || !fase.squadre?.length) {
-          return Swal.fire("Errore", "Nessuna squadra disponibile", "error");
-        }
+        btn.addEventListener("click", async () => {
+          const faseId = btn.dataset.faseId;
+          const fase = data.fasi.find(f => f.id == faseId);
 
-        const shuffled = [...fase.squadre].sort(() => Math.random() - 0.5);
-        const teams = [];
+          const conferma = await Swal.fire({
+            title: "Confermi la generazione del bracket?",
+            text: "Questa operazione sovrascriverà il bracket esistente.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Sì, genera",
+            cancelButtonText: "Annulla"
+          });
 
-        while (shuffled.length > 0) {
-          const t1 = shuffled.shift();
-          const t2 = shuffled.shift() || { id: null, nome: "BYE" };
-          teams.push([
-            { name: t1.nome, id: t1.id },
-            { name: t2.nome, id: t2.id }
-          ]);
-        }
+          if (!conferma.isConfirmed) {
+            console.log("❌ Generazione annullata");
+            return;
+          }
 
-        const results = teams.map(([a, b]) => {
-          if (a.id && !b.id) return [1, 0]; // A vince contro BYE
-          if (!a.id && b.id) return [0, 1]; // B vince contro BYE
-          return [0, 0]; // Nessun risultato iniziale
+          if (!fase || !fase.squadre?.length) {
+            return Swal.fire("Errore", "Nessuna squadra disponibile", "error");
+          }
+
+          const shuffled = [...fase.squadre].sort(() => Math.random() - 0.5);
+          const teams = [];
+
+          while (shuffled.length > 0) {
+            const t1 = shuffled.shift();
+            const t2 = shuffled.shift() || { id: null, nome: "BYE" };
+            teams.push([
+              { name: t1.nome, id: t1.id },
+              { name: t2.nome, id: t2.id }
+            ]);
+          }
+
+          const results = teams.map(([a, b]) => {
+            if (a.id && !b.id) return [1, 0];
+            if (!a.id && b.id) return [0, 1];
+            return [0, 0];
+          });
+
+          const bracketData = {
+            teams,
+            results: [results]
+          };
+
+          window.currentBracketData = bracketData;
+          window.renderBracket(bracketData, faseId);
         });
 
-        const bracketData = {
-          teams,
-          results: [results]
-        };
-
-        // Salva nel contesto globale per il salvataggio successivo
-        window.currentBracketData = bracketData;
-        window.renderBracket(bracketData, faseId);
-      });
     });
 
 
