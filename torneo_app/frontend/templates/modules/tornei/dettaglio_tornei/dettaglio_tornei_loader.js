@@ -1,17 +1,21 @@
 window.addEventListener("DOMContentLoaded", async () => {
+  console.log("🚀 Caricamento dati del torneo avviato");
+
   const torneoId = document.getElementById("torneo-container")?.dataset.torneoId;
   const tabFasi = document.getElementById("tab-fasi");
   const contenutoFasi = document.getElementById("contenuto-fasi");
 
-  if (!torneoId) return console.error("❌ torneoId non trovato");
+  if (!torneoId) return console.error("❌ torneoId non trovato nel DOM");
 
   try {
     const resp = await fetch(`/api/dettaglio/${torneoId}/dettaglio/`);
     if (!resp.ok) throw new Error("Errore HTTP: " + resp.status);
     const data = await resp.json();
 
-    let faseAttuale = null;
-    let currentBracketData = null;
+    if (!data.fasi || data.fasi.length === 0) {
+      console.warn("⚠️ Nessuna fase trovata");
+      return;
+    }
 
     tabFasi.innerHTML = "";
     contenutoFasi.innerHTML = "";
@@ -50,9 +54,9 @@ window.addEventListener("DOMContentLoaded", async () => {
                 <h5 class="text-warning">Bracket: ${fase.nome}</h5>
                 <div class="bracket-actions">
                   ${fase.bracket_confermato ? "" : `
-                    <button class="btn btn-danger btn-sm btn-resetbracket">❌ Reset</button>
-                    <button class="btn btn-success btn-sm btn-salvabracket">💾 Salva</button>
-                    <button class="btn btn-warning btn-sm btn-generabracket">🔀 Genera</button>
+                    <button class="btn btn-danger btn-sm btn-resetbracket" data-fase-id="${fase.id}">❌ Reset</button>
+                    <button class="btn btn-success btn-sm btn-salvabracket" data-fase-id="${fase.id}">💾 Salva</button>
+                    <button class="btn btn-warning btn-sm btn-generabracket" data-fase-id="${fase.id}">🔀 Genera</button>
                   `}
                 </div>
               </div>
@@ -63,55 +67,61 @@ window.addEventListener("DOMContentLoaded", async () => {
           </div>`;
       }
 
-      contenutoFasi.appendChild(tabPane);
+      contenutoFasi.appendChild(tabPane); // ⚠️ Appendere PRIMA del rendering
 
-        if (idx === 0 && !faseNonIniziata) {
-          faseAttuale = fase;
+      if (!faseNonIniziata) {
+        const tipologia = (fase.tipologia || "").toUpperCase();
+        const isBracketConfermato = !!fase.bracket_confermato;
+        const isBracketEditable = !isBracketConfermato;
+        let bracketData = null;
 
-          // ✅ Inizializza il bracket e salvalo come variabile globale
-          window.currentBracketData = fase.bracket_confermato
-            ? window.buildBracketDataFromFase(fase)
-            : (fase.partite?.length
-                ? window.buildBracketDataFromFase(fase)
-                : window.generaBracketVuoto(fase.squadre));
+        switch (tipologia) {
+          case "ELIMINAZIONE_DIRETTA":
+            bracketData = isBracketConfermato
+              ? window.buildBracketDataFromFase(fase)
+              : (fase.partite?.length
+                  ? window.buildBracketDataFromFase(fase)
+                  : window.generaBracketVuoto(fase.squadre));
+            break;
 
-          window.isBracketConfermato = !!fase.bracket_confermato;
-          window.isBracketEditable = !window.isBracketConfermato;
+          case "GRUPPI":
+            console.warn("⚠️ Tipologia GRUPPI non ancora gestita");
+            break;
 
-          console.log("🎯 Chiamo renderBracket con dati:", window.currentBracketData);
-          console.log("🔓 isBracketConfermato:", window.isBracketConfermato);
-          console.log("✏️ isBracketEditable:", window.isBracketEditable);
-
-          window.renderBracket(window.currentBracketData, fase.id);
-          window.renderSquadreDisponibili(fase.squadre, `squadre-disponibili-${fase.id}`);
+          default:
+            console.warn(`⚠️ Tipologia fase ${fase.tipologia} non supportata al momento`);
+            break;
         }
+
+        if (bracketData) {
+          // Imposta variabili globali prima del rendering
+          window.currentBracketData = bracketData;
+          window.isBracketEditable = isBracketEditable;
+          window.isBracketConfermato = isBracketConfermato;
+
+          window.renderBracket(bracketData, fase.id);
+          window.renderSquadreDisponibili(fase.squadre, `squadre-disponibili-${fase.id}`);
+        } else {
+          tabPane.innerHTML += `
+            <div class="alert alert-warning text-dark mt-3">
+              <strong>⚠️ Tipologia di fase non ancora supportata:</strong> ${fase.tipologia}
+            </div>`;
+        }
+      }
     });
 
-    // Collega i bottoni
-    document.querySelectorAll(".btn-salvabracket").forEach(btn =>
-      btn.addEventListener("click", () => {
-        if (faseAttuale?.id) window.salvaBracket(faseAttuale.id);
-      })
-    );
-
-    document.querySelectorAll(".btn-resetbracket").forEach(btn =>
-      btn.addEventListener("click", () => {
-        if (faseAttuale?.id) {
-          currentBracketData = window.generaBracketVuoto(faseAttuale.squadre);
-          window.renderBracket(currentBracketData, faseAttuale.id);
-        }
-      })
-    );
-
+    // Eventi globali
     document.querySelectorAll(".btn-generabracket").forEach(btn => {
       btn.addEventListener("click", () => {
-        if (!faseAttuale || !faseAttuale.squadre.length) {
-          Swal.fire("Errore", "Nessuna squadra disponibile", "error");
-          return;
+        const faseId = btn.dataset.faseId;
+        const fase = data.fasi.find(f => f.id == faseId);
+        if (!fase || !fase.squadre?.length) {
+          return Swal.fire("Errore", "Nessuna squadra disponibile", "error");
         }
 
-        const shuffled = [...faseAttuale.squadre].sort(() => Math.random() - 0.5);
+        const shuffled = [...fase.squadre].sort(() => Math.random() - 0.5);
         const teams = [];
+
         while (shuffled.length > 0) {
           const t1 = shuffled.shift();
           const t2 = shuffled.shift() || { id: null, nome: "BYE" };
@@ -121,20 +131,39 @@ window.addEventListener("DOMContentLoaded", async () => {
           ]);
         }
 
-        currentBracketData = {
+        const results = teams.map(([a, b]) => {
+          if (a.id && !b.id) return [1, 0]; // A vince contro BYE
+          if (!a.id && b.id) return [0, 1]; // B vince contro BYE
+          return [0, 0]; // Nessun risultato iniziale
+        });
+
+        const bracketData = {
           teams,
-          results: [teams.map(() => [0, 0])]
+          results: [results]
         };
 
-        console.log("🔀 Bracket generato manualmente:", currentBracketData);
-
-        // FIX ⬇️
-        window.currentBracketData = currentBracketData;
-
-        window.renderBracket(currentBracketData, faseAttuale.id);
+        // Salva nel contesto globale per il salvataggio successivo
+        window.currentBracketData = bracketData;
+        window.renderBracket(bracketData, faseId);
       });
     });
 
+
+    document.querySelectorAll(".btn-resetbracket").forEach(btn =>
+      btn.addEventListener("click", () => {
+        const faseId = btn.dataset.faseId;
+        const fase = data.fasi.find(f => f.id == faseId);
+        const bracketData = window.generaBracketVuoto(fase.squadre);
+        window.renderBracket(bracketData, faseId);
+      })
+    );
+
+    document.querySelectorAll(".btn-salvabracket").forEach(btn =>
+      btn.addEventListener("click", () => {
+        const faseId = btn.dataset.faseId;
+        window.salvaBracket(faseId);
+      })
+    );
 
   } catch (err) {
     console.error("❌ Errore caricamento dati:", err);
