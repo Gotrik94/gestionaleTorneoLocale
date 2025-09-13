@@ -173,23 +173,27 @@ def aggiorna_risultato_serie(partita_serie):
 # --------------------------------------------------------------------
 
 def calcola_punteggio_on_the_fly(vincitore, squadra_rossa, squadra_blu, modalita="BO1"):
-    """
-    Calcola i punteggi in base a vincitore e modalita, SENZA leggere/scrivere punteggio_rossa/punteggio_blu dal DB.
-    Se serve, personalizza la logica per BO3/BO5.
-    """
-    logger.debug(f"[calcola_punteggio_on_the_fly] vincitore={vincitore}, modalita={modalita}")
+    logger.debug(f"🧮 Calcolo punteggio: vincitore={vincitore}, rossa={squadra_rossa}, blu={squadra_blu}, mod={modalita}")
+
+    if squadra_blu is None and squadra_rossa:
+        logger.debug("🎯 Match contro BYE: squadra_blu è None → ritorno (1, 0)")
+        return (1, 0)
+    if squadra_rossa is None and squadra_blu:
+        logger.debug("🎯 Match contro BYE: squadra_rossa è None → ritorno (0, 1)")
+        return (0, 1)
 
     if vincitore is None:
-        return 0, 0
+        logger.debug("⚠️ Nessun vincitore assegnato → ritorno (0, 0)")
+        return (0, 0)
 
     if modalita == "BO1":
         if vincitore == squadra_rossa:
-            return 1, 0
-        else:
-            return 0, 1
+            return (1, 0)
+        elif vincitore == squadra_blu:
+            return (0, 1)
 
-    return 0, 0  # fallback per altre modalita
-
+    logger.warning("⚠️ Modalità non gestita o vincitore non corrisponde → ritorno (0, 0)")
+    return (0, 0)
 
 # --------------------------------------------------------------------
 # ------------------------ LOGICA ESISTENTE --------------------------
@@ -261,7 +265,13 @@ def api_dettaglio_torneo(request, torneo_id):
         logger.debug(f"[api_dettaglio_torneo] Elaborazione fase ID={fase.id}, {fase.nome}")
         squadre_iscritte = Squadra.objects.filter(iscrizione__torneo=torneo).distinct()
 
-        partite = Partita.objects.all_with_bye().filter(fase=fase).order_by('data_evento','round_num')
+        #partite = Partita.objects.all_with_bye().filter(fase=fase).order_by('data_evento','round_num')
+        partite = Partita.objects.all_with_bye().filter(fase=fase).order_by('round_num', 'data_evento', 'id')
+
+        for p in partite:
+            logger.debug(
+                f"🧩 Match DB → Round {p.round_num}: {p.squadra_rossa} vs {p.squadra_blu} → vincitore: {p.vincitore}")
+
         logger.debug(f"[api_dettaglio_torneo] Trovate {partite.count()} partite per fase ID={fase.id}")
 
         partite_data = []

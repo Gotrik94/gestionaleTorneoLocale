@@ -85,86 +85,6 @@
   padding: 20px;
 }
 
-/* ====== jQuery BRACKET - STILI PRINCIPALI ====== */
-/* Base container del bracket */
-.jQBracket {
-  font-family: 'Roboto', sans-serif;
-  margin: 0 auto;
-}
-
-/* Connettori (linee) che collegano i match */
-.jQBracket .connector {
-  border-color: rgba(255, 255, 255, 0.4) !important;
-  border-width: 2px !important;
-}
-.jQBracket .connector.highlight,
-.jQBracket .connector.highlightWinner {
-  border-color: #ffc107 !important; /* linea evidenziata in giallo */
-  border-width: 3px !important;
-}
-
-/* Margine tra i match in verticale (puoi anche settare matchMargin nel JS) */
-.jQBracket .round .match {
-  margin: 25px 0 !important; /* Spazio verticale tra un match e l'altro */
-  display: flex;             /* Permette center alignment */
-  align-items: center;       /* Centra verticalmente il contenuto (squadre, punteggi) */
-  min-height: 60px;          /* Almeno 60px di altezza, così la linea si disegna al centro */
-}
-
-/* Se vuoi più margine: .jQBracket .round .match { margin: 40px 0 !important; } */
-
-/* Round label (es. "Semifinale") */
-.jQBracket .round .space .label {
-  color: #ffc107 !important;
-  font-weight: bold !important;
-  font-size: 16px !important;
-  margin-bottom: 15px !important;
-  text-transform: uppercase;
-}
-
-/* Squadra (team) */
-.jQBracket .team {
-  color: #e0e0e0 !important;
-  background-color: #272727 !important;
-  padding: 8px 12px !important;
-  border-radius: 4px !important;
-  min-width: 150px !important;
-  max-width: none !important;
-  font-size: 15px !important;
-  font-weight: 500 !important;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  margin: 2px 0 !important;
-  height: auto !important;
-  line-height: 1.4 !important;
-  min-height: 30px; /* se vuoi garantire un'altezza minima */
-}
-
-/* Squadra evidenziata (vincente) */
-.jQBracket .team.highlight {
-  background-color: rgba(255,193,7, 0.3) !important;
-  color: #fff !important;
-  font-weight: bold !important;
-  box-shadow: 0 0 8px rgba(255,193,7,0.5);
-}
-
-/* Punteggi (score) */
-.jQBracket .score {
-  min-width: 40px !important;
-  height: 30px !important;
-  padding: 5px 8px !important;
-  font-size: 16px !important;
-  font-weight: bold !important;
-  text-align: center !important;
-  border-radius: 4px !important;
-  margin: 0 5px !important;
-  background-color: #333 !important;
-  color: #e0e0e0 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
 /* Sola lettura (es. bracket confermato) */
 .results-readonly .score {
   padding: 5px 10px !important;
@@ -231,3 +151,58 @@
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
+
+.bracket-wrapper {
+  position: relative;
+  min-height: 300px; /* o quello che ti serve per lo spazio */
+}
+
+/* Contenitore per centrare */
+.loader-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+  pointer-events: none;
+}
+
+/* Il tuo loader */
+.loader {
+  width: 215px;
+  height: 215px;
+  display: block;
+  background: #FFF;
+  box-sizing: border-box;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(255,255,255,0.1);
+  position: relative;
+}
+
+.loader::after {
+  content: '';
+  width: calc(100% - 30px);
+  height: calc(100% - 15px);
+  top: 15px;
+  left: 15px;
+  position: absolute;
+  background-image:
+    linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5) 50%, transparent 100%),
+    linear-gradient(#DDD 100px, transparent 0),
+    linear-gradient(#DDD 16px, transparent 0),
+    linear-gradient(#DDD 50px, transparent 0);
+  background-repeat: no-repeat;
+  background-size: 75px 175px, 100% 100px, 100% 16px, 100% 30px;
+  background-position: -185px 0, center 0, center 115px, center 142px;
+  box-sizing: border-box;
+  animation: animloader 1s linear infinite;
+}
+
+@keyframes animloader {
+  to {
+    background-position: 185px 0, center 0, center 115px, center 142px;
+  }
+}
+
+
+
