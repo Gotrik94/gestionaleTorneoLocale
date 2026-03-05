@@ -13,13 +13,31 @@ jobs:
       - name: Verify Docker
         shell: powershell
         run: |
-          docker context ls
-          docker context use default
-          docker version
+          $dockerSvc = Get-Service -Name com.docker.service -ErrorAction SilentlyContinue
+          if ($dockerSvc) {
+            Set-Service -Name com.docker.service -StartupType Automatic
+            if ($dockerSvc.Status -ne "Running") { Start-Service com.docker.service }
+          }
+
+          $dockerCli = "$Env:ProgramFiles\Docker\Docker\DockerCli.exe"
+          if (Test-Path $dockerCli) { & $dockerCli -SwitchWindowsEngine }
+
+          $ok = $false
+          for ($i = 0; $i -lt 6; $i++) {
+            try {
+              docker context ls
+              docker version
+              $ok = $true
+              break
+            } catch {
+              Start-Sleep -Seconds 5
+            }
+          }
+          if (-not $ok) { throw "Docker daemon non raggiungibile dal runner." }
 
       - name: Deploy
         shell: powershell
         run: |
           cd $env:GITHUB_WORKSPACE
-          docker compose up -d --build
-          docker compose ps
+          docker compose -f docker-compose.windows.yml up -d --build
+          docker compose -f docker-compose.windows.yml ps
