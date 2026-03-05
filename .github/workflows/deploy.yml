@@ -10,9 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Verify Docker
-        shell: powershell
-        run: docker version
+      - name: Verify Docker`n        shell: powershell`n        run: |`n          docker context ls`n          docker context use default`n          docker version
 
       - name: Deploy
         shell: powershell
@@ -20,3 +18,4 @@ jobs:
           cd $env:GITHUB_WORKSPACE
           docker compose up -d --build
           docker compose ps
+
