@@ -1,0 +1,9 @@
+﻿services:
+  web:
+    build: ./torneo_app
+    container_name: gestionale_web
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./torneo_app:/app
+    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"

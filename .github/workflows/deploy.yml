@@ -1,0 +1,22 @@
+﻿name: Deploy
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, windows]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify Docker
+        shell: powershell
+        run: docker version
+
+      - name: Deploy
+        shell: powershell
+        run: |
+          cd $env:GITHUB_WORKSPACE
+          docker compose up -d --build
+          docker compose ps
