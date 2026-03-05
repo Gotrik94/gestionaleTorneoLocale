@@ -22,22 +22,23 @@ jobs:
           $dockerCli = "$Env:ProgramFiles\Docker\Docker\DockerCli.exe"
           if (Test-Path $dockerCli) { & $dockerCli -SwitchWindowsEngine }
 
+          $ctx = "desktop-windows"
           $ok = $false
           for ($i = 0; $i -lt 6; $i++) {
             try {
               docker context ls
-              docker version
+              docker --context $ctx version
               $ok = $true
               break
             } catch {
               Start-Sleep -Seconds 5
             }
           }
-          if (-not $ok) { throw "Docker daemon non raggiungibile dal runner." }
+          if (-not $ok) { throw "Docker daemon non raggiungibile dal runner (context: $ctx)." }
 
       - name: Deploy
         shell: powershell
         run: |
           cd $env:GITHUB_WORKSPACE
-          docker compose -f docker-compose.windows.yml up -d --build
-          docker compose -f docker-compose.windows.yml ps
+          docker --context desktop-windows compose -f docker-compose.windows.yml up -d --build
+          docker --context desktop-windows compose -f docker-compose.windows.yml ps
