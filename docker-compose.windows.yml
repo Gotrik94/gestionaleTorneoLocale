@@ -1,0 +1,11 @@
+services:
+  web:
+    build:
+      context: ./torneo_app
+      dockerfile: Dockerfile.windows
+    container_name: gestionale_web_win
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./torneo_app:/app
+    command: cmd /c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
