@@ -10,35 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Verify Docker
+      - name: Deploy Windows Service
         shell: powershell
         run: |
-          $dockerSvc = Get-Service -Name com.docker.service -ErrorAction SilentlyContinue
-          if ($dockerSvc) {
-            Set-Service -Name com.docker.service -StartupType Automatic
-            if ($dockerSvc.Status -ne "Running") { Start-Service com.docker.service }
-          }
-
-          $dockerCli = "$Env:ProgramFiles\Docker\Docker\DockerCli.exe"
-          if (Test-Path $dockerCli) { & $dockerCli -SwitchWindowsEngine }
-
-          $ctx = "desktop-windows"
-          $ok = $false
-          for ($i = 0; $i -lt 6; $i++) {
-            try {
-              docker context ls
-              docker --context $ctx version
-              $ok = $true
-              break
-            } catch {
-              Start-Sleep -Seconds 5
-            }
-          }
-          if (-not $ok) { throw "Docker daemon non raggiungibile dal runner (context: $ctx)." }
-
-      - name: Deploy
-        shell: powershell
-        run: |
-          cd $env:GITHUB_WORKSPACE
-          docker --context desktop-windows compose -f docker-compose.windows.yml up -d --build
-          docker --context desktop-windows compose -f docker-compose.windows.yml ps
+          powershell -ExecutionPolicy Bypass -File "$env:GITHUB_WORKSPACE\scripts\deploy_windows.ps1" -RepoPath "C:\apps\gestionaleTorneoLocale" -ServiceName "gestionale_torneo" -Branch "master"
