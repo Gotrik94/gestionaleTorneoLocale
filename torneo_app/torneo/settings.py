@@ -17,6 +17,7 @@ STATIC_URL = "/modules/"
 STATICFILES_DIRS = [
     BASE_DIR / "frontend/templates/modules",
 ]
+STATIC_ROOT = BASE_DIR / "staticfiles"
 # Applicazioni installate
 INSTALLED_APPS = [
     "django.contrib.admin",  # Deve essere presente
